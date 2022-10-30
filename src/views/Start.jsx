@@ -27,12 +27,12 @@ const Start = () => {
     <Container maxW="container.md">
       <Box>
         <Text fontSize="4xl" fontWeight="bold">
-          Todos
+          Temperature
         </Text>
         <List spacing={3}>
           <ListItem>
             <ListIcon as={MdCheckCircle} color="green.500" />
-            {data.temperature}
+            {JSON.stringify(data)}
           </ListItem>
         </List>
       </Box>
