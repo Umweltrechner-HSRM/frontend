@@ -1,27 +1,30 @@
 import { Box, Container, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { MdCheckCircle } from "react-icons/all.js";
-import { useState } from "react";
+import { Client } from "@stomp/stompjs";
 
+let client = null;
 
 const Start = () => {
+  const [lastMessage, setLastMessage] = useState("No message received yet");
 
-  const { data, isLoading, error } = useQuery(["temperature"], () =>
-    fetch("http://localhost:8230/api/temperature").then((res) =>
-      res.json()
-    ),
-    {
-      refetchInterval: 5000,
-    }
-  );
 
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text>Error: {error.message}</Text>;
-  }
+  useEffect(() => {
+    client = new Client({
+      brokerURL: "ws://localhost:8230/api/looping",
+      onConnect: () => {
+        console.log("connected");
+        client.subscribe("/topic/temperature", (msg) => {
+          console.log(msg);
+          setLastMessage(msg.body);
+        });
+      }
+    });
+    client.activate();
+    return () => {
+      client.deactivate();
+    };
+  }, []);
 
   return (
     <Container maxW="container.md">
@@ -32,12 +35,12 @@ const Start = () => {
         <List spacing={3}>
           <ListItem>
             <ListIcon as={MdCheckCircle} color="green.500" />
-            {JSON.stringify(data)}
+            Last Message: {lastMessage}
           </ListItem>
         </List>
       </Box>
     </Container>
   );
-}
+};
 
 export default Start;
