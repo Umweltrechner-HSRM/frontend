@@ -6,7 +6,7 @@ import { Client } from "@stomp/stompjs";
 let client = null;
 
 const Start = () => {
-  const [lastMessage, setLastMessage] = useState("No message received yet");
+  const [lastMessage, setLastMessage] = useState("No message received yet!");
 
 
   useEffect(() => {
