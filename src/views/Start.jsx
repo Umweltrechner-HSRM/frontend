@@ -16,7 +16,7 @@ const Start = () => {
         console.log("connected");
         client.subscribe("/topic/temperature", (msg) => {
           console.log(msg);
-          setLastMessage(msg.body);
+          setLastMessage(JSON.parse(msg.body));
         });
       }
     });
@@ -35,7 +35,8 @@ const Start = () => {
         <List spacing={3}>
           <ListItem>
             <ListIcon as={MdCheckCircle} color="green.500" />
-            Last Message: {lastMessage}
+            Last Message:
+            Value: {lastMessage.value} Unit: {lastMessage.unit} Time: {lastMessage.timestamp}
           </ListItem>
         </List>
       </Box>
