@@ -8,6 +8,7 @@ import {
     Td,
     TableCaption,
     TableContainer,
+    Container,
   } from '@chakra-ui/react'
 import { Client } from '@stomp/stompjs';
 
@@ -48,26 +49,31 @@ const DataPreview = () => {
 
 
   return (
-    <TableContainer>
-      <Table variant='simple'>
-        <Thead>
-          <Tr>
-            <Th>Value</Th>
-            <Th>Timestamp</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {lastMessage.map(item => {
-            return(
-              <Tr key = {item.timestamp}>
-                <Td>{item.value}</Td>
-                <Td>{item.timestamp}</Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <Container bg='gray' rounded= 'lg'>
+      <TableContainer>
+        <Table 
+        variant='simple'
+        colorScheme = 'twitter'
+        >
+          <Thead>
+            <Tr>
+              <Th>Value</Th>
+              <Th>Timestamp</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {lastMessage.map(item => {
+              return(
+                <Tr key = {item.timestamp}>
+                  <Td>{item.value}</Td>
+                  <Td>{item.timestamp}</Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Container>
     )
 };
 
