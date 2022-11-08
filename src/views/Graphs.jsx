@@ -22,7 +22,7 @@ const Graph = () => {
     client = new Client({
       brokerURL: "ws://localhost:8230/api/looping",
       onConnect: () => {
-        console.log("connected");
+        console.log("Graphs connected");
         client.subscribe("/topic/temperature", (msg) => {
           let msgJson = JSON.parse(msg.body);
           setLastMessage(msgJson);
@@ -32,6 +32,7 @@ const Graph = () => {
     });
     client.activate();
     return () => {
+      console.log("Disconnected from Graphs");
       client.deactivate();
     };
   }, []);
