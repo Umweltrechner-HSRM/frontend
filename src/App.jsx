@@ -7,6 +7,7 @@ import Start from "./views/Start.jsx";
 import Graph from "./views/Graphs.jsx";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import React from "react";
+import Datasets from "./views/Datasets";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,9 @@ const Layout = () => {
             </li>
             <li>
               <Link to="/graph">Graphen</Link>
+            </li>
+            <li>
+              <Link to="/datasets">Datasets</Link>
             </li>
           </ul>
         </nav>
@@ -39,6 +43,7 @@ const RoutesHandler = () => {
         <Route element={<Layout/>}>
           <Route element={<Start />} path="/" />
           <Route element={<Graph />} path="/graph" />
+          <Route element={<Datasets />} path="/datasets" />
         </Route>
       </Routes>
     </BrowserRouter>
