@@ -41,7 +41,7 @@ const DataPreview = () => {
     });
     client.activate();
     return() => {
-      console.log("Disconnected from DataPreview!");
+      console.log("Disconnected from DataPreview");
       client.deactivate();
     }
   }, []);
