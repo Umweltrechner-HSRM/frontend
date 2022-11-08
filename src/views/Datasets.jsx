@@ -11,7 +11,7 @@ function SensorRow({data}) {
     return (
         <Tr>
             <Td><Checkbox/></Td>
-            <Td>{data.name}</Td>
+            <Td>{data}</Td>
             <Td><Input htmlSize={2} width='auto'/></Td>
         </Tr>
     );
@@ -20,7 +20,7 @@ function SensorRow({data}) {
 function TableCriticalValues({sensorData}) {
     const rows = [];
     sensorData.forEach((data) => {
-            rows.push(<SensorRow data={data}/>);
+            rows.push(<SensorRow data={data.name} key={data.name}/>);
         }
     )
     return (
@@ -44,7 +44,7 @@ function TableAlertType() {
     const rows = [];
 
     table_data.forEach((data) => {
-            rows.push(<SensorRow data={data}/>);
+            rows.push(<SensorRow data={data.name} key={data.name}/>);
         }
     )
     return (
@@ -71,14 +71,10 @@ function AlertSystem({sensorData}) {
             </Text>
             <HStack spacing={20} align='stretch'>
                 <Box>
-                    <Table>
-                        <TableCriticalValues sensorData={sensorData}/>
-                    </Table>
+                    <TableCriticalValues sensorData={sensorData}/>
                 </Box>
                 <Box>
-                    <Table>
-                        <TableAlertType/>
-                    </Table>
+                    <TableAlertType/>
                 </Box>
             </HStack>
         </VStack>
