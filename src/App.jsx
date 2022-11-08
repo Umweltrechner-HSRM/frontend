@@ -1,30 +1,56 @@
-import { Box, ChakraProvider, Container, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Box, ChakraProvider, Flex } from "@chakra-ui/react";
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
 import Start from "./views/Start.jsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Start/>
-  }
-])
+import Graph from "./views/Graphs.jsx";
+import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
+import React from "react";
 
 const queryClient = new QueryClient();
+
+const Layout = () => {
+  return (
+    <Flex>
+      <Box>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/graph">Graphen</Link>
+            </li>
+          </ul>
+        </nav>
+      </Box>
+      <Flex>
+        <Outlet />
+      </Flex>
+    </Flex>
+  );
+}
+
+const RoutesHandler = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout/>}>
+          <Route element={<Start />} path="/" />
+          <Route element={<Graph />} path="/graph" />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
+}
 
 const App = () => {
   return (
     <React.StrictMode>
       <ChakraProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+            <RoutesHandler />
         </QueryClientProvider>
       </ChakraProvider>
     </React.StrictMode>
