@@ -13,6 +13,19 @@ export const testChartData = [
 
 export const lineChartOptions = {
     chart: {
+        // animations: {
+        //     enabled: true,
+        //     easing: 'easein',
+        //     speed: 800,
+        //     animateGradually: {
+        //         enabled: true,
+        //         delay: 1000
+        //     },
+        //     dynamicAnimation: {
+        //         enabled: true,
+        //         speed: 400
+        //     }
+        // },
         toolbar: {
             show: false,
         },
@@ -26,19 +39,29 @@ export const lineChartOptions = {
     stroke: {
         curve: "straight",
     },
+    // markers:{
+    //     size: 2,
+    //     strokeColors: '#7eefff',
+    //     strokeWidth: 3,
+    // },
     xaxis: {
-        max: 200,
-        type: 'numeric',
+        type: 'datetime',
         labels: {
+            rotate: -30,
+            rotateAlways: true,
+            format: 'HH:mm:ss',
             style: {
                 colors: "#c8cfca",
                 fontSize: "12px",
+                fontWeight: 600,
             },
+            minHeight: 40
         },
+
     },
     yaxis: {
-        max: 1.0,
-        min: -1.0,
+        // max: 1.0,
+        // min: -1.0,
         labels: {
             formatter: function (value) {
                 return value.toFixed(2)
@@ -46,6 +69,7 @@ export const lineChartOptions = {
             style: {
                 colors: "#c8cfca",
                 fontSize: "12px",
+                fontWeight: 600,
             },
         },
     },
@@ -63,11 +87,18 @@ export const lineChartOptions = {
             shadeIntensity: 0.5,
             gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
             inverseColors: true,
-            opacityFrom: 0.7,
+            opacityFrom: 0.5,
             opacityTo: 0,
             stops: [],
         },
-        colors: ["#4FD1C5", "#2D3748"],
     },
-    colors: ["#4FD1C5", "#2D3748"],
+    annotations: {
+        yaxis: [
+            {
+                y: 1.4,
+                borderColor: "#e30000",
+                strokeDashArray: 0,
+            }
+        ],
+    }
 };
