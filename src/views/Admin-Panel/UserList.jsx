@@ -3,7 +3,7 @@ import React from 'react';
 function UserList() {
     return (
         <div>
-            Add User to "Users.json" here
+            Make List of Users and their data from "Users.json" here
             Other functionalities like deleting, giving rights etc. next week?
         </div>
     );
