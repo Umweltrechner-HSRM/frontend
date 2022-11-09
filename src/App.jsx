@@ -24,7 +24,7 @@ const Layout = () => {
               <Link to="/graph">Graphen</Link>
             </li>
               <li>
-              <Link to="/charttest">TestGraph</Link>
+              <Link to="/charttest">ChartTest</Link>
             </li>
           </ul>
         </nav>

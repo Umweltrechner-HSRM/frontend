@@ -7,6 +7,20 @@ import ReactApexChart from "react-apexcharts";
 
 let client = null;
 
+const boxStyle = {
+    backgroundColor: '#333',
+    borderRadius: 20,
+    color: '#eee',
+    height: 380,
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingTop: 20,
+    paddingBottom: 0,
+    width: 550,
+    margin: 30,
+    alignItems: 'center',
+}
+
 function limitData(currentData, message) {
     if (currentData.length > 100) {
         currentData.shift();
@@ -30,7 +44,7 @@ function InfoBox({data}) {
     return (
         <Box style={{padding: 20, backgroundColor: '#4b4b4b', margin: 30, borderRadius: 20}}>
             <Stack spacing={3}>
-                <Text fontWeight='bold'>Recent sent value: {data.at(-1).y}</Text>
+                <Text fontWeight='bold'>Recent sent value: {data.at(-1)?.y}</Text>
                 <Text fontWeight='bold'>Critical Value: {userChartOptions.criticalValue}</Text>
                 <Text fontWeight='bold'>Formula Used: None</Text>
             </Stack>
@@ -69,20 +83,6 @@ const LineChart = () => {
         }
     ]
 
-    const boxStyle = {
-        backgroundColor: '#333',
-        borderRadius: 20,
-        color: '#eee',
-        height: 380,
-        paddingRight: 20,
-        paddingLeft: 20,
-        paddingTop: 20,
-        paddingBottom: 0,
-        width: 550,
-        margin: 30,
-        alignItems: 'center',
-    }
-
     const lastUpdate = (new Date(data.at(-1)?.x)).toLocaleString('de', {timeZone: 'UTC'})
 
     const chartOptions = {
@@ -111,13 +111,13 @@ const LineChart = () => {
                     {infoPressed ? 'Back' : 'Show Info'}
                 </Button>
             </div>
-            {!infoPressed ? <ReactApexChart
+            {infoPressed ? <InfoBox data={data}/> :
+                <ReactApexChart
                 options={chartOptions}
                 series={chartData}
-                type="area"
+                type='area'
                 width='500'
-                height="300"
-            /> : <InfoBox data={data}/>}
+                height='300'/>}
         </Box>
     )
 };
