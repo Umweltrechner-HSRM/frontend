@@ -79,26 +79,17 @@ export const lineChartOptions = {
     grid: {
         strokeDashArray: 5,
     },
-    fill: {
-        type: "gradient",
-        gradient: {
-            shade: "light",
-            type: "vertical",
-            shadeIntensity: 0.5,
-            gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
-            inverseColors: true,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-            stops: [],
-        },
-    },
-    annotations: {
-        yaxis: [
-            {
-                y: 1.4,
-                borderColor: "#e30000",
-                strokeDashArray: 0,
-            }
-        ],
-    }
+    // fill: {
+    //     type: "gradient",
+    //     gradient: {
+    //         shade: "light",
+    //         type: "vertical",
+    //         shadeIntensity: 0.8,
+    //         gradientToColors: undefined, // optional, if not defined - uses the shades of same color in series
+    //         inverseColors: true,
+    //         opacityFrom: 0.8,
+    //         opacityTo: 0,
+    //         stops: [],
+    //     },
+    // },
 };
