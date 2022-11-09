@@ -1,4 +1,4 @@
-import {
+import { 
     Table,
     Thead,
     Tbody,
@@ -8,20 +8,70 @@ import {
     Td,
     TableCaption,
     TableContainer,
-    Container,
-    Button,
-    ButtonGroup,
+    Select,
+    Text,
+    Flex,
+    Spacer,
     Box,
-  } from '@chakra-ui/react'
-import { Client } from '@stomp/stompjs';
-
+    Button,
+  } from "@chakra-ui/react";
+import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
 
 
 let client = null;
-let clientConnected = false;
+
+function DataSelection({setLastMessage}){
+
+  const [subscription, setSubscription] = useState('');
+
+  function handleChange(e){
+    if (subscription !== '' ) {
+      subscription.unsubscribe();
+    }
+    setSubscription(client.subscribe(e.target.value, (msg) => {
+      let msgJson = JSON.parse(msg.body);
+      setLastMessage((curr) => limitData(curr, msgJson));
+    }))
+  }
 
 
+  return(
+    <>  
+      <Select placeholder='Select Dataset' onChange={handleChange}>
+        <option value="/topic/temperature">Dataset1</option>
+        <option value="Daset2">Datset2</option>
+      </Select>
+    </>
+  )
+}
+
+function DataTable({lastMessage}){
+  return (
+    <Box>
+      <TableContainer>
+        <Table variant = 'simple'>
+          <Thead>
+            <Tr>
+              <Th>Value</Th>
+              <Th>Timestamp</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {lastMessage.map(item =>{
+              return(
+                <Tr key={item.timestamp}>
+                  <Td>{item.value}</Td>
+                  <Td>{item.timestamp}</Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+    </Box>
+  )
+}
 
 function limitData(currentData, message) {
   if (currentData.length >= 4) {
@@ -30,101 +80,37 @@ function limitData(currentData, message) {
   return [message,...currentData];
 }
 
-
-const DataPreview = () => {
+function DataPreview(){
 
   const [lastMessage, setLastMessage] = useState([]);
-  const [displayValue, setDisplayValue] = useState("/topic/temperature");
 
   useEffect(() => {
     client = new Client({
       brokerURL: "ws://localhost:8230/api/looping",
       onConnect: () =>{
         console.log("DataPrev connected");
-        client.subscribe(displayValue, (msg) => {
+        client.subscribe('', (msg) => {
           let msgJson = JSON.parse(msg.body);
           setLastMessage((curr) => limitData(curr, msgJson));
         })
       }
     });
+    client.activate();
     return() => {
       console.log("Disconnected from DataPreview");
-      clientConnected = false;
       client.deactivate();
     }
   }, []);
 
-  
 
 
-  return (
-    <>
-      <Container bg='lightgray' rounded= 'lg'>
-        
-        <TableContainer>
-          <Table 
-          variant='simple'
-          colorScheme = 'darkgray'
-          >
-            <Thead>
-              <Tr>
-                <Th>Value</Th>
-                <Th>Timestamp</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {lastMessage.map(item => {
-                return(
-                  <Tr key = {item.timestamp}>
-                    <Td>{item.value}</Td>
-                    <Td>{item.timestamp}</Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Container>
-    </>
-  )
-};
-
-const ConnectButton = () => {
-  function handleClick(){
-
-
-    if (clientConnected){
-      clientConnected = false;
-      console.log('DataPrev disconnected')
-      client.deactivate();
-    }else{
-      clientConnected = true;
-      client.activate();
-    }
-  }
 
   return(
-    <Button 
-    colorScheme='blue' 
-    onClick={() => handleClick()}
-    >Hallo</Button>
-  )
-
-};
-
-const Main = () => {
-  
-
-
-
-  return (
     <>
-      <ConnectButton></ConnectButton>
-      <DataPreview></DataPreview>
-
+      <DataSelection setLastMessage={setLastMessage}/>
+      <DataTable lastMessage={lastMessage} />
     </>
-    
-  );
+  )
 }
 
-export default Main;
+export default DataPreview;
