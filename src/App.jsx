@@ -7,6 +7,7 @@ import Start from "./views/Start.jsx";
 import Graph from "./views/Graphs.jsx";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import React from "react";
+import ChartTest from "./views/ChartTest.jsx";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,9 @@ const Layout = () => {
             </li>
             <li>
               <Link to="/graph">Graphen</Link>
+            </li>
+              <li>
+              <Link to="/charttest">TestGraph</Link>
             </li>
           </ul>
         </nav>
@@ -39,6 +43,7 @@ const RoutesHandler = () => {
         <Route element={<Layout/>}>
           <Route element={<Start />} path="/" />
           <Route element={<Graph />} path="/graph" />
+          <Route element={<ChartTest />} path="/charttest" />
         </Route>
       </Routes>
     </BrowserRouter>
