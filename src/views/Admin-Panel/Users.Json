@@ -1,0 +1,8 @@
+{
+    "name": "test name",
+    "password": "not hashed right now, belongs to Security",
+    "rank": "user",
+    "mail": "testmail",
+    "phone_number": "0612212345" ,
+    "_comment": "probably still some missing data?"    
+}
