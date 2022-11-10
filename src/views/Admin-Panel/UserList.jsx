@@ -1,19 +1,14 @@
 import React from 'react';
-import { getUsers} from './AddUser';
+import { add_example_user, userData } from './AddUser';
+
+var userList = userData
 
 function UserList() {
-
-    const users = getUsers();
-
     return (
         <div>
-            <br/><br/><br/><br/><br/><br/><br/><br/><br/>
-            List of Users <br/>
-            {users[0].name} <br/>
-            {users[0].password} <br/>
-            {users[0].rank} <br/>
-            {users[0].mail} <br/>
-            {users[0].number} <br/>
+            <br/><br/><br/><br/><br/>
+            Test <br/>
+            {userList[0].name}
         </div>
     );
 }
