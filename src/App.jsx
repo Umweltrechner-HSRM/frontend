@@ -7,7 +7,7 @@ import Start from "./views/Start.jsx";
 import Graph from "./views/Graphs.jsx";
 import { BrowserRouter, Link, Outlet, Route, Routes } from "react-router-dom";
 import React from "react";
-import AddUser from "./views/Admin-Panel/AddUser.jsx";
+import AddUser from "./views/Admin-Panel/AddUser";
 import UserList from "./views/Admin-Panel/UserList.jsx";
 
 const queryClient = new QueryClient();
