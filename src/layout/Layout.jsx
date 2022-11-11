@@ -14,6 +14,7 @@ export const Layout = () => {
       <Navbar />
       <Divider orientation={"horizontal"} />
       <Flex
+        justifyContent={"space-between"}
         flexDir={{ base: "column-reverse", md: "row" }} h="90vh">
         <Box>
           <Sidebar />
