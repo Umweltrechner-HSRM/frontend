@@ -13,13 +13,9 @@ const Navbar = () => {
       h={"8vh"}
     >
       <Flex align="flex-start">
-        <LinkBox cursor="pointer">
-          <NavLink to={"/"}>
-            <LinkOverlay>
-              <Text>Umweltrechner</Text>
-            </LinkOverlay>
-          </NavLink>
-        </LinkBox>
+        <NavLink to={"/"}>
+          <Text>Umweltrechner</Text>
+        </NavLink>
       </Flex>
 
       <Box flex={2} align="right">
