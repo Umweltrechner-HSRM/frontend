@@ -12,7 +12,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import React from "react";
 import theme from "./theme.js";
 import { Layout } from "./layout/Layout.jsx";
-import AdminPanel from "./views/AdminPanel.jsx";
 import Settings from "./views/Settings.jsx";
 
 const queryClient = new QueryClient();
@@ -24,7 +23,6 @@ const RoutesHandler = () => {
         <Route element={<Layout/>}>
           <Route element={<Dashboard />} path="/" />
           <Route element={<Graph />} path="/datasets" />
-          <Route element={<AdminPanel />} path="/admin" />
           <Route element={<Settings/>} path="/settings" />
           <Route element={<h1>404</h1>} path="*" />
         </Route>

@@ -3,7 +3,7 @@ import React from "react";
 import { Link as ChakraLink } from "@chakra-ui/layout";
 import { NavLink } from "react-router-dom";
 import { useLocation } from "react-router-dom"
-import { FiCalendar, FiHome, FiSettings, FiUser } from "react-icons/fi";
+import { FiCalendar, FiHome, FiSettings} from "react-icons/fi";
 
 function NavItem({ icon, title, link }) {
   const location = useLocation();
@@ -51,7 +51,6 @@ const Sidebar = () => {
       >
         <NavItem icon={FiHome} title="Dashboard" link="/" />
         <NavItem icon={FiCalendar} title="Datasets" link="/datasets" />
-        <NavItem icon={FiUser} title="Admin Panel" link="/admin" />
         <NavItem icon={FiSettings} title="Settings" link="/settings" />
       </Flex>
 
