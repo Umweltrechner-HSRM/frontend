@@ -1,37 +1,54 @@
 import {
   ChakraProvider,
-  ColorModeScript,
+  ColorModeScript
 } from "@chakra-ui/react";
 import {
   QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-import Dashboard from "./views/Dashboard.jsx";
-import Graph from "./views/Datasets.jsx";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+  QueryClientProvider
+} from "@tanstack/react-query";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import React from "react";
 import theme from "./theme.js";
 import { Layout } from "./layout/Layout.jsx";
-import Settings from "./views/Settings.jsx";
+import { useKeycloak } from "@react-keycloak/web";
+import ClientRoutes from "./Routes.jsx";
 
 const queryClient = new QueryClient();
 
 const RoutesHandler = () => {
+  const { keycloak } = useKeycloak();
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout/>}>
-          <Route element={<Dashboard />} path="/" />
-          <Route element={<Graph />} path="/datasets" />
-          <Route element={<Settings/>} path="/settings" />
+        <Route element={<Layout />}>
+          {
+            ClientRoutes.map((route, index) => {
+              return <Route
+                key={index}
+                path={route.path}
+                element={(route.permission === null || keycloak.hasRealmRole(route.permission)) ? route.element :
+                  <Navigate to={"/"} />}
+              />;
+            })
+          }
           <Route element={<h1>404</h1>} path="*" />
         </Route>
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
 const App = () => {
+  const { keycloak, initialized } = useKeycloak();
+  if (!initialized) {
+    return null;
+  }
+
+  if (!keycloak?.authenticated) {
+    keycloak.login();
+    return;
+  }
+
   return (
     <>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
@@ -41,7 +58,7 @@ const App = () => {
         </QueryClientProvider>
       </ChakraProvider>
     </>
-  )
+  );
 
-}
+};
 export default App;
