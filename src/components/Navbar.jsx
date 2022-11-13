@@ -1,7 +1,6 @@
-import { Box, Button, Flex, HStack, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import ThemeToggleButton from "./ToggleButton.jsx";
 import { NavLink } from "react-router-dom";
-import { useKeycloak } from "@react-keycloak/web";
 import LogoutButton from "./LogoutButton";
 
 const Navbar = () => {
