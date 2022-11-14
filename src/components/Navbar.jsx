@@ -1,8 +1,10 @@
-import { Box, Flex, HStack, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import ThemeToggleButton from "./ToggleButton.jsx";
 import { NavLink } from "react-router-dom";
+import LogoutButton from "./LogoutButton";
 
 const Navbar = () => {
+
   return (
     <Flex
       paddingX={5}
@@ -21,6 +23,7 @@ const Navbar = () => {
       <Box flex={2} align="right">
         <HStack justifyContent={"flex-end"}>
           <ThemeToggleButton />
+          <LogoutButton />
         </HStack>
       </Box>
     </Flex>
