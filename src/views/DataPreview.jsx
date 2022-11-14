@@ -18,60 +18,94 @@ import {
 import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
 
-
 let client = null;
+let connected = false;
 
-function DataSelection({setLastMessage}){
-
+function DataSelection({setLastMessage, channels, setMessageKeys}){
   const [subscription, setSubscription] = useState('');
 
   function handleChange(e){
     if (subscription !== '' ) {
       subscription.unsubscribe();
     }
+    if(e.target.value === ""){
+      console.log("No Connection");
+      setMessageKeys(['']);
+      connected = false;
+      subscription.unsubscribe();
+    }
     setSubscription(client.subscribe(e.target.value, (msg) => {
       let msgJson = JSON.parse(msg.body);
-      setLastMessage((curr) => limitData(curr, msgJson));
+      setMessageKeys(Object.keys(msgJson));
+      setLastMessage((curr) => limitData(curr, msgJson)); 
+      connected = true;
+      
     }))
+    console.log("Subscribe to", e.target.value);
+    
+    
   }
 
-
   return(
-    <>  
+    <Flex>  
       <Select placeholder='Select Dataset' onChange={handleChange}>
-        <option value="/topic/temperature">Dataset1</option>
-        <option value="Daset2">Datset2</option>
+        {channels.map(item => {
+          return(
+            <option value={item.link} key={item.link}>{item.name}</option>
+          )
+        })}
       </Select>
-    </>
+    </Flex>
   )
 }
 
-function DataTable({lastMessage}){
-  return (
-    <Box>
-      <TableContainer>
-        <Table variant = 'simple'>
-          <Thead>
-            <Tr>
-              <Th>Value</Th>
-              <Th>Timestamp</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {lastMessage.map(item =>{
-              return(
-                <Tr key={item.timestamp}>
-                  <Td>{item.value}</Td>
-                  <Td>{item.timestamp}</Td>
-                </Tr>
-              )
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Box>
-  )
+function DataTable({lastMessage, messageKeys}){
+  if (connected){
+
+  
+    return (
+      <Flex>
+        <TableContainer>
+          <Table variant = 'simple'>
+            <Thead>
+              <Tr>
+                {messageKeys.map(item =>{
+                  return(
+                    <Th key={item}>{item}</Th>
+                  )
+                })}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {lastMessage.map(item =>{
+                let allItems = Object.values(item)
+                return(
+                  <Tr key={item.timestamp}>
+                    {allItems.map(aItem =>{
+                      return(
+                        <Td key={aItem}>{aItem}</Td>
+                      )
+                    })}
+                  </Tr>
+                )
+              })}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Flex>
+    )
+  }
 }
+
+const CHANNELS = [
+  {name: 'Temperature', link: '/topic/temperature'},
+  {name: 'Humidity', link: '/topic/humidity'},
+  {name: 'Pressure', link: '/topic/pressure'}
+]
+
+
+
+
 
 function limitData(currentData, message) {
   if (currentData.length >= 4) {
@@ -83,16 +117,13 @@ function limitData(currentData, message) {
 function DataPreview(){
 
   const [lastMessage, setLastMessage] = useState([]);
+  const [messageKeys, setMessageKeys] = useState(['']);
 
   useEffect(() => {
     client = new Client({
       brokerURL: "ws://localhost:8230/api/looping",
       onConnect: () =>{
         console.log("DataPrev connected");
-        client.subscribe('', (msg) => {
-          let msgJson = JSON.parse(msg.body);
-          setLastMessage((curr) => limitData(curr, msgJson));
-        })
       }
     });
     client.activate();
@@ -106,10 +137,10 @@ function DataPreview(){
 
 
   return(
-    <>
-      <DataSelection setLastMessage={setLastMessage}/>
-      <DataTable lastMessage={lastMessage} />
-    </>
+    <Flex>
+      <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} setMessageKeys={setMessageKeys}/>
+      <DataTable lastMessage={lastMessage} messageKeys={messageKeys} />
+    </Flex>
   )
 }
 
