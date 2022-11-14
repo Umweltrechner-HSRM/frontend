@@ -14,6 +14,8 @@ import {
     Spacer,
     Box,
     Button,
+    Container,
+    Input,
   } from "@chakra-ui/react";
 import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
@@ -47,7 +49,7 @@ function DataSelection({setLastMessage, channels, setMessageKeys}){
   }
 
   return(
-    <Flex>  
+    <Container>  
       <Select placeholder='Select Dataset' onChange={handleChange}>
         {channels.map(item => {
           return(
@@ -55,7 +57,7 @@ function DataSelection({setLastMessage, channels, setMessageKeys}){
           )
         })}
       </Select>
-    </Flex>
+    </Container>
   )
 }
 
@@ -100,8 +102,15 @@ function DataTable({lastMessage, messageKeys}){
 const CHANNELS = [
   {name: 'Temperature', link: '/topic/temperature'},
   {name: 'Humidity', link: '/topic/humidity'},
-  {name: 'Pressure', link: '/topic/pressure'}
+  {name: 'Pressure', link: '/topic/pressure'},
 ]
+
+
+function FormInput(){
+  return(
+    <Input placeholder='Neue Formel'></Input>
+  )
+}
 
 
 
@@ -139,6 +148,7 @@ function DataPreview(){
   return(
     <Flex>
       <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} setMessageKeys={setMessageKeys}/>
+      <FormInput />
       <DataTable lastMessage={lastMessage} messageKeys={messageKeys} />
     </Flex>
   )
