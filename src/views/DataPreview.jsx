@@ -16,6 +16,8 @@ import {
     Button,
     Container,
     Input,
+    VStack,
+    Textarea,
   } from "@chakra-ui/react";
 import { Client } from "@stomp/stompjs";
 import { useEffect, useState } from "react";
@@ -108,13 +110,11 @@ const CHANNELS = [
 
 function FormInput(){
   return(
-    <Input placeholder='Neue Formel'></Input>
+    <Container>
+      <Textarea placeholder='Neue Formel' resize='none'/>
+    </Container>
   )
 }
-
-
-
-
 
 function limitData(currentData, message) {
   if (currentData.length >= 4) {
@@ -147,8 +147,10 @@ function DataPreview(){
 
   return(
     <Flex>
-      <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} setMessageKeys={setMessageKeys}/>
-      <FormInput />
+      <VStack>
+        <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} setMessageKeys={setMessageKeys}/>
+        <FormInput />
+      </VStack>
       <DataTable lastMessage={lastMessage} messageKeys={messageKeys} />
     </Flex>
   )
