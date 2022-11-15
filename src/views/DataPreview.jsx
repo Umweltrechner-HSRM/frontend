@@ -86,7 +86,7 @@ function DataTable({lastMessage}){
                   <Tr key={item.timestamp}>
                     {allItems.map(aItem =>{
                       return(
-                        <Td key={aItem} overflowX='hidden' isNumeric maxW='190'>{aItem}</Td>
+                        <Td key={aItem} overflowX='hidden' maxW='194'>{aItem}</Td>
                       )
                     })}
                   </Tr>
@@ -111,6 +111,19 @@ function FormInput(){
   return(
     <Container>
       <Textarea placeholder='Neue Formel' resize='none'/>
+      <TableContainer>
+        <Table variant='unstyled'>
+          <Tbody>
+            {CHANNELS.map(item =>{
+              return(
+                <Tr>
+                  <Td key={item.name}>{item.name}</Td>
+                </Tr>
+              )
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
     </Container>
   )
 }
