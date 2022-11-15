@@ -1,6 +1,6 @@
 import { Box, Container, List, ListIcon, ListItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { MdCheckCircle } from "react-icons/all.js";
+import { MdCheckCircle } from "react-icons/md";
 import { Client } from "@stomp/stompjs";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
