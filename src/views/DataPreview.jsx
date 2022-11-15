@@ -25,7 +25,7 @@ import { useEffect, useState } from "react";
 let client = null;
 let connected = false;
 
-function DataSelection({setLastMessage, channels, setMessageKeys}){
+function DataSelection({setLastMessage, channels}){
   const [subscription, setSubscription] = useState('');
 
   function handleChange(e){
@@ -40,7 +40,6 @@ function DataSelection({setLastMessage, channels, setMessageKeys}){
     }
     setSubscription(client.subscribe(e.target.value, (msg) => {
       let msgJson = JSON.parse(msg.body);
-      setMessageKeys(Object.keys(msgJson));
       setLastMessage((curr) => limitData(curr, msgJson)); 
       connected = true;
       
@@ -63,9 +62,9 @@ function DataSelection({setLastMessage, channels, setMessageKeys}){
   )
 }
 
-function DataTable({lastMessage, messageKeys}){
+function DataTable({lastMessage}){
   if (connected){
-
+    let messageKeys = Object.keys(lastMessage[0])
   
     return (
       <Flex>
@@ -75,7 +74,7 @@ function DataTable({lastMessage, messageKeys}){
               <Tr>
                 {messageKeys.map(item =>{
                   return(
-                    <Th key={item}>{item}</Th>
+                    <Th key={item} overflowX='hidden'>{item}</Th>
                   )
                 })}
               </Tr>
@@ -87,7 +86,7 @@ function DataTable({lastMessage, messageKeys}){
                   <Tr key={item.timestamp}>
                     {allItems.map(aItem =>{
                       return(
-                        <Td key={aItem}>{aItem}</Td>
+                        <Td key={aItem} overflowX='hidden' isNumeric maxW='190'>{aItem}</Td>
                       )
                     })}
                   </Tr>
@@ -126,7 +125,6 @@ function limitData(currentData, message) {
 function DataPreview(){
 
   const [lastMessage, setLastMessage] = useState([]);
-  const [messageKeys, setMessageKeys] = useState(['']);
 
   useEffect(() => {
     client = new Client({
@@ -148,10 +146,10 @@ function DataPreview(){
   return(
     <Flex>
       <VStack>
-        <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} setMessageKeys={setMessageKeys}/>
+        <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} />
         <FormInput />
       </VStack>
-      <DataTable lastMessage={lastMessage} messageKeys={messageKeys} />
+      <DataTable lastMessage={lastMessage}/>
     </Flex>
   )
 }
