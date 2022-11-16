@@ -2,6 +2,7 @@ import {FiActivity, FiCalendar, FiEdit, FiHome, FiSettings} from "react-icons/fi
 import Dashboard from "./views/Dashboard.jsx";
 import Settings from "./views/Settings.jsx";
 import ChartTest from "./views/ChartTest.jsx";
+import Datasets from './views/Datasets.jsx';
 import React from "react";
 import CreateChart from "./views/CreateChart.jsx";
 import Datasets from "./components/AlertSystem.jsx";
@@ -14,13 +15,13 @@ const ClientRoutes = [
         element: <Dashboard/>,
         permission: null
     },
-    {
-        title: "Datasets",
-        icon: FiHome,
-        path: "/datasets",
-        element: <Datasets/>,
-        permission: null
-    },
+  {
+    title: "Datasets",
+    icon: AiOutlineTable,
+    path: "/datasets",
+    element: <Datasets />,
+    permission: "admin"
+  },
     {
         title: "Create Chart",
         icon: FiEdit,
