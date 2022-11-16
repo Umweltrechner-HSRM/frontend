@@ -25,22 +25,26 @@ import { useEffect, useState } from "react";
 let client = null;
 let connected = false;
 
+
 function DataSelection({setLastMessage, channels}){
   const [subscription, setSubscription] = useState('');
 
   function handleChange(e){
     if (subscription !== '' ) {
       subscription.unsubscribe();
+      connected = false;
     }
     if(e.target.value === ""){
-      console.log("No Connection");
-      setMessageKeys(['']);
       connected = false;
+      console.log("No Connection");
       subscription.unsubscribe();
+      setLastMessage([])
     }
+    
     setSubscription(client.subscribe(e.target.value, (msg) => {
       let msgJson = JSON.parse(msg.body);
       setLastMessage((curr) => limitData(curr, msgJson)); 
+      
       connected = true;
       
     }))
@@ -50,8 +54,8 @@ function DataSelection({setLastMessage, channels}){
   }
 
   return(
-    <Container>  
-      <Select placeholder='Select Dataset' onChange={handleChange}>
+    <Container p='0px'>  
+      <Select placeholder='Select Sensor' onChange={handleChange} minW='501.41px'>
         {channels.map(item => {
           return(
             <option value={item.link} key={item.link}>{item.name}</option>
@@ -67,14 +71,22 @@ function DataTable({lastMessage}){
     let messageKeys = Object.keys(lastMessage[0])
   
     return (
-      <Flex>
+      <Container 
+        border='1px' 
+        borderRadius='8' 
+        borderColor='inherit'
+      >
         <TableContainer>
-          <Table variant = 'simple'>
+          <Table variant = 'simple' type='inherit'>
             <Thead>
               <Tr>
                 {messageKeys.map(item =>{
                   return(
-                    <Th key={item} overflowX='hidden'>{item}</Th>
+                    <Th 
+                      key={item} 
+                      overflowX='hidden'
+                      paddingLeft='0'
+                    >{item}</Th>
                   )
                 })}
               </Tr>
@@ -86,7 +98,11 @@ function DataTable({lastMessage}){
                   <Tr key={item.timestamp}>
                     {allItems.map(aItem =>{
                       return(
-                        <Td key={aItem} overflowX='hidden' maxW='194'>{aItem}</Td>
+                        <Td 
+                          key={aItem} overflowX='hidden' 
+                          maxW='140'
+                          paddingLeft='0'
+                        >{aItem}</Td>
                       )
                     })}
                   </Tr>
@@ -95,37 +111,9 @@ function DataTable({lastMessage}){
             </Tbody>
           </Table>
         </TableContainer>
-      </Flex>
+      </Container>
     )
   }
-}
-
-const CHANNELS = [
-  {name: 'Temperature', link: '/topic/temperature'},
-  {name: 'Humidity', link: '/topic/humidity'},
-  {name: 'Pressure', link: '/topic/pressure'},
-]
-
-
-function FormInput(){
-  return(
-    <Container>
-      <Textarea placeholder='Neue Formel' resize='none'/>
-      <TableContainer>
-        <Table variant='unstyled'>
-          <Tbody>
-            {CHANNELS.map(item =>{
-              return(
-                <Tr>
-                  <Td key={item.name}>{item.name}</Td>
-                </Tr>
-              )
-            })}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Container>
-  )
 }
 
 function limitData(currentData, message) {
@@ -135,10 +123,7 @@ function limitData(currentData, message) {
   return [message,...currentData];
 }
 
-function DataPreview(){
-
-  const [lastMessage, setLastMessage] = useState([]);
-
+function connectToClient(){
   useEffect(() => {
     client = new Client({
       brokerURL: "ws://localhost:8230/api/looping",
@@ -150,20 +135,22 @@ function DataPreview(){
     return() => {
       console.log("Disconnected from DataPreview");
       client.deactivate();
+      connected = false;
     }
   }, []);
+}
 
+function DataPreview({channels}){
 
+  const [lastMessage, setLastMessage] = useState([]);
 
+  connectToClient();
 
   return(
-    <Flex>
-      <VStack>
-        <DataSelection setLastMessage={setLastMessage} channels={CHANNELS} />
-        <FormInput />
-      </VStack>
+    <VStack align='flex-start'>
+      <DataSelection setLastMessage={setLastMessage} channels={channels} />
       <DataTable lastMessage={lastMessage}/>
-    </Flex>
+    </VStack>
   )
 }
 

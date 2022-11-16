@@ -1,9 +1,9 @@
 import { FiCalendar, FiHome, FiSettings } from "react-icons/fi";
 import {AiOutlineTable} from "react-icons/ai";
 import Dashboard from "./views/Dashboard.jsx";
-import Graph from "./views/Datasets.jsx";
+import Graph from "./views/Graphs.jsx";
 import Settings from "./views/Settings.jsx";
-import DataPreview from './views/DataPreview.jsx';
+import Datasets from './views/Datasets.jsx';
 import React from "react";
 
 const ClientRoutes = [
@@ -17,15 +17,15 @@ const ClientRoutes = [
   {
     title: "Graph",
     icon: FiCalendar,
-    path: "/datasets",
+    path: "/graphs",
     element: <Graph />,
     permission: null
   },
   {
     title: "Datasets",
     icon: AiOutlineTable,
-    path: "/datapreview",
-    element: <DataPreview />,
+    path: "/datasets",
+    element: <Datasets />,
     permission: "admin"  
   },
   {
