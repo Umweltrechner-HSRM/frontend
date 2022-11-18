@@ -10,7 +10,6 @@ Frontend for the Umweltrechner project.
 ## Development
 - docker compose -f docker-compose.local.yml up --build
 
-
 ## Resources
 - [React.js](https://beta.reactjs.org/) - A JavaScript library for building user interfaces
 - [React Query](https://tanstack.com/query/v4/) - Hooks for fetching, caching and updating asynchronous data in React

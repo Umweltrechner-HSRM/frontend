@@ -1,6 +1,6 @@
 import { FiCalendar, FiHome, FiSettings } from "react-icons/fi";
 import Dashboard from "./views/Dashboard.jsx";
-import Graph from "./views/Datasets.jsx";
+import Datasets from "./components/AlertSystem.jsx";
 import Settings from "./views/Settings.jsx";
 import React from "react";
 
@@ -13,10 +13,10 @@ const ClientRoutes = [
     permission: null
   },
   {
-    title: "Graph",
+    title: "Datasets",
     icon: FiCalendar,
     path: "/datasets",
-    element: <Graph />,
+    element: <Datasets />,
     permission: null
   },
   {

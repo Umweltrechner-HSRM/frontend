@@ -77,6 +77,7 @@ const Graph = () => {
           </LineChart>
         </ResponsiveContainer>
       </Box>
+
     </Container>
   );
 };
