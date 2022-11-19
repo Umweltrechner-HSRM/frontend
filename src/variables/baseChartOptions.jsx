@@ -13,19 +13,19 @@ export const testChartData = [
 
 export const lineChartOptions = {
     chart: {
-        // animations: {
-        //     enabled: true,
-        //     easing: 'easein',
-        //     speed: 800,
-        //     animateGradually: {
-        //         enabled: true,
-        //         delay: 1000
-        //     },
-        //     dynamicAnimation: {
-        //         enabled: true,
-        //         speed: 400
-        //     }
-        // },
+        animations: {
+            enabled: true,
+            easing: 'linear',
+            speed: 100,
+            animateGradually: {
+                enabled: false,
+                delay: 1000
+            },
+            dynamicAnimation: {
+                enabled: true,
+                speed: 500
+            }
+        },
         toolbar: {
             show: false,
         },
@@ -45,6 +45,7 @@ export const lineChartOptions = {
     //     strokeWidth: 3,
     // },
     xaxis: {
+        range: 10000,
         type: 'datetime',
         labels: {
             rotate: -30,

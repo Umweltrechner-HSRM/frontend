@@ -22,8 +22,8 @@ const boxStyle = {
 }
 
 function limitData(currentData, message) {
-    if (currentData.length > 100) {
-        currentData.shift();
+    if (currentData.length > 2000){
+        currentData = currentData.slice(-100)
     }
     return [...currentData, message];
 }

@@ -8,12 +8,14 @@ import {
 } from '@tanstack/react-query'
 import Dashboard from "./views/Dashboard.jsx";
 import Graph from "./views/Datasets.jsx";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import React from "react";
 import theme from "./theme.js";
-import { Layout } from "./layout/Layout.jsx";
+import {Layout} from "./layout/Layout.jsx";
 import AdminPanel from "./views/AdminPanel.jsx";
 import Settings from "./views/Settings.jsx";
+import ChartTest from "./views/ChartTest.jsx"
+import CreateChart from "./views/CreateChart.jsx";
 
 const queryClient = new QueryClient();
 
@@ -22,11 +24,13 @@ const RoutesHandler = () => {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout/>}>
-          <Route element={<Dashboard />} path="/" />
-          <Route element={<Graph />} path="/datasets" />
-          <Route element={<AdminPanel />} path="/admin" />
-          <Route element={<Settings/>} path="/settings" />
-          <Route element={<h1>404</h1>} path="*" />
+          <Route element={<Dashboard/>} path="/"/>
+          <Route element={<Graph/>} path="/datasets"/>
+          <Route element={<AdminPanel/>} path="/admin"/>
+          <Route element={<Settings/>} path="/settings"/>
+          <Route element={<ChartTest/>} path="/charttest"/>
+          <Route element={<CreateChart/>} path="/createchart"/>
+          <Route element={<h1>404</h1>} path="*"/>
         </Route>
       </Routes>
     </BrowserRouter>
@@ -36,10 +40,10 @@ const RoutesHandler = () => {
 const App = () => {
   return (
     <>
-      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
       <ChakraProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
-          <RoutesHandler />
+          <RoutesHandler/>
         </QueryClientProvider>
       </ChakraProvider>
     </>
