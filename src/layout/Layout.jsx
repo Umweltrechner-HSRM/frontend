@@ -7,6 +7,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Sidebar from "../components/Sidebar.jsx";
+import { useKeycloak } from "@react-keycloak/web";
 
 export const Layout = () => {
   return (
@@ -14,6 +15,7 @@ export const Layout = () => {
       <Navbar />
       <Divider orientation={"horizontal"} />
       <Flex
+        justifyContent={"space-between"}
         flexDir={{ base: "column-reverse", md: "row" }} h="90vh">
         <Box>
           <Sidebar />

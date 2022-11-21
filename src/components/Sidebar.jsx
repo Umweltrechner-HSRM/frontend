@@ -2,8 +2,9 @@ import { Flex, Icon, Text } from "@chakra-ui/react";
 import React from "react";
 import { Link as ChakraLink } from "@chakra-ui/layout";
 import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router-dom"
-import { FiActivity, FiCalendar, FiHome, FiSettings, FiUser } from "react-icons/fi";
+import { useLocation } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";
+import ClientRoutes from "../Routes.jsx";
 
 function NavItem({ icon, title, link }) {
   const location = useLocation();
@@ -36,7 +37,7 @@ function NavItem({ icon, title, link }) {
 }
 
 const Sidebar = () => {
-
+  const { keycloak } = useKeycloak();
 
   return (
     <Flex
@@ -49,12 +50,15 @@ const Sidebar = () => {
         alignItems={{ base: "center", lg: "flex-start" }}
         as="nav"
       >
-        <NavItem icon={FiHome} title="Dashboard" link="/" />
-        <NavItem icon={FiCalendar} title="Datasets" link="/datasets" />
-        <NavItem icon={FiCalendar} title="Create Chart" link="/createchart" />
-        <NavItem icon={FiActivity} title="Charts" link="/charttest" />
-        <NavItem icon={FiUser} title="Admin Panel" link="/admin" />
-        <NavItem icon={FiSettings} title="Settings" link="/settings" />
+        {
+          ClientRoutes.map((route, index) => {
+              if (route.permission === null || keycloak.hasRealmRole(route.permission)) {
+                return <NavItem key={index} icon={route.icon} title={route.title} link={route.path} />;
+              }
+            }
+          )
+        }
+
       </Flex>
 
     </Flex>
