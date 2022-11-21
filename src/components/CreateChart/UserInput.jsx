@@ -37,17 +37,17 @@ function selectData(){
     )
 }
 
-const userInput = ({showPreviewButton}) => {
+const userInput = ({userData, setUserData, showPreviewButton}) => {
     return (
         <Box style={boxStyle}>
             <Heading style={{paddingBottom: 20}}>
                 Input Parameters
             </Heading>
             <VStack spacing={'10px'} align={'left'}>
-                <ChartName/>
+                <ChartName userData={userData} setUserData={setUserData} />
                 {selectData()}
-                <ChartType/>
-                <ChartColor/>
+                <ChartType userData={userData} setUserData={setUserData}/>
+                <ChartColor userData={userData} setUserData={setUserData}/>
                 {showPreviewButton}
                 <br/>
             </VStack>

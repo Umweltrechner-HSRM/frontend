@@ -13,6 +13,4 @@ class UserChartData {
 }
 const userchartdata = new UserChartData(null,null,null)
 
-export function getUserData () {
-    return userchartdata
-}
+

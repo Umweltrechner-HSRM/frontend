@@ -1,21 +1,15 @@
 import {FormControl, FormLabel, Select} from "@chakra-ui/react";
 import React from "react";
-import {useState} from "react";
-import {getUserData} from "../../variables/UserChartData.jsx";
 
-const ChartColor = () => {
-    const [color, setColor] = useState('0,4,231')
-    const userData = getUserData()
+const ChartColor = ({userData, setUserData}) => {
 
     const handleChange = (e) => {
         if (!e.target.value) {
-            setColor('0,4,231')
-        }else {
-            setColor(e.target.value)
+            setUserData({...userData, color: '0,4,231', animation: 1500})
+        } else {
+            setUserData({...userData, color: e.target.value, animation: 1500})
         }
     }
-
-    userData.color = color
 
     return (
         <FormControl>

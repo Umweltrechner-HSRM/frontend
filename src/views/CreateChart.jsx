@@ -2,7 +2,6 @@ import UserInput from "../components/CreateChart/UserInput";
 import {Button, HStack} from '@chakra-ui/react'
 import ChartPreview from "../components/CreateChart/ChartPreview.jsx";
 import {useState} from "react";
-import {getUserData} from '../variables/UserChartData.jsx'
 
 const submitButtonStyle = {
     position: 'absolute',
@@ -14,6 +13,7 @@ const submitButtonStyle = {
 function stack() {
     const [showPreview, setShowPreview] = useState(false)
     const [buttonText, setButtonText] = useState('Show Preview')
+    const [userData, setUserData] = useState({name:'', type:'area', color:'0,4,231', animation: 1500})
 
     const handleChange = () => {
         !showPreview ? setButtonText('Hide Preview') : setButtonText('Show Preview')
@@ -28,14 +28,15 @@ function stack() {
 
     return(
         <HStack>
-            <UserInput showPreviewButton={showPreviewButton(buttonText)}></UserInput>
-            {showPreview ? <ChartPreview></ChartPreview> : <></>}
+            <UserInput userData={userData} setUserData={setUserData} showPreviewButton={showPreviewButton(buttonText)}></UserInput>
+            {showPreview ? <ChartPreview userData={userData}/> : <></>}
             <Button colorScheme={'teal'} style={submitButtonStyle}>Save</Button>
         </HStack>
     )
 }
 
 const createChart = () => {
+
     return(
         <>
             {stack()}

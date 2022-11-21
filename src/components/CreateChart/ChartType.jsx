@@ -1,21 +1,15 @@
 import {FormControl, FormLabel, Select} from "@chakra-ui/react";
 import React from "react";
-import {useState} from "react";
-import {getUserData} from "../../variables/UserChartData.jsx";
 
-const ChartType = () => {
-    const [type, setType] = useState('area')
-    const userData = getUserData()
+const ChartType = ({userData, setUserData}) => {
 
     const handleChange = (e) => {
         if (!e.target.value) {
-            setType('area')
+            setUserData({...userData, type: 'area', animation: 1500})
         } else {
-            setType(e.target.value)
+            setUserData({...userData, type: e.target.value, animation: 1500})
         }
     }
-
-    userData.type = type
 
     return (
         <FormControl>
