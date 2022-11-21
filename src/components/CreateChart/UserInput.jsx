@@ -7,7 +7,6 @@ import {
     Heading,
     Select, VStack, Button
 } from '@chakra-ui/react'
-import '../../variables/UserChartData.jsx'
 import ChartName from './ChartName.jsx'
 import ChartType from './ChartType.jsx'
 import ChartColor from "./ChartColor.jsx";
