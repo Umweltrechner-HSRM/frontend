@@ -4,6 +4,7 @@ import Settings from "./views/Settings.jsx";
 import ChartTest from "./views/ChartTest.jsx";
 import React from "react";
 import CreateChart from "./views/CreateChart.jsx";
+import Datasets from "./components/AlertSystem.jsx";
 
 const ClientRoutes = [
     {
@@ -11,6 +12,13 @@ const ClientRoutes = [
         icon: FiHome,
         path: "/",
         element: <Dashboard/>,
+        permission: null
+    },
+    {
+        title: "Datasets",
+        icon: FiHome,
+        path: "/datasets",
+        element: <Datasets/>,
         permission: null
     },
     {
