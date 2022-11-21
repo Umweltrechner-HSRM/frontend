@@ -29,7 +29,7 @@ function limitData(currentData, message) {
 }
 
 function convertData(json) {
-    return {x: Date.parse(json.timestamp), y: +json.value}
+    return {x: json.timestamp, y: +json.value}
 }
 
 function criticalValueColor(value) {

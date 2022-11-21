@@ -53,7 +53,7 @@ function limitData(currentData, message) {
 }
 
 function convertData(json) {
-    return {x: Date.parse(json.timestamp), y: +json.value}
+    return {x: json.timestamp, y: +json.value}
 }
 
 const data = {
@@ -85,7 +85,6 @@ function Test({dataPoint}) {
                                     x: dataPoint.at(-1)?.x,
                                     y: dataPoint.at(-1)?.y
                                 });
-                                console.log(chart.data.datasets[0].data.length)
                             });
                         }
                     }
@@ -110,6 +109,7 @@ const LineChart2 = () => {
             }
         });
         client.activate();
+
         return () => {
             client.deactivate();
         };

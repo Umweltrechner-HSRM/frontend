@@ -35,7 +35,7 @@ function stack() {
     )
 }
 
-const createChart = () => {
+const CreateChart = () => {
 
     return(
         <>
@@ -45,4 +45,4 @@ const createChart = () => {
     )
 }
 
-export default createChart
+export default CreateChart
