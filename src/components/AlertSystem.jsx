@@ -14,6 +14,7 @@ import {
     Box, Heading, Button, Flex
 } from "@chakra-ui/react";
 import React, {useState} from 'react';
+import DatasetsFormula from './DatasetsFormula.jsx'
 
 //data for testing
 const SENSORDATA = [
@@ -122,17 +123,17 @@ function AlertSystem({sensorData, dataDB}) {
     );
 }
 
-const Datasets = () => {
+const DatasetsAlert = () => {
     let dataDB = {};
     return (
-        <VStack spacing={5} align='stretch' bg={'#2E2E2E'}>
+        <VStack spacing={5} align='stretch'>
             <Box ml={'10'}>
                 <Text fontSize="4xl" fontWeight="bold">
                     Datasets
                 </Text>
             </Box>
             <Box ml={'10'}>
-                !!! TO DO DATA PREVIEW !!!!
+                <DatasetsFormula />
             </Box>
             <Box ml={'10'}>
                 <AlertSystem sensorData={SENSORDATA} dataDB={dataDB}></AlertSystem>
@@ -146,4 +147,4 @@ const Datasets = () => {
     );
 }
 
-export default Datasets;
+export default DatasetsAlert;
