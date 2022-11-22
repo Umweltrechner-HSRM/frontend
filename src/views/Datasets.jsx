@@ -6,6 +6,13 @@ const CHANNELS = [
   {name: 'Temperature', link: '/topic/temperature'},
   {name: 'Humidity', link: '/topic/humidity'},
   {name: 'Pressure', link: '/topic/pressure'},
+  {name: 'EinatembarerFeinstaub', link: ''},
+  {name: 'Kohlenmonoxid', link: ''},
+  {name: 'LungengängigerFeinstaub', link: ''},
+  {name: 'Ozon', link: ''},
+  {name: 'Schwefeldioxid', link: ''},
+  {name: 'Stickstoffdioxid', link: ''},
+  {name: 'Wind', link: ''},
 ]
 
 

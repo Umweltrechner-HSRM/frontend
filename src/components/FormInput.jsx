@@ -17,11 +17,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import {createPopper} from '@popperjs/core'
-import React from "react";
+import { useRef } from "react";
+
 
 function InputField({sensors}){
   
-  const initialFocusRef = React.useRef();
+  const initialFocusRef = useRef();
   const {isOpen, onToggle, onClose} = useDisclosure();
   
   function onBlurHandler(e){
