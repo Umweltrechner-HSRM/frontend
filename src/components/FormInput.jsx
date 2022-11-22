@@ -16,7 +16,6 @@ import {
   Flex,
   useDisclosure,
 } from "@chakra-ui/react";
-import {createPopper} from '@popperjs/core'
 import React from "react";
 
 function InputField({sensors}){

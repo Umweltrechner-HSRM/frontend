@@ -99,7 +99,8 @@ function DataTable({lastMessage}){
                     {allItems.map(aItem =>{
                       return(
                         <Td 
-                          key={aItem} overflowX='hidden' 
+                          key={aItem} 
+                          //overflowX='hidden' 
                           maxW='140'
                           paddingLeft='0'
                         >{aItem}</Td>
