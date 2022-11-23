@@ -1,31 +1,36 @@
 import { 
   Box, 
-  Text, 
   Textarea,
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
-  Button,
-  VStack,
   Flex,
   useDisclosure,
+  List,
+  ListItem,
+  TableContainer,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  useComponentStyles__unstable,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 
-function InputField({sensors}){
-  
+function InputField({sensors, completeInput, setCompleteInput}){
+
+  const [lastSelected, setSelected] = useState()
+  const [displaySelected, setDisplay] = useState()
+
   const initialFocusRef = React.useRef();
   const {isOpen, onToggle, onClose} = useDisclosure();
   
   function onBlurHandler(e){
     if(isOpen){
       onToggle();
+      setDisplay(lastSelected);
+      console.log(lastSelected)
     }
   }
   function onClickHandler(e){
@@ -55,7 +60,10 @@ function InputField({sensors}){
             placeholder="Formel" 
             ref={initialFocusRef}
             onBlur={onBlurHandler}
-            onClick={onClickHandler}
+            //onClick={onClickHandler}
+
+            value={completeInput}
+            onChange={(e)=>{setCompleteInput(e.target.value)}}
           />
         </PopoverTrigger>
         <PopoverContent 
@@ -63,7 +71,7 @@ function InputField({sensors}){
           borderWidth='0px'
         >
           <PopoverBody>
-            <ButtonList sensors={sensors} />
+            <ButtonList sensors={sensors} setSelected={setSelected} />
           </PopoverBody>
         </PopoverContent>
       </Popover>
@@ -72,41 +80,98 @@ function InputField({sensors}){
 }
 
 
-function ButtonList({sensors}){
+function ButtonList({sensors,setSelected}){
+  
+  function mouseEnterHandler(e){
+    //console.log('entered');
+    setSelected(e.target.innerText);
+  }
+  function mouseLeaveHandler(){
+    //console.log('left')
+    setSelected('');
+  }
+
   return(
     <Flex
       align='flex-start'
       direction='column'
 
     >
-      {sensors.map((item , index) => {
-        return(
-          <Box
-            key={index}
-            w='50%'
-            _hover={{backgroundColor: "#AEC8CA" }}
-          >
 
-            <Button 
-              
-              variant='unstyled' 
-              justifyContent='flex-start'
-              
+      <List>
+        {sensors.map((item,index)=>{
+          return(
+            <ListItem
+            _hover={{bg: "#AEC8CA"}}
+            w='110%'
+            key={index}
+            onMouseEnter={mouseEnterHandler}
+            onMouseLeave={mouseLeaveHandler}
             >
-              {item.name}</Button>
-        </Box>
-    
-        )
-      })}
+              {item.name}
+            </ListItem>
+          )
+        })}
+      </List>
     </Flex>
     
   )
 }
 
+function getValidWords(input, sensors){
+  let res =[]
+  let valid =[]
+  let tmp = input.split(' ')
+
+  sensors.map(item => {valid.push(item.name)})
+
+  tmp.map((element, index) => {
+    if(valid.includes(element) && !res.includes(element)){
+      res.push(element)
+    }
+  });
+
+  return res
+
+
+}
+
+
+function DataTable({completeInput, sensors}){
+
+  let allWords = getValidWords(completeInput, sensors)
+
+  return(
+    <TableContainer
+      variant='simple'
+      type='inherit'
+    >
+      <Table>
+        <Tbody>
+          {allWords.map((item,index)=>{
+            return(
+              <Tr
+                key={index}
+              >
+                <Td>{item}</Td>
+              </Tr>
+            )
+          })}
+        </Tbody>
+      </Table>
+    </TableContainer>
+  )
+}
+
 function FormInput({sensors}){
+
+  const [completeInput, setCompleteInput] = useState('')
+
+
   return(
     <Box>
-      <InputField sensors={sensors} />
+      <InputField sensors={sensors} completeInput={completeInput} setCompleteInput={setCompleteInput} />
+      <DataTable completeInput={completeInput} sensors={sensors} />
     </Box>
   );
 }
