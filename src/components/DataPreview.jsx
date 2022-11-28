@@ -44,7 +44,6 @@ function DataSelection({setLastMessage, channels}){
     setSubscription(client.subscribe(e.target.value, (msg) => {
       let msgJson = JSON.parse(msg.body);
       setLastMessage((curr) => limitData(curr, msgJson)); 
-      
       connected = true;
       
     }))
@@ -56,9 +55,9 @@ function DataSelection({setLastMessage, channels}){
   return(
     <Container p='0px'>  
       <Select placeholder='Select Sensor' onChange={handleChange} minW='501.41px'>
-        {channels.map(item => {
+        {channels.map((item, index) => {
           return(
-            <option value={item.link} key={item.link}>{item.name}</option>
+            <option value={item.link} key={index}>{item.name}</option>
           )
         })}
       </Select>
