@@ -124,6 +124,7 @@ function AlertSystem({sensorData, dataDB}) {
 }
 
 const DatasetsAlert = () => {
+    const [sensorData, setSensorData] = useState([])
     let dataDB = {};
     return (
         <VStack spacing={5} align='stretch'>
@@ -133,10 +134,10 @@ const DatasetsAlert = () => {
                 </Text>
             </Box>
             <Box ml={'10'}>
-                <DatasetsFormula />
+                <DatasetsFormula setSensorData={setSensorData}/>
             </Box>
             <Box ml={'10'}>
-                <AlertSystem sensorData={SENSORDATA} dataDB={dataDB}></AlertSystem>
+                <AlertSystem sensorData={sensorData} dataDB={dataDB}></AlertSystem>
             </Box>
             <Flex display={'flex'} justifyContent={'flex-end'}>
                 <Box>

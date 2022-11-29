@@ -9,7 +9,7 @@ const CHANNELS = [
 ]
 
 
-function DatasetsFormula() {
+function DatasetsFormula({setSensorData}) {
 
     return (
         <div style={{margin:20, paddingBottom:70, paddingLeft:20}}>
@@ -20,7 +20,7 @@ function DatasetsFormula() {
             divider={<StackDivider borderColor='inherit'/>}
         >
             <DataPreview channels={CHANNELS}/>
-            <FormInput sensors={CHANNELS}/>
+            <FormInput sensors={CHANNELS} setSensorData={setSensorData} />
         </Stack>
         </div>
 

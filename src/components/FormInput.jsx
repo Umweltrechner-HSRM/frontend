@@ -20,13 +20,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
-import { circularProgressAnatomy } from "@chakra-ui/anatomy";
 
 let client = null;
-let connected = false;
 let connectedWords = []
 
-function InputField({sensors, setDisplayValue}){
+function InputField({sensors, setDisplayValue, setSensorData}){
 
   const [lastSelected, setSelected] = useState()
   const [displaySelected, setDisplay] = useState()
@@ -40,7 +38,10 @@ function InputField({sensors, setDisplayValue}){
   function onChangeHandler(e){
     let input = e.target.value
     validWords = getValidWords(input, sensors)
-    disconnectWords(validWords)
+    //TODO change this to after form validation
+    setSensorData(validWords)
+
+    disconnectWords(validWords, setDisplayValue)
     connectWords(validWords, setDisplayValue)
   }
 
@@ -139,7 +140,7 @@ function ButtonList({sensors,setSelected}){
 function getValidWords(input, sensors){
   let res =[]
   let valid =[]
-  let inArray = input.split(' ')
+  let inArray = input.split(/(?:\n| )+/)
   
   inArray.map((item, index) => {
     inArray[index] = item.toLowerCase()
@@ -163,22 +164,29 @@ function getValidWords(input, sensors){
 
 }
 
-function disconnectWords(allWords){
+function disconnectWords(allWords, setDisplayValue){
   let res = []
   let allNames = []
   allWords.forEach(item => allNames.push(item.name))
 
-  connectedWords.forEach(item => {
-    if(!allNames.includes(item.name)){
-      item.id.unsubscribe()
-      console.log("Disconnected",item.name)
+  connectedWords.forEach(word => {
+    if(!allNames.includes(word.name)){
+      word.id.unsubscribe()
+      console.log("Disconnected",word.name)
+      setDisplayValue((curr) => {
+        console.log(curr)
+        let setRes = curr.map(item => {
+          console.log("Vorher:",item.name)
+        })
+
+        return curr
+      })
     }else{
-      res.push(item)
+      res.push(word)
     }
   })
 
   connectedWords = res
-
 }
 
 function connectWords(allWords, setDisplayValue){
@@ -267,19 +275,18 @@ function connectToClient(){
     return() => {
       console.log("Disconnected from FormInput");
       client.deactivate();
-      connected = false;
     }
   }, []);
 }
 
 
-function FormInput({sensors}){
+function FormInput({sensors, setSensorData}){
   const [displayValue, setDisplayValue] = useState([])
   connectToClient();
 
   return(
     <Box>
-      <InputField sensors={sensors} setDisplayValue={setDisplayValue} />
+      <InputField sensors={sensors} setDisplayValue={setDisplayValue} setSensorData={setSensorData} />
       <DataTable sensors={sensors} displayValue={displayValue} />
     </Box>
   );
