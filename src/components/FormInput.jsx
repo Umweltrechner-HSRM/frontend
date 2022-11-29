@@ -17,6 +17,7 @@ import {
   useComponentStyles__unstable,
   Thead,
   Th,
+  filter,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
@@ -139,24 +140,31 @@ function ButtonList({sensors,setSelected}){
 
 function getValidWords(input, sensors){
   let res =[]
-  let valid =[]
   let inArray = input.split(/(?:\n| )+/)
   
-  inArray.map((item, index) => {
+  /*inArray.forEach((item, index) => {
     inArray[index] = item.toLowerCase()
-  })
+  })*/
 
-  sensors.map(item => {
-    valid.push(item)
-  })
+  let valid = sensors.map(sen => sen.name)
 
+  console.log(valid)
+  console.log(inArray)
+
+  /*res = inArray.map(input => {
+    let found = valid.find(word => word.toLowerCase() == input.toLowerCase())
+    return found
+  })*/
+
+
+  
 
   //TODO change order of elements in res from order of valid to order of inArray
-  valid.map(element => {
+  /*valid.map(element => {
     if(inArray.includes(element.name.toLowerCase())){
       res.push(element)
     }
-  })
+  })*/
 
 
   return res
@@ -173,13 +181,11 @@ function disconnectWords(allWords, setDisplayValue){
     if(!allNames.includes(word.name)){
       word.id.unsubscribe()
       console.log("Disconnected",word.name)
-      setDisplayValue((curr) => {
+      setDisplayValue((curr) =>{
         console.log(curr)
-        let setRes = curr.map(item => {
-          console.log("Vorher:",item.name)
-        })
+        return curr.filter(item => item.name != word.name)
 
-        return curr
+        
       })
     }else{
       res.push(word)
@@ -201,6 +207,7 @@ function connectWords(allWords, setDisplayValue){
         let returnMsg = {name:word.name, value:msgJson.value, unit:'TODO', timestamp:msgJson.timestamp}
         
         setDisplayValue((curr) => {
+          console.log(curr)
           if(curr.length <= wordIndex){
             return [...curr, returnMsg]
           }else{
