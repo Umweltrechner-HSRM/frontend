@@ -5,7 +5,7 @@ import FormInput from "./FormInput.jsx";
 const CHANNELS = [
     {name: 'Temperature', link: '/topic/temperature'},
     {name: 'Humidity', link: '/topic/temperature'},
-    {name: 'Pressure', link: '/topic/pressure'},
+    {name: 'Pressure', link: '/topic/temperature'},
 ]
 
 

@@ -23,7 +23,63 @@ import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
 
 let client = null;
-let connectedWords = []
+//Müsste State sein für runtime Updates
+let connectedMessages = []
+
+function connectToClient(sensors){
+  useEffect(() => {
+    client = new Client({
+      brokerURL: "ws://localhost:8230/api/looping",
+      onConnect: () =>{
+        console.log("FormInput connected");
+        connectSensors(sensors)
+      }
+    });
+    client.activate();
+    return() => {
+      console.log("Disconnected from FormInput");
+      client.deactivate();
+    }
+  }, []);
+}
+
+function connectSensors(sensors){
+  console.log("sensors:",sensors)
+  sensors.forEach((sensor, index) =>{
+    client.subscribe(sensor.link,(msg) =>{
+      let msgJson = JSON.parse(msg.body)
+      let returnMsg = {name:sensor.name, value:msgJson.value, unit:'TODO', timestamp:msgJson.timestamp}
+      if(index >= connectedMessages.length){
+        connectedMessages.push(returnMsg)
+      }else{
+        connectedMessages[index] = returnMsg
+      }
+    })
+  })
+}
+
+function getValidWords(input, sensors){
+  let res =[]
+  let inArray = input.split(/(?:\n| )+/)
+  let valid = sensors.map(sen => sen.name.toLowerCase())
+
+  console.log("sensors:",sensors)
+  console.log("valid:", valid)
+  console.log("inArray:",inArray)
+
+  inArray.forEach(inItem => {
+    if(valid.includes(inItem.toLowerCase())){
+      res.push(inItem)
+    }
+    /*let index = -1
+    index = valid.indexOf(inItem.toLowerCase())
+    if(index > -1){
+      res.push(sensors[index])
+    }*/
+  })
+  console.log("res:",res)
+  return res
+}
 
 function InputField({sensors, setDisplayValue, setSensorData}){
 
@@ -35,15 +91,33 @@ function InputField({sensors, setDisplayValue, setSensorData}){
 
   let validWords = []
   
-
   function onChangeHandler(e){
     let input = e.target.value
     validWords = getValidWords(input, sensors)
+    console.log("validWords:",validWords)
     //TODO change this to after form validation
     setSensorData(validWords)
+    //end of TODO
+    console.log("connectedMessages:",connectedMessages)
+    setDisplayValue((curr) =>{
+      let res = []
+      let msgNames = connectedMessages.map(msg => msg.name.toLowerCase())
+      validWords.forEach(val => {
+        console.log("val:",val)
+        let index = msgNames.indexOf(val.toLowerCase())
+        if (index > -1){
+          res.push(connectedMessages[index])
+        }
+        
+      })
 
-    disconnectWords(validWords, setDisplayValue)
-    connectWords(validWords, setDisplayValue)
+      return res
+
+    })
+
+
+
+
   }
 
   function onBlurHandler(e){
@@ -81,8 +155,6 @@ function InputField({sensors, setDisplayValue, setSensorData}){
             ref={initialFocusRef}
             onBlur={onBlurHandler}
             //onClick={onClickHandler}
-
-            
             onChange={onChangeHandler}
           />
         </PopoverTrigger>
@@ -99,7 +171,6 @@ function InputField({sensors, setDisplayValue, setSensorData}){
   )
 }
 
-
 function ButtonList({sensors,setSelected}){
   
   function mouseEnterHandler(e){
@@ -115,9 +186,7 @@ function ButtonList({sensors,setSelected}){
     <Flex
       align='flex-start'
       direction='column'
-
     >
-
       <List>
         {sensors.map((item,index)=>{
           return(
@@ -133,105 +202,10 @@ function ButtonList({sensors,setSelected}){
           )
         })}
       </List>
-    </Flex>
-    
+    </Flex>   
   )
 }
 
-function getValidWords(input, sensors){
-  let res =[]
-  let inArray = input.split(/(?:\n| )+/)
-  
-  /*inArray.forEach((item, index) => {
-    inArray[index] = item.toLowerCase()
-  })*/
-
-  let valid = sensors.map(sen => sen.name)
-
-  console.log(valid)
-  console.log(inArray)
-
-  /*res = inArray.map(input => {
-    let found = valid.find(word => word.toLowerCase() == input.toLowerCase())
-    return found
-  })*/
-
-
-  
-
-  //TODO change order of elements in res from order of valid to order of inArray
-  /*valid.map(element => {
-    if(inArray.includes(element.name.toLowerCase())){
-      res.push(element)
-    }
-  })*/
-
-
-  return res
-
-
-}
-
-function disconnectWords(allWords, setDisplayValue){
-  let res = []
-  let allNames = []
-  allWords.forEach(item => allNames.push(item.name))
-
-  connectedWords.forEach(word => {
-    if(!allNames.includes(word.name)){
-      word.id.unsubscribe()
-      console.log("Disconnected",word.name)
-      setDisplayValue((curr) =>{
-        console.log(curr)
-        return curr.filter(item => item.name != word.name)
-
-        
-      })
-    }else{
-      res.push(word)
-    }
-  })
-
-  connectedWords = res
-}
-
-function connectWords(allWords, setDisplayValue){
-
-  let connectedNames = []
-  connectedWords.map(item => connectedNames.push(item.name))
-  
-  allWords.map((word, wordIndex) =>{
-    if(!connectedNames.includes(word.name)){
-      let subID = client.subscribe(word.link, (msg) =>{
-        let msgJson = JSON.parse(msg.body)
-        let returnMsg = {name:word.name, value:msgJson.value, unit:'TODO', timestamp:msgJson.timestamp}
-        
-        setDisplayValue((curr) => {
-          console.log(curr)
-          if(curr.length <= wordIndex){
-            return [...curr, returnMsg]
-          }else{
-            return curr.map((element, elemIndex) => {
-              if(elemIndex == wordIndex){
-                return returnMsg
-              }else{
-                return element
-              }
-            })
-          }
-        })
-        
-
-
-        //console.log(msgArray)
-      })
-      connectedWords.push({name:word.name, id:subID})
-      console.log("Connected", word.name)
-    }
-  })
-}
-
-let msgArray = []
 function DataTable({displayValue}){
 
   return(
@@ -260,8 +234,7 @@ function DataTable({displayValue}){
                   )
                 })}
               </Tr>
-            )
-            
+            )            
           })}
         </Tbody>
       </Table>
@@ -269,27 +242,9 @@ function DataTable({displayValue}){
   )
 }
 
-
-function connectToClient(){
-  useEffect(() => {
-    client = new Client({
-      brokerURL: "ws://localhost:8230/api/looping",
-      onConnect: () =>{
-        console.log("FormInput connected");
-      }
-    });
-    client.activate();
-    return() => {
-      console.log("Disconnected from FormInput");
-      client.deactivate();
-    }
-  }, []);
-}
-
-
 function FormInput({sensors, setSensorData}){
   const [displayValue, setDisplayValue] = useState([])
-  connectToClient();
+  connectToClient(sensors);
 
   return(
     <Box>
