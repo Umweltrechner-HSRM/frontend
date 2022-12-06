@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { Client } from "@stomp/stompjs";
+import ValidationButtons from "./ValidationButtons.jsx"
 
 let client = null;
 //Müsste State sein für runtime Updates
@@ -249,6 +250,7 @@ function FormInput({sensors, setSensorData}){
   return(
     <Box>
       <InputField sensors={sensors} setDisplayValue={setDisplayValue} setSensorData={setSensorData} />
+      <ValidationButtons />
       <DataTable sensors={sensors} displayValue={displayValue} />
     </Box>
   );
