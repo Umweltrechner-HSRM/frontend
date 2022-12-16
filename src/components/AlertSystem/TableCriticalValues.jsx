@@ -7,25 +7,25 @@ function setThresholdVal(val, state) {
 
 function SensorRow({data, thresholds}) {
     const [check, setCheck] = useState(false);
-    const [lowVal, setLowVal] = useState('');
-    const [upVal, setUpVal] = useState('');
+    const [varList,setVarList] = useState(thresholds.varList);
 
-    const values = {lowVal: lowVal, upVal: upVal};
-    thresholds[`${data}`] = values;
+    const handleChange = React.useCallback((name,lowVal,upVal) => {
+        let newVarList = varList.map(elem => elem.name===name ? Object.assign(elem,{lowVal:lowVal,upVal:upVal}) : elem);
+        setVarList(newVarList);
+    })
 
     return (
         <Tr>
             <Td width={"10%"}><Checkbox bg='#04B4AE' isChecked={check} onChange={(e) => {
                 setCheck(!check);
-                setLowVal('');
-                setUpVal('')
+                handleChange(data,'','');
             }}/></Td>
             <Td width={"30%"}><Box bg='#0B615E' color='white' p='2.5' borderRadius='15px' align={'center'}>
                 {data}</Box></Td>
-            <Td width={"30%"}><Input bg={'white'} color={'black'} isDisabled={!check} value={lowVal}
-                                     onChange={(e) => setThresholdVal(e.target.value, setLowVal)}/></Td>
-            <Td width={"30%"}><Input bg={'white'} color={'black'} isDisabled={!check} value={upVal}
-                                     onChange={(e) => setThresholdVal(e.target.value, setUpVal)}/></Td>
+            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).lowVal}
+                                     onChange={(e) => handleChange(data,e.target.value,varList.find(({name})=> name===data).upVal)}/></Td>
+            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).upVal}
+                                     onChange={(e) => handleChange(data,varList.find(({name})=> name===data).lowVal,e.target.value)}/></Td>
         </Tr>
     );
 }

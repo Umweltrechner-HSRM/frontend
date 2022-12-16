@@ -1,26 +1,18 @@
 import {
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    TableContainer,
     VStack,
     HStack,
     Text,
-    Checkbox,
-    Input,
-    Box, Heading, Button, Flex, Drawer,DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, useDisclosure
+    Box, Heading, Button, Flex, Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, useDisclosure
 } from "@chakra-ui/react";
-import React, {useState} from 'react';
+import React, {useState} from "react";
 import DatasetsFormula from './DatasetsFormula.jsx'
 import TableCriticalValues from "./AlertSystem/TableCriticalValues.jsx";
 import TableAlertType from "./AlertSystem/TableAlertType.jsx";
 
-//ToDo: Längere Variablennamen testen, tooltips, datenübergabe ans backend für schwellenwerte und mail/telefon
+//noch offen: Längere Variablennamen testen, datenübergabe ans backend für schwellenwerte und mail/telefon, useContext einbauen,
+// resp. Layout
 
-function AlertSystem({sensorData, thresholds, mailFail}) {
+function AlertSystem({sensorData, thresholds, setMailFail}) {
 
     return (
         <VStack ml={'10'} align='stretch'>
@@ -32,7 +24,7 @@ function AlertSystem({sensorData, thresholds, mailFail}) {
                     <TableCriticalValues sensorData={sensorData} thresholds={thresholds}/>
                 </Box>
                 <Box width={"40%"}>
-                    <TableAlertType thresholds={thresholds} mailFail={mailFail}/>
+                    <TableAlertType thresholds={thresholds} setMailFail={setMailFail}/>
                 </Box>
             </HStack>
         </VStack>
@@ -41,7 +33,8 @@ function AlertSystem({sensorData, thresholds, mailFail}) {
 
 const DatasetsAlert = () => {
     const [sensorData, setSensorData] = useState([{name: 'var1'}, {name: 'var2'}])
-    let thresholds = {};
+    let thresholds = {varList:sensorData.map(elem => Object.assign(elem,{name:elem.name, lowVal:'',upVal:''})),Mail:'',Mobile:''};
+
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [mailFail,setMailFail] = useState(false);
 
@@ -56,7 +49,7 @@ const DatasetsAlert = () => {
                 <DatasetsFormula setSensorData={setSensorData}/>
             </Box>
             <Box ml={'10'}>
-                <AlertSystem sensorData={sensorData} thresholds={thresholds} mailFail={setMailFail}></AlertSystem>
+                <AlertSystem sensorData={sensorData} thresholds={thresholds} setMailFail={setMailFail} ></AlertSystem>
             </Box>
             <Flex display={'flex'} justifyContent={'flex-end'}>
                 <Box>
@@ -66,7 +59,7 @@ const DatasetsAlert = () => {
             <Drawer placement='bottom' onClose={onClose} isOpen={isOpen}>
                 <DrawerOverlay />
                 <DrawerContent>
-                    <DrawerHeader borderBottomWidth='1px'>E-Mail is invalid. Please check!</DrawerHeader>
+                    <DrawerHeader borderBottomWidth='1px'>The e-mail address provided is invalid.</DrawerHeader>
                 </DrawerContent>
             </Drawer>
         </VStack>
