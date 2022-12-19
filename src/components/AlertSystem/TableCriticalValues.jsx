@@ -12,7 +12,7 @@ function SensorRow({data, thresholds}) {
     const handleChange = React.useCallback((name,lowVal,upVal) => {
         let newVarList = varList.map(elem => elem.name===name ? Object.assign(elem,{lowVal:lowVal,upVal:upVal}) : elem);
         setVarList(newVarList);
-    })
+    },[varList]);
 
     return (
         <Tr>

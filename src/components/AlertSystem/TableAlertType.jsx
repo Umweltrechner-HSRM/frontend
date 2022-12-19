@@ -33,7 +33,7 @@ function SignalRow({data, thresholds, setMailFail}) {
             setMail({...mail, input: e.target.value, validMail:''});
             setMailFail(true);
         }
-    });
+    },[mail]);
     if(data==='Mail') {
         thresholds[`${data}`] = mail.validMail;
         return (
