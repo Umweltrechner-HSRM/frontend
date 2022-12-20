@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@react-keycloak/web";
 
 const fetchSettings = async (token) => {
-  let resp = await fetch("http://localhost:8230/api/v1/test/secret", {
+  let resp = await fetch("http://localhost:8230/api/variable", {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -30,6 +30,7 @@ const Settings = () => {
     return <div>Error</div>
   }
 
+  
   return (
     <Box>
       <Heading>Settings</Heading>

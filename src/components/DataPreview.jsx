@@ -91,10 +91,10 @@ function DataTable({lastMessage}){
               </Tr>
             </Thead>
             <Tbody>
-              {lastMessage.map(item =>{
+              {lastMessage.map((item, index) =>{
                 let allItems = Object.values(item)
                 return(
-                  <Tr key={item.timestamp}>
+                  <Tr key={index}>
                     {allItems.map(aItem =>{
                       return(
                         <Td 
