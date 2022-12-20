@@ -7,10 +7,10 @@ function setThresholdVal(val, state) {
 
 function SensorRow({data, thresholds}) {
     const [check, setCheck] = useState(false);
-    const [varList,setVarList] = useState(thresholds.varList);
+    const [varList,setVarList] = useState(thresholds.variables);
 
-    const handleChange = React.useCallback((name,lowVal,upVal) => {
-        let newVarList = varList.map(elem => elem.name===name ? Object.assign(elem,{lowVal:lowVal,upVal:upVal}) : elem);
+    const handleChange = React.useCallback((name,minThreshold,maxThreshold) => {
+        let newVarList = varList.map(elem => elem.name===name ? Object.assign(elem,{minThreshold:minThreshold,maxThreshold:maxThreshold}) : elem);
         setVarList(newVarList);
     },[varList]);
 
@@ -22,10 +22,10 @@ function SensorRow({data, thresholds}) {
             }}/></Td>
             <Td width={"30%"}><Box bg='#0B615E' color='white' p='2.5' borderRadius='15px' align={'center'}>
                 {data}</Box></Td>
-            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).lowVal}
-                                     onChange={(e) => handleChange(data,e.target.value,varList.find(({name})=> name===data).upVal)}/></Td>
-            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).upVal}
-                                     onChange={(e) => handleChange(data,varList.find(({name})=> name===data).lowVal,e.target.value)}/></Td>
+            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).minThreshold}
+                                     onChange={(e) => handleChange(data,e.target.value,varList.find(({name})=> name===data).maxThreshold)}/></Td>
+            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).maxThreshold}
+                                     onChange={(e) => handleChange(data,varList.find(({name})=> name===data).minThreshold,e.target.value)}/></Td>
         </Tr>
     );
 }

@@ -8,54 +8,37 @@ import React, {useState} from "react";
 import DatasetsFormula from './DatasetsFormula.jsx'
 import TableCriticalValues from "./AlertSystem/TableCriticalValues.jsx";
 import TableAlertType from "./AlertSystem/TableAlertType.jsx";
-import {useQuery} from "@tanstack/react-query";
 import {useKeycloak} from "@react-keycloak/web";
+import {useQuery} from "@tanstack/react-query";
 
 //noch offen: Längere Variablennamen testen, datenübergabe ans backend für schwellenwerte und mail/telefon, useContext einbauen,
 // resp. Layout
+const fetchThresholds = async (token,thresholds) => {
+    console.log(JSON.stringify(thresholds))
+    let resp = await fetch("http://localhost:8230/api/variable/updateThreshold", {
+        credentials: 'include',
+        method: 'PUT',
+        headers:{
+            Authorization: `Bearer ${token}`,
+            'Content-Type': "application/json",
+        },
+        body: JSON.stringify(thresholds),
+    });
+    return resp;
+}
 
-function AlertButton({name, thresholds}){
+const useHandleClick = (thresholds) => {
+    const {keycloak} = useKeycloak();
 
-    /*const handleClick = () => {
-        console.log(JSON.stringify(thresholds));
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(thresholds)
-        };
-        fetch('http://localhost:8230/api/variable/updateThreshold', requestOptions)
-            .then(response => console.log(response.text()))
-            .catch(error => console.log('error', error));
-    }*/
-    const fetchThresholds = async (token) => {
-        let resp = await fetch("http://localhost:8230/api/variable/updateThreshold", {
-            credentials: 'include',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                ContentType: "application/json",
-            }
-            body: JSON.stringify(thresholds)
-        });
-        return await resp.json();
+    const {data, isLoading, error} = useQuery({
+        queryFn: () => fetchThresholds(keycloak.token, thresholds),
+    })
+    if (error) {
+        console.log(error);
     }
-    const handleClick = () => {
-        const {keycloak} = useKeycloak();
-
-        const {data, isLoading, error} = useQuery({
-            queryKey: ["settings"],
-            queryFn: () => fetchThresholds(keycloak.token),
-        })
-
-        if (error) {
-            return <div>Error</div>
-        }
+    if (data) {
+        console.log(data)
     }
-    return (
-        <Button onClick={handleClick}>{`${name}`}</Button>
-    );
 }
 
 function AlertSystem({sensorData, thresholds, setMailFail}) {
@@ -78,8 +61,9 @@ function AlertSystem({sensorData, thresholds, setMailFail}) {
 }
 
 const DatasetsAlert = () => {
-    const [sensorData, setSensorData] = useState([{name: 'var1'}, {name: 'var2'}])
-    let thresholds = {varList:sensorData.map(elem => Object.assign(elem,{name:elem.name, lowVal:'',upVal:''})),Mail:'',Mobile:''};
+    const {keycloak} = useKeycloak();
+    const [sensorData, setSensorData] = useState([{name: 'x'}, {name: 'var1'}])
+    let thresholds = {variables:sensorData.map(elem => Object.assign(elem,{name:elem.name, minThreshold:'',maxThreshold:''})),mail:'',mobile:''};
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [mailFail,setMailFail] = useState(false);
@@ -99,7 +83,7 @@ const DatasetsAlert = () => {
             </Box>
             <Flex display={'flex'} justifyContent={'flex-end'}>
                 <Box>
-                    <AlertButton name={'SAVE'} thresholds={thresholds}></AlertButton>
+                    <Button onClick={() => fetchThresholds(keycloak.token,thresholds)} >SAVE</Button>
                 </Box>
             </Flex>
             <Drawer placement='bottom' onClose={onClose} isOpen={isOpen}>

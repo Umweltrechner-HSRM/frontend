@@ -34,7 +34,7 @@ function SignalRow({data, thresholds, setMailFail}) {
             setMailFail(true);
         }
     },[mail]);
-    if(data==='Mail') {
+    if(data==='mail') {
         thresholds[`${data}`] = mail.validMail;
         return (
             <Tr>
@@ -61,7 +61,7 @@ function SignalRow({data, thresholds, setMailFail}) {
 }
 
 function TableAlertType({thresholds, setMailFail}) {
-    const table_data = [{name: 'Mail'}, {name: 'Mobile'}];
+    const table_data = [{name: 'mail'}, {name: 'mobile'}];
     const rows = [];
 
     table_data.forEach((data) => {
