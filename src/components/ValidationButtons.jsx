@@ -25,28 +25,15 @@ const validate = async (token,form) => {
   return await resp;
 }
 
-const save = async (token,form) => {
-  let resp = await fetch("http://localhost:8230/api/formula/add",{
-    method: "POST",
-    credentials: 'include',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body:JSON.stringify()
-  })
-  return await resp
-}
-
 function ValidateButton({token,form,setReturnMessage}){
-  const {data, isFetching, error, isSuccess, refetch} = useQuery({
+  const {isLoading, error, isSuccess, refetch} = useQuery({
     queryKey: ['validate'],
     queryFn: () => validate(token,form),
     enabled: false
   })
 
   let msg = 'Nothing Validated'
-  if(isFetching){
+  if(isLoading){
     msg = 'Validating...'
   }
   if(error){
@@ -65,16 +52,42 @@ function ValidateButton({token,form,setReturnMessage}){
   )
 }
 
+const save = async (token,form) => {
+  let resp = await fetch("http://localhost:8230/api/formula/add",{
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      
+    },
+    body:JSON.stringify(form)
+  })
+  return await resp
+}
+
+function SaveButton({token,form,setReturnMessage}){
+  const {isFetching, error, isSuccess, refetch} = useQuery({
+    queryKey: ['save'],
+    queryFn: () => {save(token,form)},
+    enabled: false
+  })
+
+  return(
+    <Button onClick={refetch}>Add</Button>
+  )
+}
+
 function ValidationButtons(){  
   const [message, setMessage] = useState()
-  let tmpForm = {formula: 'x := 2'}
+  let tmpForm = {formula: 'x := temperature + pressure'}
   const {keycloak} = useKeycloak()
-  let msg = 'Nothing Validated'
   
   return(
     <HStack>
       <Text>{message}</Text>
       <ValidateButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage} />
+      <SaveButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage} />
     </HStack>
   )
 }
