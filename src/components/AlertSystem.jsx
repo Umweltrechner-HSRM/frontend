@@ -137,7 +137,7 @@ const DatasetsAlert = () => {
                 <DatasetsFormula setSensorData={setSensorData}/>
             </Box>
             <Box ml={'10'}>
-                <AlertSystem sensorData={sensorData} dataDB={dataDB}></AlertSystem>
+                <AlertSystem sensorData={SENSORDATA} dataDB={dataDB}></AlertSystem>
             </Box>
             <Flex display={'flex'} justifyContent={'flex-end'}>
                 <Box>

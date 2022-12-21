@@ -79,16 +79,17 @@ function SaveButton({token,form,setReturnMessage}){
   )
 }
 
-function ValidationButtons(){  
+function ValidationButtons({form}){
   const [message, setMessage] = useState()
   let tmpForm = {formula: 'test2 := 6'}
+  form = {formula: form}
   const {keycloak} = useKeycloak()
   
   return(
     <HStack>
       <Text>{message}</Text>
-      <ValidateButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage} />
-      <SaveButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage} />
+      <ValidateButton token={keycloak.token} form={form} setReturnMessage={setMessage} />
+      <SaveButton token={keycloak.token} form={form} setReturnMessage={setMessage} />
     </HStack>
   )
 }
