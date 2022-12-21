@@ -26,14 +26,15 @@ const validate = async (token,form) => {
 }
 
 function ValidateButton({token,form,setReturnMessage}){
-  const {isLoading, error, isSuccess, refetch} = useQuery({
+  const {isFetching, error, isSuccess, refetch} = useQuery({
     queryKey: ['validate'],
     queryFn: () => validate(token,form),
-    enabled: false
+    enabled: false,
+    retry: false,
   })
 
   let msg = 'Nothing Validated'
-  if(isLoading){
+  if(isFetching){
     msg = 'Validating...'
   }
   if(error){
@@ -68,8 +69,8 @@ const save = async (token,form) => {
 
 function SaveButton({token,form,setReturnMessage}){
   const {isFetching, error, isSuccess, refetch} = useQuery({
-    queryKey: ['save'],
-    queryFn: () => {save(token,form)},
+    queryKey: ['save/validate'],
+    queryFn: () => save(token,form),
     enabled: false
   })
 
@@ -80,7 +81,7 @@ function SaveButton({token,form,setReturnMessage}){
 
 function ValidationButtons(){  
   const [message, setMessage] = useState()
-  let tmpForm = {formula: 'x := temperature + pressure'}
+  let tmpForm = {formula: 'test2 := 6'}
   const {keycloak} = useKeycloak()
   
   return(
