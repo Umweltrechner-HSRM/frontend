@@ -14,7 +14,15 @@ const validate = async (token,form) => {
     },
     body: JSON.stringify(form)
   });
-  return await resp.json();
+  if (!resp.ok) {
+    // create error object and reject if not a 2xx response code
+    let err = new Error("HTTP status code: " + resp.status)
+    err.response = resp
+    err.status = resp.status
+    throw err
+  }
+
+  return await resp;
 }
 
 const save = async (token,form) => {
@@ -27,11 +35,11 @@ const save = async (token,form) => {
     },
     body:JSON.stringify()
   })
-  return await resp.json()
+  return await resp
 }
 
 function ValidateButton({token,form,setReturnMessage}){
-  const {isFetching, error, isSuccess, refetch} = useQuery({
+  const {data, isFetching, error, isSuccess, refetch} = useQuery({
     queryKey: ['validate'],
     queryFn: () => validate(token,form),
     enabled: false
@@ -42,7 +50,7 @@ function ValidateButton({token,form,setReturnMessage}){
     msg = 'Validating...'
   }
   if(error){
-    msg = 'Invalid' 
+    msg = 'Invalid'
   }
   if(isSuccess){
     msg = 'Valid'
@@ -57,36 +65,9 @@ function ValidateButton({token,form,setReturnMessage}){
   )
 }
 
-function SaveButton({token,form,setReturnMessage}){
-  const {isFetching, error, isSuccess, refetch} = useQuery({
-    queryKey: ['validate'],
-    queryFn: () => validate(token,form),
-    enabled: false
-  })
-
-  let msg = 'Nothing Validated'
-  if(isFetching){
-    msg = 'Validating...'
-  }
-  if(error){
-    msg = 'Invalid' 
-  }
-  if(isSuccess){
-    msg = 'Valid'
-  }
-
-  useEffect(() =>{
-    setReturnMessage(msg)
-  })
-
-  return(
-    <Button onClick={refetch}>Validate & Add</Button>
-  )
-}
-
 function ValidationButtons(){  
   const [message, setMessage] = useState()
-  let tmpForm = {form: 'temp'}
+  let tmpForm = {formula: 'x := 2'}
   const {keycloak} = useKeycloak()
   let msg = 'Nothing Validated'
   
@@ -94,7 +75,6 @@ function ValidationButtons(){
     <HStack>
       <Text>{message}</Text>
       <ValidateButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage} />
-      <SaveButton token={keycloak.token} form={tmpForm} setReturnMessage={setMessage}/>
     </HStack>
   )
 }
