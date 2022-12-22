@@ -1,9 +1,10 @@
 import { Box, Heading, Text } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useKeycloak } from "@react-keycloak/web";
+import { getBaseURL } from "../helpers/api.jsx";
 
 const fetchSettings = async (token) => {
-  let resp = await fetch("http://localhost:8230/api/v1/test/secret", {
+  let resp = await fetch(`${getBaseURL()}/api/v1/test/secret`, {
     credentials: 'include',
     headers: {
       Authorization: `Bearer ${token}`,
