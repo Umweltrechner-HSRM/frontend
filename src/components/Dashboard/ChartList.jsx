@@ -2,41 +2,16 @@ import { Box,
         Button, 
         List, 
         ListItem,  } from "@chakra-ui/react";
-import LineChart2 from '../charts/ChartJsChart.jsx'
+import useWindowDimensions from '../Dashboard/WindowSize';
 
-
-const boxStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: '#ccc',
-    borderRadius: 20,
-    color: '#222',
-    height: '30vh',
-    paddingRight: 5,
-    paddingLeft: 5,
-    paddingBottom: 0,
-    marginTop: -45,
-    width: '55.5vh',
-}
-
-const EntryStyle = {
-    display: 'flex',
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    color: '#222',
-    height: '5vh',
-    paddingRight: 20,
-    paddingLeft: 20,
-    paddingBottom: 0,
-    width: '50vh',
-    alignItems: 'center',
-}
 
 function saved(){
     
 }
 
 function EntryList(){
+
+    const { height, width } = useWindowDimensions(); //for resize
 
     function Entries({name}){
         {/*const [ShowChart, setShowChart] = useState(false)*/}
@@ -50,6 +25,32 @@ function EntryList(){
 
             </Box>
         )
+    }
+    const boxStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        backgroundColor: '#ccc',
+        borderRadius: 20,
+        color: '#222',
+        height: '30vh',
+        paddingRight: 5,
+        paddingLeft: 5,
+        paddingBottom: 0,
+        marginTop: -45,
+        width: width,//'55.5vh',
+    }
+    
+    const EntryStyle = { //Schrift
+        display: 'flex',
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        color: '#222',
+        height: '5vh',
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingBottom: 0,
+        width: '50vh',
+        alignItems: 'center',
     }
     return(
         <Box style={boxStyle} border={"blue 1px solid"} maxHeight={"800px"} overflow={"auto"}>

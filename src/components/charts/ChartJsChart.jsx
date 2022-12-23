@@ -1,4 +1,6 @@
 import React from 'react';
+import {useColorModeValue} from "@chakra-ui/react";
+
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -16,6 +18,7 @@ import StreamingPlugin from 'chartjs-plugin-streaming';
 import {Box} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
+import useWindowDimensions from '../Dashboard/WindowSize';
 
 ChartJS.register(
     CategoryScale,
@@ -30,20 +33,6 @@ ChartJS.register(
 );
 
 let client = null;
-
-const boxStyle = {
-    backgroundColor: '#333',
-    borderRadius: 20,
-    color: '#eee',
-    height: 380,
-    paddingRight: 20,
-    paddingLeft: 20,
-    paddingTop: 20,
-    paddingBottom: 0,
-    width: 550,
-    margin: 30,
-    alignItems: 'center',
-}
 
 function limitData(currentData, message) {
     if (currentData.length > 100){
@@ -96,6 +85,23 @@ function Test({dataPoint}) {
 
 const LineChart2 = () => {
     const [cData, setData] = useState([]);
+    const { height, width } = useWindowDimensions(); //for resize
+    const boxColor = useColorModeValue("lightyellow","#333"); //colors day/nightmode
+    var boxSize = (width < 1250) ? width/1.45 : width/2.8;
+
+    const boxStyle = {
+        backgroundColor: boxColor, //#333
+        borderRadius: 20,
+        color: '#eee',
+        height: 380,
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingTop: 20,
+        paddingBottom: 0,
+        width: boxSize,  
+        margin: 30,
+        alignItems: 'center',
+    }
 
     useEffect(() => {
         client = new Client({
