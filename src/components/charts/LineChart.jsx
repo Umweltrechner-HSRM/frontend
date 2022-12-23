@@ -4,22 +4,10 @@ import {Client} from "@stomp/stompjs";
 import {lineChartOptions} from "../../variables/baseChartOptions.jsx";
 import {userChartOptions} from "../../variables/userChartOptions.jsx";
 import ReactApexChart from "react-apexcharts";
+import useWindowDimensions from "../Dashboard/WindowSize.jsx";
+import {useColorModeValue} from "@chakra-ui/react";
 
 let client = null;
-
-const boxStyle = {
-    backgroundColor: '#333',
-    borderRadius: 20,
-    color: '#eee',
-    height: 380,
-    paddingRight: 20,
-    paddingLeft: 20,
-    paddingTop: 20,
-    paddingBottom: 0,
-    width: 550,
-    margin: 30,
-    alignItems: 'center',
-}
 
 function limitData(currentData, message) {
     if (currentData.length > 2000){
@@ -52,7 +40,27 @@ function InfoBox({data}) {
     )
 }
 
-const LineChart = () => {
+export const LineChart = () => {
+    const { height, width } = useWindowDimensions(); //get window size
+    const boxColor = useColorModeValue("lightyellow","#333"); //colors day/nightmode
+    const lineColor = useColorModeValue("lightblue ","#e30000"); //colors day/nightmode
+    var boxSize = (width < 1250) ? width/1.45 : width/2.8;
+    var lineSize = (width < 1250) ? width/1.5 : width/2.9;
+    
+    const boxStyle = {
+        backgroundColor: boxColor,
+        borderRadius: 20,
+        color: '#eee',
+        height: 380,
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingTop: 20,
+        paddingBottom: 0,
+        width: boxSize+"px", //550
+        margin: 30,
+        alignItems: 'center',
+    }
+
     const [infoPressed, setInfoPressed] = useState(false)
     const [lastMessage, setLastMessage] = useState("No message received yet");
     const [data, setData] = useState([]);
@@ -89,7 +97,7 @@ const LineChart = () => {
         ...lineChartOptions,
         title: {
             text: 'Sinus Chart | Last Update: ' + lastUpdate,
-            style: {color: '#d3d3d3'}
+            style: {color: '#d3d3d3'} //color of text
         },
         colors: [criticalValueColor(data.at(-1)?.y)],
         fill: {colors: [criticalValueColor(data.at(-1)?.y)], gradient: {opacityFrom: 0.5, opacityTo: 0.0}},
@@ -97,7 +105,7 @@ const LineChart = () => {
             yaxis: [
                 {
                     y: userChartOptions.criticalValue,
-                    borderColor: "#e30000",
+                    borderColor: lineColor, //line color
                     strokeDashArray: 0,
                 }
             ],
@@ -116,7 +124,7 @@ const LineChart = () => {
                 options={chartOptions}
                 series={chartData}
                 type='area'
-                width='500'
+                width={lineSize} //500 before
                 height='300'/>}
         </Box>
     )
