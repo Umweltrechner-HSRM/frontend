@@ -1,86 +1,98 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Box, Input, Select, VStack, Text, Button, HStack} from "@chakra-ui/react";
-import {variableArray, colors, styles, lineChartOptions} from "../helpers/testData.js";
 import Chart from "react-apexcharts";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import axios from "axios";
+import keycloak from "../keycloak.js";
+import ChartPreview from "../components/ChartPreview.jsx";
+
+
+const colors = {Teal: '#00e7b0', Blue: '#000298', Yellow: '#f5e13c'}
 
 function InputBox({userProps, setUserProps}) {
+    const [variables, setVariables] = useState(null)
+
+    useQuery(['variables'],
+        async () => {
+            return await axios.get('http://localhost:8230/api/sensor', {
+                headers: {
+                    Authorization: `Bearer ${keycloak.token}`
+                }
+            })
+        }, {
+            onSuccess: (resp) => {
+                setVariables(resp.data)
+            }
+        }
+    )
+
+    const {mutate} = useMutation(postComponent, {
+        onSuccess: (resp) => {
+            setUserProps({...userProps, name: ''})
+            console.log(resp.status)
+        }
+    })
+
+    async function postComponent() {
+        return await axios.post('http://localhost:8230/api/dashboard/components', {
+            name: userProps.name,
+            type: userProps.style || 'LINE_CHART',
+            variable: userProps.variable,
+            variableColor: userProps.color || '#ffffff'
+        }, {
+            headers: {
+                Authorization: `Bearer ${keycloak.token}`
+            }
+        })
+    }
 
     return (
         <Box borderRadius={5} bg={'#363636'} maxW={'40%'} maxH={'30%'} padding={'3%'}>
             <VStack gap={'1%'}>
                 <>
                     <Text color={'white'}>Name</Text>
-                    <Input color={'white'} bg={'black'} onChange={e => setUserProps({...userProps, name:e.target.value})}></Input>
+                    <Input color={'white'} bg={'black'} value={userProps.name}
+                           onChange={e => setUserProps({...userProps, name: e.target.value})}/>
                 </>
                 <>
                     <Text color={'white'}>Select Variable</Text>
                     <Select placeholder={' '} color={'white'} bg={'teal.600'} variant='filled'
-                            _hover={{bg: "teal.600"}} onChange={e => setUserProps({...userProps, variable:e.target.value})}>
-                        {variableArray.map(vari => <option key={vari.name} value={vari.name}>{vari.name}</option>)}
+                            _hover={{bg: "teal.600"}}
+                            onChange={e => setUserProps({...userProps, variable: e.target.value})}>
+                        {variables?.map(vari => <option key={vari.name} value={vari.name}>{vari.name}</option>)}
                     </Select>
                 </>
                 <>
                     <Text color={'white'}>Select Style</Text>
-                    <Select placeholder={' '} color={'white'} bg={'teal.600'} variant='filled'
-                            _hover={{bg: "teal.600"}} onChange={e => setUserProps({...userProps, style:e.target.value})}>
-                        {styles.map(style => <option key={style} value={style}>{style}</option>)}
+                    <Select placeholder={'Line'} color={'white'} bg={'teal.600'} variant='filled'
+                            _hover={{bg: "teal.600"}}
+                            onChange={e => setUserProps({...userProps, type: e.target.value})}>
+                        <option value={'AREA_CHART'}>Area</option>
                     </Select>
                 </>
                 <>
                     <Text color={'white'}>Select Color</Text>
-                    <Select placeholder={' '} color={'white'} bg={'teal.600'} variant='filled'
-                            _hover={{bg: "teal.600"}} onChange={e => setUserProps({...userProps, color:e.target.value})}>
-                        {colors.map(color => <option key={color} value={color}>{color}</option>)}
+                    <Select placeholder={'White'} color={'white'} bg={'teal.600'} variant='filled'
+                            _hover={{bg: "teal.600"}}
+                            onChange={e => setUserProps({...userProps, color: e.target.value})}>
+                        {Object.keys(colors).map(color => <option key={color} value={colors[color]}>{color}</option>)}
                     </Select>
                 </>
-                <Button>TESTBUTTON</Button>
             </VStack>
-        </Box>
-    )
-}
-
-function ChartPreview({userProps}) {
-    const options = {
-        ...lineChartOptions,
-        title: {
-            text: userProps.name,
-            style: {color: '#d3d3d3'} //color of text
-        },
-        colors: ['#26c7c7'],
-        fill: {colors: ['#26c7c7'], gradient: {opacityFrom: 0.5, opacityTo: 0.0}},
-        annotations: { //Line for Critical Values
-            yaxis: [
-                {
-                    // y: userChartOptions.criticalValue,
-                    borderColor: '#26c7c7', //line color
-                    strokeDashArray: 0,
-                }
-            ],
-        },
-    }
-
-    const series =
-        [
-            {
-                name: "series-1",
-                data: [30, 40, 45, 50, 49, 60, 70, 91]
-            }
-        ]
-
-
-    return (
-        <Box borderRadius={5} bg={'#363636'} padding={'2%'}>
-            <Chart options={options} series={series} width={'120%'}/>
+            <Button onClick={() => mutate()} isDisabled={!userProps.name || !userProps.variable} colorScheme={'blue'}
+                    marginTop={'20px'}>
+                SAVE
+            </Button>
         </Box>
     )
 }
 
 
 function CreateChart() {
-    const [userProps, setUserProps] = useState({name:'', style:'',variable:'', color:''})
+    const [userProps, setUserProps] = useState({name: '', type: '', variable: '', color: ''})
 
     return (
-        <HStack gap={'5%'} margin={'3%'}>
+        <HStack gap={'5%'} style={{margin: '5% 20% 0% 20%'}}>
             <InputBox userProps={userProps} setUserProps={setUserProps}/>
             <ChartPreview userProps={userProps}/>
         </HStack>
