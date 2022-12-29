@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import {Box, Input, Select, VStack, Text, Button, HStack, Heading} from "@chakra-ui/react";
 import Chart from "react-apexcharts";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
 import ChartPreview from "../components/ChartPreview.jsx";
+import DeleteChart from "../components/DeleteChart.jsx";
 
 
 const colors = {Teal: '#00e7b0', Blue: '#000298', Yellow: '#f5e13c'}
 
 function InputBox({userProps, setUserProps}) {
     const [variables, setVariables] = useState(null)
+    const queryClient = useQueryClient()
 
     useQuery(['variables'],
         async () => {
@@ -29,7 +31,7 @@ function InputBox({userProps, setUserProps}) {
     const {mutate} = useMutation(postComponent, {
         onSuccess: (resp) => {
             setUserProps({...userProps, name: ''})
-            console.log(resp.status)
+            queryClient.invalidateQueries(['components']).catch(console.log)
         }
     })
 
@@ -89,7 +91,7 @@ function InputBox({userProps, setUserProps}) {
 
 
 function CreateChart() {
-    const [userProps, setUserProps] = useState({name: '', type: '', variable: '', color: ''})
+    const [userProps, setUserProps] = useState({name: '', type: 'LINE_CHART', variable: '', color: ''})
 
     return (
         <>
@@ -97,6 +99,7 @@ function CreateChart() {
             <HStack gap={'5%'} style={{margin: '5% 20% 0% 20%'}}>
                 <InputBox userProps={userProps} setUserProps={setUserProps}/>
                 <ChartPreview userProps={userProps}/>
+                <DeleteChart/>
             </HStack>
         </>
     )

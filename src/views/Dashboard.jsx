@@ -16,8 +16,8 @@ import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
 import {useEffect, useRef, useState} from "react";
-import ChartPreview from "../components/ChartPreview.jsx";
-
+import Chart from "../components/Chart.jsx";
+import {Client} from "@stomp/stompjs";
 
 function CreateDashboard() {
     const queryClient = useQueryClient()
@@ -53,6 +53,19 @@ function CreateDashboard() {
     )
 }
 
+let client = null
+
+function limitData(currentData, message) {
+    if (currentData.length > 300){
+        currentData = currentData.slice(-10)
+    }
+    console.log(currentData.length)
+    return [...currentData, message];
+}
+
+function convertData(json) {
+    return {x: json.timestamp, y: +json.value}
+}
 
 const Dashboard = () => {
     const [components, setComponents] = useState(null)
@@ -60,6 +73,7 @@ const Dashboard = () => {
     const selectedComp = useRef(null)
     const [filteredDashboardComps, setFilteredDashboardComps] = useState(null)
     const queryClient = useQueryClient()
+    const [data, setData] = useState([])
 
 
     useQuery(['components'],
@@ -121,6 +135,23 @@ const Dashboard = () => {
         }
     }, [tabIndex, dashboards])
 
+    useEffect(() => {
+        client = new Client({
+            brokerURL: "ws://localhost:8230/api/looping",
+            onConnect: () => {
+                console.log("connected");
+                client.subscribe("/topic/temperature", (msg) => {
+                    let msgJson = JSON.parse(msg.body);
+                    setData(prev => limitData(prev, convertData(msgJson)))
+                });
+            }
+        });
+        client.activate();
+        return () => {
+            client.deactivate()
+        };
+    }, []);
+
     return (dashboards &&
         <Box>
             <Heading>Dashboard</Heading>
@@ -148,11 +179,16 @@ const Dashboard = () => {
                     <Button onClick={() => addComponent()}>ADD</Button>
                 </>
             }
-            <Grid templateColumns='repeat(2, 1fr)' gap={20} style={{margin: '3% 13% 0% 9%'}}>
+            <Grid templateColumns='repeat(2, 1fr)' gap={10} style={{margin: '3% 13% 0% 9%'}}>
                 {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
                     return (
                         <GridItem key={chart.id}>
-                            <ChartPreview userProps={{name: chart.name, color: chart.variableColor, type: chart.type}}/>
+                            <Chart userProps={{
+                                name: chart.name,
+                                color: chart.variableColor,
+                                type: chart.type,
+                                variable: chart.variable
+                            }} data={data}/>
                         </GridItem>
                     )
                 })}
