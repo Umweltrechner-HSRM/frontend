@@ -1,8 +1,9 @@
-import {Box, Button, Text, Stack} from "@chakra-ui/react";
+import {Box, Button, Text, Stack, IconButton} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import {lineChartOptions} from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
+import {RiDeleteBinLine} from "react-icons/ri"
 
 let client = null;
 
@@ -21,7 +22,7 @@ const boxStyle = {
 }
 
 function limitData(currentData, message) {
-    if (currentData.length > 2000){
+    if (currentData.length > 2000) {
         currentData = currentData.slice(-100)
     }
     return [...currentData, message];
@@ -51,7 +52,7 @@ function InfoBox({data, userProps}) {
     )
 }
 
-const Chart = ({userProps, data}) => {
+const Chart = ({userProps, data, editState, id}, _deleteComponent) => {
     const [infoPressed, setInfoPressed] = useState(false)
 
     const chartData = [
@@ -85,11 +86,19 @@ const Chart = ({userProps, data}) => {
     }
 
     return (
-        <Box height={'25rem'} width={'35rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}>
-            <div align='right'>
-                <Button onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
+        <Box height={'25rem'} width={'35rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
+             borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
+            <div>
+                <Button style={{float: 'right'}}
+                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
                     {infoPressed ? 'Back' : 'Show Info'}
                 </Button>
+                {editState &&
+                    <IconButton style={{float: 'left'}}
+                                colorScheme='red' size={'sm'} isRound={true}
+                                icon={<RiDeleteBinLine/>} aria-label={'delete'}
+                                onClick={() => _deleteComponent(id)}>
+                    </IconButton>}
             </div>
             {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
                 <ReactApexChart

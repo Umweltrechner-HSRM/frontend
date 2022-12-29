@@ -15,7 +15,7 @@ import {
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
 import "../Grid.css"
@@ -60,7 +60,6 @@ function limitData(currentData, message) {
     if (currentData.length > 300) {
         currentData = currentData.slice(-10)
     }
-    console.log(currentData.length)
     return [...currentData, message];
 }
 
@@ -75,6 +74,7 @@ const Dashboard = () => {
     const [filteredDashboardComps, setFilteredDashboardComps] = useState(null)
     const queryClient = useQueryClient()
     const [data, setData] = useState([])
+    const [editState, setEditState] = useState(false)
 
 
     useQuery(['components'],
@@ -130,6 +130,29 @@ const Dashboard = () => {
         )
     }
 
+    const {mutate: deleteComponent} = useMutation(_deleteComponent, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['dashboards']).catch(console.log)
+        }
+    })
+
+    async function _deleteComponent (id) {
+        return await axios.put('http://localhost:8230/api/dashboard/'+dashboards.data[tabIndex].id,
+            {
+                id: filteredDashboardComps.id,
+                name: filteredDashboardComps.name,
+                components: filteredDashboardComps.components.map(comp => {
+                    if (comp.id !== id) return {id: comp.id}
+                })
+
+            }, {
+                headers: {
+                    Authorization: `Bearer ${keycloak.token}`
+                }
+            })
+    }
+
+
     useEffect(() => {
         if (dashboards && tabIndex !== dashboards.data.length) {
             setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
@@ -180,6 +203,8 @@ const Dashboard = () => {
                     <Button onClick={() => addComponent()}>ADD</Button>
                 </>
             }
+            <Button colorScheme={editState ? 'red' : 'blue'} onClick={() => setEditState(!editState)}
+                    style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>EDIT</Button>
             <div className={'dashboardGrid'}>
                 {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
                     return (
@@ -188,7 +213,7 @@ const Dashboard = () => {
                             color: chart.variableColor,
                             type: chart.type,
                             variable: chart.variable
-                        }} data={data}/>
+                        }} data={data} editState={editState} id={chart.id} _deleteComponent={deleteComponent}/>
                     )
                 })}
             </div>
