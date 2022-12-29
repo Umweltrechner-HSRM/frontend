@@ -137,14 +137,12 @@ const Dashboard = () => {
     })
 
     async function _deleteComponent (id) {
+        const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
         return await axios.put('http://localhost:8230/api/dashboard/'+dashboards.data[tabIndex].id,
             {
                 id: filteredDashboardComps.id,
                 name: filteredDashboardComps.name,
-                components: filteredDashboardComps.components.map(comp => {
-                    if (comp.id !== id) return {id: comp.id}
-                })
-
+                components: newComps
             }, {
                 headers: {
                     Authorization: `Bearer ${keycloak.token}`
@@ -164,7 +162,7 @@ const Dashboard = () => {
             brokerURL: "ws://localhost:8230/api/looping",
             onConnect: () => {
                 console.log("connected");
-                client.subscribe("/topic/temperature", (msg) => {
+                client.subscribe("/topic/pressure", (msg) => {
                     let msgJson = JSON.parse(msg.body);
                     setData(prev => limitData(prev, convertData(msgJson)))
                 });

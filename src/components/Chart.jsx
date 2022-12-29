@@ -1,4 +1,4 @@
-import {Box, Button, Text, Stack, IconButton} from "@chakra-ui/react";
+import {Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import {lineChartOptions} from "../helpers/globals.js";
@@ -52,7 +52,7 @@ function InfoBox({data, userProps}) {
     )
 }
 
-const Chart = ({userProps, data, editState, id}, _deleteComponent) => {
+const Chart = ({userProps, data, editState, id, _deleteComponent}) => {
     const [infoPressed, setInfoPressed] = useState(false)
 
     const chartData = [
@@ -86,20 +86,21 @@ const Chart = ({userProps, data, editState, id}, _deleteComponent) => {
     }
 
     return (
-        <Box height={'25rem'} width={'35rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
+        <Box height={'25rem'} width={'40rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
              borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
-            <div>
-                <Button style={{float: 'right'}}
-                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
-                    {infoPressed ? 'Back' : 'Show Info'}
-                </Button>
+            <HStack>
                 {editState &&
                     <IconButton style={{float: 'left'}}
                                 colorScheme='red' size={'sm'} isRound={true}
                                 icon={<RiDeleteBinLine/>} aria-label={'delete'}
                                 onClick={() => _deleteComponent(id)}>
                     </IconButton>}
-            </div>
+                <Spacer/>
+                <Button
+                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
+                    {infoPressed ? 'Back' : 'Show Info'}
+                </Button>
+            </HStack>
             {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
                 <ReactApexChart
                     height={'320px'}
