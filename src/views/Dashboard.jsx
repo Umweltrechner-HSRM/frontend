@@ -73,8 +73,9 @@ const Dashboard = () => {
     const selectedComp = useRef(null)
     const [filteredDashboardComps, setFilteredDashboardComps] = useState(null)
     const queryClient = useQueryClient()
-    const [data, setData] = useState([])
+    const [data, setData] = useState({})
     const [editState, setEditState] = useState(false)
+    const [dataSet, setDataSet] = useState(false)
 
 
     useQuery(['components'],
@@ -136,9 +137,9 @@ const Dashboard = () => {
         }
     })
 
-    async function _deleteComponent (id) {
+    async function _deleteComponent(id) {
         const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
-        return await axios.put('http://localhost:8230/api/dashboard/'+dashboards.data[tabIndex].id,
+        return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
             {
                 id: filteredDashboardComps.id,
                 name: filteredDashboardComps.name,
@@ -150,7 +151,6 @@ const Dashboard = () => {
             })
     }
 
-
     useEffect(() => {
         if (dashboards && tabIndex !== dashboards.data.length) {
             setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
@@ -158,26 +158,51 @@ const Dashboard = () => {
     }, [tabIndex, dashboards])
 
     useEffect(() => {
+        if (Object.keys(data).length === 0 && filteredDashboardComps) {
+            let _data = {}
+            filteredDashboardComps?.components.forEach(comp => {
+                _data[comp.variable] = []
+            })
+            setData(_data)
+            setDataSet(true)
+        }
+    }, [filteredDashboardComps])
+
+
+    useEffect(() => {
+
+        console.log('initialitertes object',data)
         client = new Client({
             brokerURL: "ws://localhost:8230/api/looping",
             onConnect: () => {
-                console.log("connected");
-                client.subscribe("/topic/pressure", (msg) => {
-                    let msgJson = JSON.parse(msg.body);
-                    setData(prev => limitData(prev, convertData(msgJson)))
-                });
+                filteredDashboardComps.components.forEach(comp => {
+                    client.subscribe("/topic/" + comp.variable, (msg) => {
+                        let msgJson = JSON.parse(msg.body);
+                        console.log(data[comp.variable])
+                        let newArray = limitData(data[comp.variable], convertData(msgJson))
+                        console.log('newArray',newArray)
+                        setData({
+                            pressure: [...newArray]
+                        })
+                        console.log(data)
+                    });
+                })
             }
         });
         client.activate();
+
         return () => {
-            client.deactivate()
+            client?.deactivate()
         };
-    }, []);
+    }, [dataSet]);
 
     return (dashboards &&
         <Box>
             <Heading>Dashboard</Heading>
-            <Tabs variant='soft-rounded' colorScheme='blue' onChange={(index) => setTabIndex(index)}>
+            <Tabs variant='soft-rounded' colorScheme='blue' onChange={(index) => {
+                setTabIndex(index)
+                setEditState(false)
+            }}>
                 <HStack style={{margin: '0% 0% 2% 4%'}}>
                     <TabList gap={1} marginTop={'3%'}>
                         {dashboards.data.map(dash => {
@@ -193,12 +218,12 @@ const Dashboard = () => {
             {tabIndex !== dashboards.data.length &&
                 <>
                     <Text color={'white'}>Select Chart</Text>
-                    <Select onChange={(e) => selectedComp.current = e.target.value}>
+                    <Select bg={'blue.700'} width={'20rem'} onChange={(e) => selectedComp.current = e.target.value}>
                         {components?.map(comp => {
                             return <option key={comp.id} value={comp.id}>{comp.name}</option>
                         })}
                     </Select>
-                    <Button onClick={() => addComponent()}>ADD</Button>
+                    <Button marginTop={'0.5rem'} colorScheme={'blue'} onClick={() => addComponent()}>ADD</Button>
                 </>
             }
             <Button colorScheme={editState ? 'red' : 'blue'} onClick={() => setEditState(!editState)}
@@ -211,7 +236,8 @@ const Dashboard = () => {
                             color: chart.variableColor,
                             type: chart.type,
                             variable: chart.variable
-                        }} data={data} editState={editState} id={chart.id} _deleteComponent={deleteComponent}/>
+                        }} data={data[chart.variable]} editState={editState} id={chart.id}
+                               deleteComponent={deleteComponent}/>
                     )
                 })}
             </div>

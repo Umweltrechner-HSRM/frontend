@@ -5,32 +5,6 @@ import {lineChartOptions} from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
 import {RiDeleteBinLine} from "react-icons/ri"
 
-let client = null;
-
-const boxStyle = {
-    backgroundColor: '#333',
-    borderRadius: 20,
-    color: '#eee',
-    height: 350,
-    paddingRight: 20,
-    paddingLeft: 20,
-    paddingTop: 20,
-    paddingBottom: 0,
-    width: 500,
-    margin: 30,
-    alignItems: 'center',
-}
-
-function limitData(currentData, message) {
-    if (currentData.length > 2000) {
-        currentData = currentData.slice(-100)
-    }
-    return [...currentData, message];
-}
-
-function convertData(json) {
-    return {x: json.timestamp, y: +json.value}
-}
 
 // function criticalValueColor(value) {
 //     if (value > userChartOptions.criticalValue) {
@@ -52,7 +26,7 @@ function InfoBox({data, userProps}) {
     )
 }
 
-const Chart = ({userProps, data, editState, id, _deleteComponent}) => {
+const Chart = ({userProps, data, editState, id, deleteComponent}) => {
     const [infoPressed, setInfoPressed] = useState(false)
 
     const chartData = [
@@ -90,14 +64,14 @@ const Chart = ({userProps, data, editState, id, _deleteComponent}) => {
              borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
             <HStack>
                 {editState &&
-                    <IconButton style={{float: 'left'}}
-                                colorScheme='red' size={'sm'} isRound={true}
-                                icon={<RiDeleteBinLine/>} aria-label={'delete'}
-                                onClick={() => _deleteComponent(id)}>
+                    <IconButton
+                        colorScheme='red' size={'sm'} isRound={true}
+                        icon={<RiDeleteBinLine/>} aria-label={'delete'}
+                        onClick={() => deleteComponent(id)}>
                     </IconButton>}
                 <Spacer/>
                 <Button
-                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
+                    onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
                     {infoPressed ? 'Back' : 'Show Info'}
                 </Button>
             </HStack>
