@@ -10,12 +10,12 @@ import {
     HStack,
     TabList,
     Tab,
-    GridItem, Grid
+    GridItem, Grid, useToast
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
 import "../Grid.css"
@@ -76,6 +76,7 @@ const Dashboard = () => {
     const queryClient = useQueryClient()
     const [data, setData] = useState({})
     const [editState, setEditState] = useState(false)
+    const toast = useToast()
 
     useQuery(['components'],
         async () => {
@@ -105,6 +106,17 @@ const Dashboard = () => {
     const {mutate: addComponent} = useMutation(_addComponent, {
         onSuccess: () => {
             queryClient.invalidateQueries(['dashboards']).catch(console.log)
+        },
+        onError: (error) => {
+            if (error.response.status === 424) {
+                toast({
+                    title: 'Error adding chart',
+                    description: "Chart already added to Dashboard",
+                    status: 'error',
+                    duration: 3000,
+                    isClosable: true,
+                })
+            }
         }
     })
 
@@ -149,6 +161,27 @@ const Dashboard = () => {
                 name: filteredDashboardComps.name,
                 components: newComps
             }, {
+                headers: {
+                    Authorization: `Bearer ${keycloak.token}`
+                }
+            })
+    }
+
+    //TODO: general function to unsubscribe (problem when you delete dashboard with charts)
+
+    const {mutate: deleteDashboard} = useMutation(_deleteDashboard, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(['dashboards']).catch(console.log)
+        },
+        onError: (error) => {
+            console.log(error)
+        }
+    })
+
+    async function _deleteDashboard () {
+        const dashboardId = filteredDashboardComps.id
+        return await axios.delete('http://localhost:8230/api/dashboard/'+dashboardId,
+            {
                 headers: {
                     Authorization: `Bearer ${keycloak.token}`
                 }
@@ -225,8 +258,10 @@ const Dashboard = () => {
                     <Button marginTop={'0.5rem'} colorScheme={'blue'} onClick={() => addComponent()}>ADD</Button>
                 </>
             }
-            <Button colorScheme={editState ? 'red' : 'blue'} onClick={() => setEditState(!editState)}
-                    style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>EDIT</Button>
+            <div style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>
+                {editState && <Button marginRight='1rem' colorScheme={'red'} onClick={() => deleteDashboard()}>DELETE DASHBOARD</Button>}
+                <Button colorScheme={editState ? 'red' : 'blue'} onClick={() => setEditState(!editState)}>EDIT</Button>
+            </div>
             <div className={'dashboardGrid'}>
                 {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
                     return (data[chart.variable] &&
