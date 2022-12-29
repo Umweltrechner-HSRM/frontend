@@ -23,7 +23,7 @@ function ChartPreview({userProps}) {
             },
         },
         fill: {
-            opacity: userProps.type ? [0.35, 1] : [0, 0],
+            opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [0, 0],
         },
         colors: [userProps.color || '#ffffff'],
         tooltip: {
@@ -77,8 +77,8 @@ function ChartPreview({userProps}) {
     }
 
     return (
-        <Box borderRadius={5} bg={'#363636'} style={{padding: '2% 2% 0% 0%'}}>
-            <Chart options={options} series={series} height={'200%'} width={'120%'}/>
+        <Box width={'500px'} borderRadius={5} bg={'#363636'} style={{padding: '2% 2% 0% 0%'}}>
+            <Chart options={options} series={series}/>
         </Box>
     )
 }

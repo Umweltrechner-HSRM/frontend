@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Input, Select, VStack, Text, Button, HStack} from "@chakra-ui/react";
+import {Box, Input, Select, VStack, Text, Button, HStack, Heading} from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import axios from "axios";
@@ -36,7 +36,7 @@ function InputBox({userProps, setUserProps}) {
     async function postComponent() {
         return await axios.post('http://localhost:8230/api/dashboard/components', {
             name: userProps.name,
-            type: userProps.style || 'LINE_CHART',
+            type: userProps.type || 'LINE_CHART',
             variable: userProps.variable,
             variableColor: userProps.color || '#ffffff'
         }, {
@@ -63,7 +63,7 @@ function InputBox({userProps, setUserProps}) {
                     </Select>
                 </>
                 <>
-                    <Text color={'white'}>Select Style</Text>
+                    <Text color={'white'}>Select Type</Text>
                     <Select placeholder={'Line'} color={'white'} bg={'teal.600'} variant='filled'
                             _hover={{bg: "teal.600"}}
                             onChange={e => setUserProps({...userProps, type: e.target.value})}>
@@ -92,10 +92,13 @@ function CreateChart() {
     const [userProps, setUserProps] = useState({name: '', type: '', variable: '', color: ''})
 
     return (
-        <HStack gap={'5%'} style={{margin: '5% 20% 0% 20%'}}>
-            <InputBox userProps={userProps} setUserProps={setUserProps}/>
-            <ChartPreview userProps={userProps}/>
-        </HStack>
+        <>
+            <Heading>Create Chart</Heading>
+            <HStack gap={'5%'} style={{margin: '5% 20% 0% 20%'}}>
+                <InputBox userProps={userProps} setUserProps={setUserProps}/>
+                <ChartPreview userProps={userProps}/>
+            </HStack>
+        </>
     )
 }
 
