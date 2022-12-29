@@ -60,7 +60,7 @@ const Chart = ({userProps, data, editState, id, deleteComponent}) => {
     }
 
     return (
-        <Box height={'25rem'} width={'40rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
+        <Box height={'25rem'} width={'38rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
              borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
             <HStack>
                 {editState &&

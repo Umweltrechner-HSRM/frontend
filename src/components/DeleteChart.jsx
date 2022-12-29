@@ -2,12 +2,13 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
 import {useEffect, useRef, useState} from "react";
-import {Box, Button, Select, Text, VStack} from "@chakra-ui/react";
+import {Box, Button, Select, Text, VStack, useToast} from "@chakra-ui/react";
 
 
 function DeleteChart () {
     const [currentCharts, setCurrentCharts] = useState([])
     const selectedChart = useRef(null)
+    const toast = useToast()
 
     const getCharts = useQuery(['components'],
         async () => {
@@ -18,16 +19,33 @@ function DeleteChart () {
             })
         }, {
             onSuccess: (resp) => {
+                selectedChart.current = resp.data[0]?.id
                 setCurrentCharts(resp.data)
             }
         }
     )
 
     const {mutate} = useMutation(deleteChart, {
-        onSuccess: (resp) => {
+        onSuccess: () => {
+            selectedChart.current = currentCharts[0].id
+            toast({
+                title: 'Success',
+                description: `Deleted chart`,
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+            })
             getCharts.refetch().catch(console.log)
-        }, onError: (resp) =>{
-            console.log(resp)
+        }, onError: (error) =>{
+            if (error.response.status === 424) {
+                toast({
+                    title: 'Error deleting chart',
+                    description: "Cannot delete chart that is used in dashboard",
+                    status: 'error',
+                    duration: 4000,
+                    isClosable: true,
+                })
+            }
         }
     })
 

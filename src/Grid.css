@@ -8,8 +8,8 @@
 
 .dashboardGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     grid-column-gap: 4rem;
     grid-row-gap: 4rem;
-    margin: 2rem 4rem 1rem 4rem;
+    margin: 2rem 4rem 1rem 1rem;
 }

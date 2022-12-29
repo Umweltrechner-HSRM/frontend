@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Box, Input, Select, VStack, Text, Button, HStack, Heading} from "@chakra-ui/react";
+import {Box, Input, Select, VStack, Text, Button, useToast, Heading} from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
@@ -8,12 +8,12 @@ import ChartPreview from "../components/ChartPreview.jsx";
 import DeleteChart from "../components/DeleteChart.jsx";
 import "../Grid.css"
 
-
 const colors = {Teal: '#00e7b0', Blue: '#000298', Yellow: '#f5e13c'}
 
 function CreateChart({userProps, setUserProps}) {
     const [variables, setVariables] = useState(null)
     const queryClient = useQueryClient()
+    const toast = useToast()
 
     useQuery(['variables'],
         async () => {
@@ -31,6 +31,13 @@ function CreateChart({userProps, setUserProps}) {
 
     const {mutate} = useMutation(postComponent, {
         onSuccess: (resp) => {
+            toast({
+                title: 'Success adding chart',
+                description: `Added chart ${userProps.name}`,
+                status: 'success',
+                duration: 4000,
+                isClosable: true,
+            })
             setUserProps({...userProps, name: ''})
             queryClient.invalidateQueries(['components']).catch(console.log)
         }

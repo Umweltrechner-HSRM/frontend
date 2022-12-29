@@ -55,7 +55,6 @@ function CreateDashboard() {
 }
 
 
-
 function limitData(currentData, message) {
     if (currentData.length > 300) {
         currentData = currentData.slice(-10)
@@ -77,7 +76,6 @@ const Dashboard = () => {
     const queryClient = useQueryClient()
     const [data, setData] = useState({})
     const [editState, setEditState] = useState(false)
-    const deletedComp = useRef('')
 
     useQuery(['components'],
         async () => {
@@ -89,7 +87,7 @@ const Dashboard = () => {
         }, {
             onSuccess: (resp) => {
                 setComponents(resp.data)
-                selectedComp.current = resp.data[0].id
+                selectedComp.current = resp.data[0]?.id
             }
         }
     )
@@ -134,11 +132,6 @@ const Dashboard = () => {
 
     const {mutate: deleteComponent} = useMutation(_deleteComponent, {
         onSuccess: () => {
-            const newData = {...data}
-            console.log(newData)
-            delete newData[deletedComp.current]
-            console.log('deleted?', newData)
-            setData(newData)
             queryClient.invalidateQueries(['dashboards']).catch(console.log)
         }
     })
@@ -146,9 +139,10 @@ const Dashboard = () => {
     async function _deleteComponent(id) {
         const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
         const deletedComp = filteredDashboardComps.components.filter(comp => comp.id === id)
-        console.log('variable', deletedComp[0].variable)
-        console.log(client.unsubscribe("/topic/"+ deletedComp[0].variable))
-        deletedComp.current = deletedComp[0].variable
+        client.unsubscribe("/topic/" + deletedComp[0].variable)
+        const newData = {...data}
+        delete newData[deletedComp[0].variable]
+        setData(newData)
         return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
             {
                 id: filteredDashboardComps.id,
@@ -169,9 +163,7 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-
         if (filteredDashboardComps) {
-            console.log('initialitertes object', data)
             client = new Client({
                 brokerURL: "ws://localhost:8230/api/looping",
                 onConnect: () => {
@@ -184,6 +176,9 @@ const Dashboard = () => {
                                     tempData[comp.variable] = [convertData(msgJson)]
                                 } else {
                                     tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
+                                    if (tempData[comp.variable].length > 300) {
+                                        tempData[comp.variable] = tempData[comp.variable].slice(-10)
+                                    }
                                 }
                                 return tempData
                             })
@@ -234,7 +229,7 @@ const Dashboard = () => {
                     style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>EDIT</Button>
             <div className={'dashboardGrid'}>
                 {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
-                    return (
+                    return (data[chart.variable] &&
                         <Chart key={chart.id} userProps={{
                             name: chart.name,
                             color: chart.variableColor,
