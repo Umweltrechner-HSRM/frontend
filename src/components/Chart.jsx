@@ -48,6 +48,11 @@ const Chart = ({userProps, data, editState, id, deleteComponent}) => {
         fill: {
             opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [1, 1],
         },
+        yaxis: {
+            ...lineChartOptions.yaxis,
+            max: Math.max.apply(Math, data?.slice(-20).map(d => d.y)),
+            min: Math.min.apply(Math, data?.slice(-20).map(d => d.y)),
+        }
         // annotations: { //Line for Critical Values
         //     yaxis: [
         //         {
