@@ -1,4 +1,4 @@
-import {Box} from "@chakra-ui/react";
+import {Box, Text} from "@chakra-ui/react";
 import Chart from "react-apexcharts";
 import React from "react";
 
@@ -77,8 +77,9 @@ function ChartPreview({userProps}) {
     }
 
     return (
-        <Box width={'500px'} heigt={'400px'} borderRadius={5} bg={'#363636'} style={{padding: '2% 2% 0% 0%'}}>
-            <Chart  options={options} series={series} type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
+        <Box height={'360px'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}>
+            <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'1rem'}>Create Preview</Text>
+            <Chart height={'320px'}  options={options} series={series} type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
         </Box>
     )
 }

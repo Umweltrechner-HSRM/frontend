@@ -3,7 +3,7 @@ import Dashboard from "./views/Dashboard.jsx";
 import Graph from "./views/Datasets.jsx";
 import Settings from "./views/Settings.jsx";
 import React from "react";
-import CreateChart from "./views/CreateChart.jsx";
+import ManageCharts from "./views/ManageCharts.jsx";
 
 const ClientRoutes = [
   {
@@ -28,10 +28,10 @@ const ClientRoutes = [
     permission: "admin"
   },
   {
-    title: "Create Chart",
+    title: "Manage Charts",
     icon: FiSettings,
     path: "/createChart",
-    element: <CreateChart/>,
+    element: <ManageCharts/>,
     permission: null
   },
 ];

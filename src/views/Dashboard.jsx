@@ -18,6 +18,7 @@ import keycloak from "../keycloak.js";
 import {useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
+import "../Grid.css"
 
 function CreateDashboard() {
     const queryClient = useQueryClient()
@@ -56,7 +57,7 @@ function CreateDashboard() {
 let client = null
 
 function limitData(currentData, message) {
-    if (currentData.length > 300){
+    if (currentData.length > 300) {
         currentData = currentData.slice(-10)
     }
     console.log(currentData.length)
@@ -179,20 +180,18 @@ const Dashboard = () => {
                     <Button onClick={() => addComponent()}>ADD</Button>
                 </>
             }
-            <Grid templateColumns='repeat(2, 1fr)' gap={10} style={{margin: '3% 13% 0% 9%'}}>
+            <div className={'dashboardGrid'}>
                 {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
                     return (
-                        <GridItem key={chart.id}>
-                            <Chart userProps={{
-                                name: chart.name,
-                                color: chart.variableColor,
-                                type: chart.type,
-                                variable: chart.variable
-                            }} data={data}/>
-                        </GridItem>
+                        <Chart key={chart.id} userProps={{
+                            name: chart.name,
+                            color: chart.variableColor,
+                            type: chart.type,
+                            variable: chart.variable
+                        }} data={data}/>
                     )
                 })}
-            </Grid>
+            </div>
         </Box>
     );
 };

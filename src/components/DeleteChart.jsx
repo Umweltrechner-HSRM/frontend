@@ -42,9 +42,9 @@ function DeleteChart () {
 
 
     return(
-        <Box borderRadius={5} bg={'#363636'} width={'300px'} maxH={'30%'} padding={'3%'}>
-            <VStack>
-                <Text color={'white'} fontSize={'20'}>Delete Chart</Text>
+        <Box borderRadius={5} bg={'#363636'} height={'180px'} width={'300px'} padding={'3%'}>
+            <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'1rem'}>Delete Chart</Text>
+            <VStack gap={3}>
                 <Select onChange={(e) => selectedChart.current = e.target.value}>
                     {currentCharts?.map(comp => {
                         return <option key={comp.id} value={comp.id}>{comp.name}</option>

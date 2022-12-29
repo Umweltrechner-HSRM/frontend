@@ -85,7 +85,7 @@ const Chart = ({userProps, data}) => {
     }
 
     return (
-        <Box style={boxStyle}>
+        <Box height={'25rem'} width={'35rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}>
             <div align='right'>
                 <Button onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
                     {infoPressed ? 'Back' : 'Show Info'}
@@ -93,6 +93,7 @@ const Chart = ({userProps, data}) => {
             </div>
             {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
                 <ReactApexChart
+                    height={'320px'}
                     options={chartOptions}
                     series={chartData}
                     type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>}

@@ -6,11 +6,12 @@ import axios from "axios";
 import keycloak from "../keycloak.js";
 import ChartPreview from "../components/ChartPreview.jsx";
 import DeleteChart from "../components/DeleteChart.jsx";
+import "../Grid.css"
 
 
 const colors = {Teal: '#00e7b0', Blue: '#000298', Yellow: '#f5e13c'}
 
-function InputBox({userProps, setUserProps}) {
+function CreateChart({userProps, setUserProps}) {
     const [variables, setVariables] = useState(null)
     const queryClient = useQueryClient()
 
@@ -49,7 +50,8 @@ function InputBox({userProps, setUserProps}) {
     }
 
     return (
-        <Box borderRadius={5} bg={'#363636'} maxW={'40%'} maxH={'30%'} padding={'3%'}>
+        <Box borderRadius={5} bg={'#363636'} padding={'1rem'} >
+            <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'20px'}>Create Chart</Text>
             <VStack gap={'1%'}>
                 <>
                     <Text color={'white'}>Name</Text>
@@ -90,19 +92,19 @@ function InputBox({userProps, setUserProps}) {
 }
 
 
-function CreateChart() {
+function ManageCharts() {
     const [userProps, setUserProps] = useState({name: '', type: 'LINE_CHART', variable: '', color: ''})
 
     return (
         <>
-            <Heading>Create Chart</Heading>
-            <HStack gap={'5%'} style={{margin: '5% 20% 0% 20%'}}>
-                <InputBox userProps={userProps} setUserProps={setUserProps}/>
+            <Heading>Manage Charts</Heading>
+            <div className={'grid'}>
+                <CreateChart userProps={userProps} setUserProps={setUserProps}/>
                 <ChartPreview userProps={userProps}/>
                 <DeleteChart/>
-            </HStack>
+            </div>
         </>
     )
 }
 
-export default CreateChart
+export default ManageCharts
