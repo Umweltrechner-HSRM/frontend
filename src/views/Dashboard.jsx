@@ -54,7 +54,7 @@ function CreateDashboard() {
     )
 }
 
-let client = null
+
 
 function limitData(currentData, message) {
     if (currentData.length > 300) {
@@ -67,6 +67,8 @@ function convertData(json) {
     return {x: json.timestamp, y: +json.value}
 }
 
+let client = null
+
 const Dashboard = () => {
     const [components, setComponents] = useState(null)
     const [tabIndex, setTabIndex] = useState(0)
@@ -75,8 +77,7 @@ const Dashboard = () => {
     const queryClient = useQueryClient()
     const [data, setData] = useState({})
     const [editState, setEditState] = useState(false)
-    const [dataSet, setDataSet] = useState(false)
-
+    const deletedComp = useRef('')
 
     useQuery(['components'],
         async () => {
@@ -133,12 +134,21 @@ const Dashboard = () => {
 
     const {mutate: deleteComponent} = useMutation(_deleteComponent, {
         onSuccess: () => {
+            const newData = {...data}
+            console.log(newData)
+            delete newData[deletedComp.current]
+            console.log('deleted?', newData)
+            setData(newData)
             queryClient.invalidateQueries(['dashboards']).catch(console.log)
         }
     })
 
     async function _deleteComponent(id) {
         const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
+        const deletedComp = filteredDashboardComps.components.filter(comp => comp.id === id)
+        console.log('variable', deletedComp[0].variable)
+        console.log(client.unsubscribe("/topic/"+ deletedComp[0].variable))
+        deletedComp.current = deletedComp[0].variable
         return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
             {
                 id: filteredDashboardComps.id,
@@ -157,44 +167,38 @@ const Dashboard = () => {
         }
     }, [tabIndex, dashboards])
 
+
     useEffect(() => {
-        if (Object.keys(data).length === 0 && filteredDashboardComps) {
-            let _data = {}
-            filteredDashboardComps?.components.forEach(comp => {
-                _data[comp.variable] = []
-            })
-            setData(_data)
-            setDataSet(true)
+
+        if (filteredDashboardComps) {
+            console.log('initialitertes object', data)
+            client = new Client({
+                brokerURL: "ws://localhost:8230/api/looping",
+                onConnect: () => {
+                    filteredDashboardComps.components.forEach(comp => {
+                        client.subscribe("/topic/" + comp.variable, (msg) => {
+                            let msgJson = JSON.parse(msg.body);
+                            setData(prev => {
+                                const tempData = {...prev}
+                                if (!prev[comp.variable]) {
+                                    tempData[comp.variable] = [convertData(msgJson)]
+                                } else {
+                                    tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
+                                }
+                                return tempData
+                            })
+                        });
+                    })
+                }
+            });
+            client.activate();
         }
-    }, [filteredDashboardComps])
-
-
-    useEffect(() => {
-
-        console.log('initialitertes object',data)
-        client = new Client({
-            brokerURL: "ws://localhost:8230/api/looping",
-            onConnect: () => {
-                filteredDashboardComps.components.forEach(comp => {
-                    client.subscribe("/topic/" + comp.variable, (msg) => {
-                        let msgJson = JSON.parse(msg.body);
-                        console.log(data[comp.variable])
-                        let newArray = limitData(data[comp.variable], convertData(msgJson))
-                        console.log('newArray',newArray)
-                        setData({
-                            pressure: [...newArray]
-                        })
-                        console.log(data)
-                    });
-                })
-            }
-        });
-        client.activate();
-
         return () => {
             client?.deactivate()
         };
-    }, [dataSet]);
+    }, [filteredDashboardComps, tabIndex]);
+
+    console.log(data)
 
     return (dashboards &&
         <Box>
