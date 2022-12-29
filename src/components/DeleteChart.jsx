@@ -32,7 +32,7 @@ function DeleteChart () {
                 title: 'Success',
                 description: `Deleted chart`,
                 status: 'success',
-                duration: 4000,
+                duration: 3000,
                 isClosable: true,
             })
             getCharts.refetch().catch(console.log)
@@ -42,7 +42,7 @@ function DeleteChart () {
                     title: 'Error deleting chart',
                     description: "Cannot delete chart that is used in dashboard",
                     status: 'error',
-                    duration: 4000,
+                    duration: 3000,
                     isClosable: true,
                 })
             }
