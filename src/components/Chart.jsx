@@ -66,7 +66,7 @@ const Chart = ({userProps, data, editState, id, deleteComponent}) => {
 
     return (
         <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{padding: '1rem', position:'relative'}}
-             borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
+             borderWidth={'0.2rem'} borderColor={editState ? '#669ed5' : '#363636'}>
             {editState &&
                 <IconButton style={{position:'absolute', bottom: '23.4rem', left: '-0.9rem'}}
                     colorScheme='red' size={'sm'} isRound={true}
