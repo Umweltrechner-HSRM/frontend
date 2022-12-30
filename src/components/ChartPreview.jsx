@@ -25,7 +25,7 @@ function ChartPreview({userProps}) {
         fill: {
             opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [0, 0],
         },
-        colors: [userProps.color || '#ffffff'],
+        colors: [userProps.color || '#00e7b0'],
         tooltip: {
             enabled: false
         },
