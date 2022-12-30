@@ -1,9 +1,14 @@
 import { Box, Flex, HStack, Text } from "@chakra-ui/react";
 import ThemeToggleButton from "./ToggleButton.jsx";
-import { NavLink } from "react-router-dom";
+import {NavLink, useLocation} from "react-router-dom";
 import LogoutButton from "./LogoutButton";
+import {DashboardTabsContext} from "../App.jsx";
+import {useContext, useEffect, useState} from "react";
+import DashboardTabs from "./DashboardTabs.jsx";
 
 const Navbar = () => {
+  const context = useContext(DashboardTabsContext)
+  const location = useLocation()
 
   return (
     <Flex
@@ -19,7 +24,12 @@ const Navbar = () => {
           <Text>Umweltrechner</Text>
         </NavLink>
       </Flex>
-
+      {location.pathname === '/' &&
+          <DashboardTabs
+          setTabIndex={context.tabData?.setTabIndex}
+          dashboards={context.tabData?.dashboards}
+          setEditState={context.tabData?.setEditState}
+      />}
       <Box flex={2} align="right">
         <HStack justifyContent={"flex-end"}>
           <ThemeToggleButton />

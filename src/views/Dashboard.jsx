@@ -25,10 +25,12 @@ import {
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
 import "../Grid.css"
+import DashboardTabs from "../components/DashboardTabs.jsx";
+import {DashboardTabsContext} from "../App.jsx";
 
 function CreateDashboard() {
     const queryClient = useQueryClient()
@@ -108,6 +110,7 @@ const Dashboard = () => {
     const toast = useToast()
     const {isOpen, onOpen, onClose} = useDisclosure()
     const stompSubs = useRef([])
+    const TabProps = useContext(DashboardTabsContext)
 
     useQuery(['components'],
         async () => {
@@ -215,6 +218,7 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
+        TabProps.setTabData({dashboards, setTabIndex, setEditState})
         if (dashboards && tabIndex !== dashboards.data.length) {
             setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
         }
@@ -267,22 +271,6 @@ const Dashboard = () => {
             <AreYouSure isOpen={isOpen} onClose={onClose}
                         deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name}/>
             <Heading>Dashboard</Heading>
-            <Tabs marginTop={'1rem'} variant='soft-rounded'
-                  style={{width: "min-content"}}
-                  colorScheme='blue'
-                  onChange={(index) => {
-                      setTabIndex(index)
-                      setEditState(false)
-                  }}>
-                <TabList gap={1} margin={'0.5rem'}>
-                    {dashboards.data.map(dash => {
-                        return <Tab borderRadius={'0.7rem'} bg={'#252525'} color='whitesmoke'
-                                    borderWidth={'0.2rem'} key={dash.id}>{dash.name}</Tab>
-                    })}
-                    <Tab borderRadius={'0.7rem'} borderColor={'blue.300'} bg={'#252525'}
-                         borderWidth={'0.2rem'} color='whitesmoke'>+</Tab>
-                </TabList>
-            </Tabs>
             {tabIndex === dashboards.data.length && <CreateDashboard/>}
             {tabIndex !== dashboards.data.length &&
                 <>
