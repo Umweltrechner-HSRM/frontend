@@ -16,9 +16,9 @@ import {RiDeleteBinLine} from "react-icons/ri"
 
 function InfoBox({data, userProps}) {
     return (
-        <Box style={{padding: 20, backgroundColor: '#4b4b4b', margin: 30, borderRadius: 20}}>
+        <Box style={{padding: 20, backgroundColor: '#4b4b4b', margin: 30, borderRadius: '0.5rem'}}>
             <Stack spacing={3}>
-                <Text fontWeight='bold'>Recent sent value: {data.at(-1)?.y}</Text>
+                <Text fontWeight='bold'>Recent received value: {data.at(-1)?.y}</Text>
                 {/*<Text fontWeight='bold'>Critical Value: {userChartOptions.criticalValue}</Text>*/}
                 <Text fontWeight='bold'>Variable used: {userProps.variable}</Text>
             </Stack>
@@ -65,15 +65,17 @@ const Chart = ({userProps, data, editState, id, deleteComponent}) => {
     }
 
     return (
-        <Box height={'25rem'} width={'38rem'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}
+        <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{padding: '1rem', position:'relative'}}
              borderWidth={'0.2rem'} borderColor={editState ? '#d56666' : '#363636'}>
+            {editState &&
+                <IconButton style={{position:'absolute', bottom: '23.4rem', left: '-0.9rem'}}
+                    colorScheme='red' size={'sm'} isRound={true}
+                            borderWidth={'2px'}
+                            borderColor={'whitesmoke'}
+                    icon={<RiDeleteBinLine/>} aria-label={'delete'}
+                    onClick={() => deleteComponent(id)}>
+                </IconButton>}
             <HStack>
-                {editState &&
-                    <IconButton
-                        colorScheme='red' size={'sm'} isRound={true}
-                        icon={<RiDeleteBinLine/>} aria-label={'delete'}
-                        onClick={() => deleteComponent(id)}>
-                    </IconButton>}
                 <Spacer/>
                 {data &&
                     <Button
