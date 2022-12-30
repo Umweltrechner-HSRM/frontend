@@ -2,7 +2,7 @@ import {Tab, TabList, Tabs} from "@chakra-ui/react";
 
 function DashboardTabs ({setTabIndex, setEditState, dashboards}) {
     return (
-        <Tabs variant='soft-rounded' forceRenderTabPanel={true}
+        <Tabs variant='soft-rounded'
               marginLeft={'5rem'}
               colorScheme='blue'
               onChange={(index) => {
