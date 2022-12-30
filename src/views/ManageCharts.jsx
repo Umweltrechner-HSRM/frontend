@@ -8,7 +8,8 @@ import ChartPreview from "../components/ChartPreview.jsx";
 import DeleteChart from "../components/DeleteChart.jsx";
 import "../Grid.css"
 
-const colors = {Teal: '#00e7b0', Blue: '#000298', Yellow: '#f5e13c'}
+const colors = {Teal: '#00e7b0', Blue: '#0741ff', Yellow: '#f5e13c', Purple: '#6f65ff',
+    Green: '#44ff55'}
 
 function CreateChart({userProps, setUserProps}) {
     const [variables, setVariables] = useState(null)
