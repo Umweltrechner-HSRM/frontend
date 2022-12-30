@@ -63,7 +63,8 @@ function DeleteChart () {
         <Box borderRadius={5} bg={'#363636'} height={'180px'} width={'300px'} padding={'3%'}>
             <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'1rem'}>Delete Chart</Text>
             <VStack gap={3}>
-                <Select onChange={(e) => selectedChart.current = e.target.value}>
+                <Select onChange={(e) => selectedChart.current = e.target.value}
+                        color={'white'} bg={'#2D3748'} variant='outline' _hover={{bg: "#3b485d"}}>
                     {currentCharts?.map(comp => {
                         return <option key={comp.id} value={comp.id}>{comp.name}</option>
                     })}
