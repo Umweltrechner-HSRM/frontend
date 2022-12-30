@@ -11,7 +11,7 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    ModalFooter, Flex,
+    ModalFooter, Flex, Box, Center, VStack, Spacer,
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
@@ -217,13 +217,14 @@ const Dashboard = () => {
                         deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name}/>
             {!dashboardSelected && <CreateDashboard/>}
             {dashboardSelected &&
-                <Flex justifyContent={"flex-end"} marginRight={'2rem'}>
+                <Flex marginRight={'2rem'}>
                     {editState &&
-                        <Button marginRight='1rem' colorScheme={'red'}
+                        <Button marginLeft='1rem' colorScheme={'red'}
                             onClick={onOpen}>DELETE DASHBOARD</Button>
                     }
+                    <Spacer/>
                     <Button colorScheme={editState ? 'red' : 'blue'}
-                        onClick={() => setEditState(!editState)}>EDIT</Button>
+                        onClick={() => setEditState(!editState)}>{editState ? 'CANCEL' : 'EDIT MODE'}</Button>
                 </Flex>
             }
             <div className={'dashboardGrid'}>
@@ -238,7 +239,17 @@ const Dashboard = () => {
                     })
                 }
                 {dashboardSelected && editState &&
-                <AddChart addComponent={addComponent}/>}
+                <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps} editState={editState}/>}
+                {filteredDashboardComps?.components.length === 0 && !editState &&
+                    <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{
+                        display: 'flex', alignItems: 'center',
+                        justifyContent: 'center'}} borderWidth={'0.2rem'} borderColor={'#363636'}>
+                        <VStack>
+                            <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
+                            <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT mode to add charts.</Text>
+                        </VStack>
+                    </Box>
+                }
             </div>
         </>
     );
