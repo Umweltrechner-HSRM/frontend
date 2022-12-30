@@ -1,5 +1,4 @@
 import {
-    Box,
     Button,
     Heading,
     Text,
@@ -12,7 +11,7 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    ModalFooter,
+    ModalFooter, Flex,
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
@@ -23,6 +22,7 @@ import {Client} from "@stomp/stompjs";
 import "../Grid.css"
 import {DashboardTabsContext} from "../App.jsx";
 import CreateDashboard from "../components/CreateDashboard.jsx";
+import AddChart from "../components/AddChart.jsx";
 
 function convertData(json) {
     return {x: json.timestamp, y: +json.value}
@@ -57,9 +57,7 @@ const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}
 let client = null
 
 const Dashboard = () => {
-    const [components, setComponents] = useState(null)
     const [tabIndex, setTabIndex] = useState(0)
-    const selectedComp = useRef(null)
     const [filteredDashboardComps, setFilteredDashboardComps] = useState(null)
     const queryClient = useQueryClient()
     const [data, setData] = useState({})
@@ -69,20 +67,6 @@ const Dashboard = () => {
     const stompSubs = useRef({})
     const TabProps = useContext(DashboardTabsContext)
 
-    useQuery(['components'],
-        async () => {
-            return await axios.get('http://localhost:8230/api/dashboard/components', {
-                headers: {
-                    Authorization: `Bearer ${keycloak.token}`
-                }
-            })
-        }, {
-            onSuccess: (resp) => {
-                setComponents(resp.data)
-                selectedComp.current = resp.data[0]?.id
-            }
-        }
-    )
 
     const {data: dashboards} = useQuery(['dashboards'],
         async () => {
@@ -111,7 +95,7 @@ const Dashboard = () => {
         }
     })
 
-    async function _addComponent() {
+    async function _addComponent(selectedComp) {
         const existingComps = filteredDashboardComps.components.map(comp => {
             return {id: comp.id, position: comp.position}
         })
@@ -121,7 +105,7 @@ const Dashboard = () => {
                 name: dashboards.data[tabIndex].name,
                 components: [...existingComps,
                     {
-                        id: selectedComp.current,
+                        id: selectedComp,
                         position: existingComps.length
                     }
                 ]
@@ -184,6 +168,7 @@ const Dashboard = () => {
         }
     }, [tabIndex, dashboards])
 
+
     useEffect(() => {
         if (filteredDashboardComps) {
             const dataCopy = {}
@@ -220,38 +205,26 @@ const Dashboard = () => {
         return () => {
             client?.deactivate()
         };
-    }, [filteredDashboardComps, tabIndex]);
+    }, [filteredDashboardComps, tabIndex, dashboards]);
 
-    console.log(data)
-    console.log(stompSubs.current)
+    // console.log('data',data)
+    // console.log('subs',stompSubs.current)
     const dashboardSelected = (tabIndex !== dashboards?.data.length)
 
     return (dashboards &&
         <>
             <AreYouSure isOpen={isOpen} onClose={onClose}
                         deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name}/>
-            <Heading>Dashboard</Heading>
             {!dashboardSelected && <CreateDashboard/>}
             {dashboardSelected &&
-                <>
-                    <Text color={'white'}>Select Chart</Text>
-                    <Select bg={'blue.700'} width={'20rem'} onChange={(e) => selectedComp.current = e.target.value}>
-                        {components?.map(comp => {
-                            return <option key={comp.id} value={comp.id}>{comp.name}</option>
-                        })}
-                    </Select>
-                    <Button marginTop={'0.5rem'} colorScheme={'blue'} onClick={() => addComponent()}>ADD</Button>
-                </>
-            }
-            {dashboardSelected &&
-                <div style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>
+                <Flex justifyContent={"flex-end"} marginRight={'2rem'}>
                     {editState &&
                         <Button marginRight='1rem' colorScheme={'red'}
                             onClick={onOpen}>DELETE DASHBOARD</Button>
                     }
                     <Button colorScheme={editState ? 'red' : 'blue'}
                         onClick={() => setEditState(!editState)}>EDIT</Button>
-                </div>
+                </Flex>
             }
             <div className={'dashboardGrid'}>
                 {dashboardSelected &&
@@ -264,6 +237,8 @@ const Dashboard = () => {
                         )
                     })
                 }
+                {dashboardSelected && editState &&
+                <AddChart addComponent={addComponent}/>}
             </div>
         </>
     );
