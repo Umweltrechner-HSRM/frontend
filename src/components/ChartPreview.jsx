@@ -78,7 +78,7 @@ function ChartPreview({userProps}) {
 
     return (
         <Box height={'360px'} borderRadius={5} bg={'#363636'} style={{padding: '1rem'}}>
-            <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'1rem'}>Create Preview</Text>
+            <Text color={'white'} fontSize={'20'} fontWeight={'bold'} marginBottom={'1rem'}>Chart Preview</Text>
             <Chart height={'320px'}  options={options} series={series} type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
         </Box>
     )
