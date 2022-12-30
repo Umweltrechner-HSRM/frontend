@@ -1,4 +1,4 @@
-import {Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack} from "@chakra-ui/react";
+import {Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack, Center, Spinner} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import {lineChartOptions} from "../helpers/globals.js";
@@ -75,17 +75,29 @@ const Chart = ({userProps, data, editState, id, deleteComponent}) => {
                         onClick={() => deleteComponent(id)}>
                     </IconButton>}
                 <Spacer/>
-                <Button
-                    onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
-                    {infoPressed ? 'Back' : 'Show Info'}
-                </Button>
+                {data &&
+                    <Button
+                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
+                        {infoPressed ? 'Back' : 'Show Info'}
+                    </Button>}
             </HStack>
             {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
-                <ReactApexChart
-                    height={'320px'}
-                    options={chartOptions}
-                    series={chartData}
-                    type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>}
+                data ? <ReactApexChart
+                        height={'320px'}
+                        options={chartOptions}
+                        series={chartData}
+                        type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
+                    :
+                    <Center marginTop={'10rem'}>
+                        <Spinner
+                            thickness='4px'
+                            speed='0.65s'
+                            emptyColor='gray.200'
+                            color='blue.500'
+                            size='xl'
+                        />
+                    </Center>
+            }
         </Box>
     )
 };
