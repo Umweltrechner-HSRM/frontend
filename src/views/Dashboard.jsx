@@ -3,15 +3,7 @@ import {
     Button,
     Heading,
     Text,
-    Input,
     Select,
-    VStack,
-    Tabs,
-    HStack,
-    TabList,
-    Tab,
-    GridItem,
-    Grid,
     useToast,
     useDisclosure,
     Modal,
@@ -20,7 +12,7 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    ModalFooter, Center, Spinner
+    ModalFooter,
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
@@ -29,11 +21,8 @@ import React, {useContext, useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
 import "../Grid.css"
-import DashboardTabs from "../components/DashboardTabs.jsx";
 import {DashboardTabsContext} from "../App.jsx";
 import CreateDashboard from "../components/CreateDashboard.jsx";
-
-
 
 function convertData(json) {
     return {x: json.timestamp, y: +json.value}
@@ -50,7 +39,6 @@ const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}
                     <ModalBody>
                         <Text color={'white'}>Are you sure?</Text>
                     </ModalBody>
-
                     <ModalFooter>
                         <Button colorScheme='blue' mr={3} onClick={() => {
                             deleteDashboard()
@@ -78,7 +66,7 @@ const Dashboard = () => {
     const [editState, setEditState] = useState(false)
     const toast = useToast()
     const {isOpen, onOpen, onClose} = useDisclosure()
-    const stompSubs = useRef([])
+    const stompSubs = useRef({})
     const TabProps = useContext(DashboardTabsContext)
 
     useQuery(['components'],
@@ -165,7 +153,6 @@ const Dashboard = () => {
             })
     }
 
-
     const {mutate: deleteDashboard} = useMutation(_deleteDashboard, {
         onSuccess: () => {
             setEditState(false)
@@ -187,12 +174,15 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
+        Object.keys(stompSubs.current).forEach(variable => {
+            stompSubs.current[variable]?.unsubscribe()
+            stompSubs.current[variable] = null
+        })
         TabProps.setTabData({dashboards, setTabIndex, setEditState})
         if (dashboards && tabIndex !== dashboards.data.length) {
             setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
         }
     }, [tabIndex, dashboards])
-
 
     useEffect(() => {
         if (filteredDashboardComps) {
@@ -201,28 +191,27 @@ const Dashboard = () => {
                 dataCopy[comp.variable] = data[comp.variable]
             })
             setData(dataCopy)
-            stompSubs.current.forEach(sub => sub.unsubscribe())
-            stompSubs.current = []
             client = new Client({
                 brokerURL: "ws://localhost:8230/api/looping",
                 onConnect: () => {
                     filteredDashboardComps.components.forEach(comp => {
-                        let sub = client.subscribe("/topic/" + comp.variable, (msg) => {
-                            let msgJson = JSON.parse(msg.body);
-                            setData(prev => {
-                                const tempData = {...prev}
-                                if (!prev[comp.variable]) {
-                                    tempData[comp.variable] = [convertData(msgJson)]
-                                } else {
-                                    tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
-                                    if (tempData[comp.variable].length > 300) {
-                                        tempData[comp.variable] = tempData[comp.variable].slice(-10)
+                        if (!stompSubs.current[comp.variable]) {
+                            stompSubs.current[comp.variable] = client.subscribe("/topic/" + comp.variable, (msg) => {
+                                let msgJson = JSON.parse(msg.body);
+                                setData(prev => {
+                                    const tempData = {...prev}
+                                    if (!prev[comp.variable]) {
+                                        tempData[comp.variable] = [convertData(msgJson)]
+                                    } else {
+                                        tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
+                                        if (tempData[comp.variable].length > 300) {
+                                            tempData[comp.variable] = tempData[comp.variable].slice(-10)
+                                        }
                                     }
-                                }
-                                return tempData
-                            })
-                        });
-                        stompSubs.current.push(sub)
+                                    return tempData
+                                })
+                            });
+                        }
                     })
                 }
             });
@@ -234,14 +223,16 @@ const Dashboard = () => {
     }, [filteredDashboardComps, tabIndex]);
 
     console.log(data)
+    console.log(stompSubs.current)
+    const dashboardSelected = (tabIndex !== dashboards?.data.length)
 
     return (dashboards &&
-        <Box>
+        <>
             <AreYouSure isOpen={isOpen} onClose={onClose}
                         deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name}/>
             <Heading>Dashboard</Heading>
-            {tabIndex === dashboards.data.length && <CreateDashboard/>}
-            {tabIndex !== dashboards.data.length &&
+            {!dashboardSelected && <CreateDashboard/>}
+            {dashboardSelected &&
                 <>
                     <Text color={'white'}>Select Chart</Text>
                     <Select bg={'blue.700'} width={'20rem'} onChange={(e) => selectedComp.current = e.target.value}>
@@ -252,30 +243,29 @@ const Dashboard = () => {
                     <Button marginTop={'0.5rem'} colorScheme={'blue'} onClick={() => addComponent()}>ADD</Button>
                 </>
             }
-            {tabIndex !== dashboards.data.length &&
+            {dashboardSelected &&
                 <div style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>
                     {editState &&
-                        <Button marginRight='1rem' colorScheme={'red'} onClick={onOpen}>DELETE DASHBOARD</Button>}
+                        <Button marginRight='1rem' colorScheme={'red'}
+                            onClick={onOpen}>DELETE DASHBOARD</Button>
+                    }
                     <Button colorScheme={editState ? 'red' : 'blue'}
-                            onClick={() => setEditState(!editState)}>EDIT</Button>
+                        onClick={() => setEditState(!editState)}>EDIT</Button>
                 </div>
             }
             <div className={'dashboardGrid'}>
-                {tabIndex !== dashboards.data.length &&
+                {dashboardSelected &&
                     filteredDashboardComps?.components.map(chart => {
                         return (
-                            <Chart key={chart.id} userProps={{
-                                name: chart.name,
-                                color: chart.variableColor,
-                                type: chart.type,
-                                variable: chart.variable
-                            }} data={data[chart.variable]} editState={editState} id={chart.id}
-                                   deleteComponent={deleteComponent}/>
+                            <Chart key={chart.id} userProps={{name: chart.name, color: chart.variableColor,
+                                type: chart.type, variable: chart.variable}}
+                                   data={data[chart.variable]} editState={editState}
+                                   id={chart.id} deleteComponent={deleteComponent}/>
                         )
                     })
                 }
             </div>
-        </Box>
+        </>
     );
 };
 
