@@ -31,40 +31,9 @@ import {Client} from "@stomp/stompjs";
 import "../Grid.css"
 import DashboardTabs from "../components/DashboardTabs.jsx";
 import {DashboardTabsContext} from "../App.jsx";
+import CreateDashboard from "../components/CreateDashboard.jsx";
 
-function CreateDashboard() {
-    const queryClient = useQueryClient()
-    const [dashboardName, setDashboardName] = useState('')
 
-    const {mutate: addDashboard} = useMutation(postDashboard, {
-        onSuccess: (resp) => {
-            queryClient.invalidateQueries(['dashboards']).catch(console.log)
-        }
-    })
-
-    async function postDashboard() {
-        return await axios.post('http://localhost:8230/api/dashboard/', {
-            name: dashboardName
-        }, {
-            headers: {
-                Authorization: `Bearer ${keycloak.token}`
-            }
-        })
-    }
-
-    return (
-        <Box borderRadius={5} bg={'#363636'} width={'40%'} padding={'1%'}>
-            <Text color={'white'} fontSize={'24'}>Create Dashboard</Text>
-            <VStack alignItems={'left'} gap={'2%'} marginTop={'4%'}>
-                <Text color={'white'}>Name</Text>
-                <Input color={'white'} bg={'black'}
-                       onChange={e => setDashboardName(e.target.value)}/>
-                <Button onClick={() => addDashboard()} isDisabled={!dashboardName}
-                        colorScheme={'blue'}>ADD</Button>
-            </VStack>
-        </Box>
-    )
-}
 
 function convertData(json) {
     return {x: json.timestamp, y: +json.value}
