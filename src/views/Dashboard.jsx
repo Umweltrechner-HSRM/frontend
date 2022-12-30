@@ -10,12 +10,22 @@ import {
     HStack,
     TabList,
     Tab,
-    GridItem, Grid, useToast
+    GridItem,
+    Grid,
+    useToast,
+    useDisclosure,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter, Center, Spinner
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Chart from "../components/Chart.jsx";
 import {Client} from "@stomp/stompjs";
 import "../Grid.css"
@@ -54,17 +64,36 @@ function CreateDashboard() {
     )
 }
 
-
-function limitData(currentData, message) {
-    if (currentData.length > 300) {
-        currentData = currentData.slice(-10)
-    }
-    return [...currentData, message];
-}
-
 function convertData(json) {
     return {x: json.timestamp, y: +json.value}
 }
+
+const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}) => {
+    return (
+        <>
+            <Modal isCentered={true} marginTop={'4rem'} isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay/>
+                <ModalContent>
+                    <ModalHeader>Delete Dashboard {dashboardName}</ModalHeader>
+                    <ModalCloseButton/>
+                    <ModalBody>
+                        <Text color={'white'}>Are you sure?</Text>
+                    </ModalBody>
+
+                    <ModalFooter>
+                        <Button colorScheme='blue' mr={3} onClick={() => {
+                            deleteDashboard()
+                            onClose()
+                        }}>
+                            Yes
+                        </Button>
+                        <Button onClick={onClose}>Cancel</Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </>
+    )
+})
 
 let client = null
 
@@ -77,6 +106,8 @@ const Dashboard = () => {
     const [data, setData] = useState({})
     const [editState, setEditState] = useState(false)
     const toast = useToast()
+    const {isOpen, onOpen, onClose} = useDisclosure()
+    const stompSubs = useRef([])
 
     useQuery(['components'],
         async () => {
@@ -150,11 +181,6 @@ const Dashboard = () => {
 
     async function _deleteComponent(id) {
         const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
-        const deletedComp = filteredDashboardComps.components.filter(comp => comp.id === id)
-        client.unsubscribe("/topic/" + deletedComp[0].variable)
-        const newData = {...data}
-        delete newData[deletedComp[0].variable]
-        setData(newData)
         return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
             {
                 id: filteredDashboardComps.id,
@@ -167,10 +193,10 @@ const Dashboard = () => {
             })
     }
 
-    //TODO: general function to unsubscribe (problem when you delete dashboard with charts)
 
     const {mutate: deleteDashboard} = useMutation(_deleteDashboard, {
         onSuccess: () => {
+            setEditState(false)
             queryClient.invalidateQueries(['dashboards']).catch(console.log)
         },
         onError: (error) => {
@@ -178,9 +204,9 @@ const Dashboard = () => {
         }
     })
 
-    async function _deleteDashboard () {
+    async function _deleteDashboard() {
         const dashboardId = filteredDashboardComps.id
-        return await axios.delete('http://localhost:8230/api/dashboard/'+dashboardId,
+        return await axios.delete('http://localhost:8230/api/dashboard/' + dashboardId,
             {
                 headers: {
                     Authorization: `Bearer ${keycloak.token}`
@@ -197,11 +223,18 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (filteredDashboardComps) {
+            const dataCopy = {}
+            filteredDashboardComps.components.forEach(comp => {
+                dataCopy[comp.variable] = data[comp.variable]
+            })
+            setData(dataCopy)
+            stompSubs.current.forEach(sub => sub.unsubscribe())
+            stompSubs.current = []
             client = new Client({
                 brokerURL: "ws://localhost:8230/api/looping",
                 onConnect: () => {
                     filteredDashboardComps.components.forEach(comp => {
-                        client.subscribe("/topic/" + comp.variable, (msg) => {
+                        let sub = client.subscribe("/topic/" + comp.variable, (msg) => {
                             let msgJson = JSON.parse(msg.body);
                             setData(prev => {
                                 const tempData = {...prev}
@@ -216,6 +249,7 @@ const Dashboard = () => {
                                 return tempData
                             })
                         });
+                        stompSubs.current.push(sub)
                     })
                 }
             });
@@ -230,23 +264,26 @@ const Dashboard = () => {
 
     return (dashboards &&
         <Box>
+            <AreYouSure isOpen={isOpen} onClose={onClose}
+                        deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name}/>
             <Heading>Dashboard</Heading>
-            <Tabs variant='soft-rounded' colorScheme='blue' onChange={(index) => {
-                setTabIndex(index)
-                setEditState(false)
-            }}>
-                <HStack style={{margin: '0% 0% 2% 4%'}}>
-                    <TabList gap={1} marginTop={'3%'}>
-                        {dashboards.data.map(dash => {
-                            return <Tab key={dash.id}>{dash.name}</Tab>
-                        })}
-                        <Tab>+</Tab>
-                    </TabList>
-                </HStack>
-                <div style={{margin: '4%'}}>
-                    {tabIndex === dashboards.data.length && <CreateDashboard/>}
-                </div>
+            <Tabs marginTop={'1rem'} variant='soft-rounded'
+                  style={{width: "min-content"}}
+                  colorScheme='blue'
+                  onChange={(index) => {
+                      setTabIndex(index)
+                      setEditState(false)
+                  }}>
+                <TabList gap={1} margin={'0.5rem'}>
+                    {dashboards.data.map(dash => {
+                        return <Tab borderRadius={'0.7rem'} bg={'#252525'} color='whitesmoke'
+                                    borderWidth={'0.2rem'} key={dash.id}>{dash.name}</Tab>
+                    })}
+                    <Tab borderRadius={'0.7rem'} borderColor={'blue.300'} bg={'#252525'}
+                         borderWidth={'0.2rem'} color='whitesmoke'>+</Tab>
+                </TabList>
             </Tabs>
+            {tabIndex === dashboards.data.length && <CreateDashboard/>}
             {tabIndex !== dashboards.data.length &&
                 <>
                     <Text color={'white'}>Select Chart</Text>
@@ -258,22 +295,28 @@ const Dashboard = () => {
                     <Button marginTop={'0.5rem'} colorScheme={'blue'} onClick={() => addComponent()}>ADD</Button>
                 </>
             }
-            <div style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>
-                {editState && <Button marginRight='1rem' colorScheme={'red'} onClick={() => deleteDashboard()}>DELETE DASHBOARD</Button>}
-                <Button colorScheme={editState ? 'red' : 'blue'} onClick={() => setEditState(!editState)}>EDIT</Button>
-            </div>
+            {tabIndex !== dashboards.data.length &&
+                <div style={{float: 'right', margin: '1rem 1rem 0rem 0rem'}}>
+                    {editState &&
+                        <Button marginRight='1rem' colorScheme={'red'} onClick={onOpen}>DELETE DASHBOARD</Button>}
+                    <Button colorScheme={editState ? 'red' : 'blue'}
+                            onClick={() => setEditState(!editState)}>EDIT</Button>
+                </div>
+            }
             <div className={'dashboardGrid'}>
-                {tabIndex !== dashboards.data.length && filteredDashboardComps?.components.map(chart => {
-                    return (data[chart.variable] &&
-                        <Chart key={chart.id} userProps={{
-                            name: chart.name,
-                            color: chart.variableColor,
-                            type: chart.type,
-                            variable: chart.variable
-                        }} data={data[chart.variable]} editState={editState} id={chart.id}
-                               deleteComponent={deleteComponent}/>
-                    )
-                })}
+                {tabIndex !== dashboards.data.length &&
+                    filteredDashboardComps?.components.map(chart => {
+                        return (
+                            <Chart key={chart.id} userProps={{
+                                name: chart.name,
+                                color: chart.variableColor,
+                                type: chart.type,
+                                variable: chart.variable
+                            }} data={data[chart.variable]} editState={editState} id={chart.id}
+                                   deleteComponent={deleteComponent}/>
+                        )
+                    })
+                }
             </div>
         </Box>
     );
