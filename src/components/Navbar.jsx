@@ -29,6 +29,7 @@ const Navbar = () => {
           setTabIndex={context.tabData?.setTabIndex}
           dashboards={context.tabData?.dashboards}
           setEditState={context.tabData?.setEditState}
+          editState={context.tabData?.editState}
       />}
       <Box flex={2} align="right">
         <HStack justifyContent={"flex-end"}>

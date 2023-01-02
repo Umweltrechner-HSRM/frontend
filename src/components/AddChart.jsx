@@ -1,5 +1,5 @@
 import {Box, Button, Flex, IconButton, Select, Text} from "@chakra-ui/react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {HiPlus, HiOutlinePlusSm} from "react-icons/hi"
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
@@ -11,7 +11,7 @@ function AddChart({addComponent, filteredDashboardComps, editState}) {
     const [plusClicked, setPlusClicked] = useState(false)
     const selectedComp = useRef(null)
     const [filteredOptions, setFilteredOptions] = useState(null)
-    const [noMoreComps, setNoMoreComps] = useState(true)
+    const [noMoreComps, setNoMoreComps] = useState(false)
 
     useQuery(['components'],
         async () => {
@@ -60,7 +60,7 @@ function AddChart({addComponent, filteredDashboardComps, editState}) {
                     <Text color={'white'}>Select Chart</Text>
                     <Select bg={'blue.700'} width={'20rem'} onChange={(e) => selectedComp.current = e.target.value}>
                         {filteredOptions?.map(comp => {
-                                return comp && <option key={comp.id} value={comp.id}>{comp.name}</option>
+                                return comp && <option key={comp.id} value={comp.id}>{comp.name} (Variable: {comp.variable})</option>
                         })}
                     </Select>
                     <Button marginTop={'0.5rem'} colorScheme={'blue'}
@@ -71,9 +71,9 @@ function AddChart({addComponent, filteredDashboardComps, editState}) {
                 </Flex>
             }
             {!plusClicked && !noMoreComps &&
-                <IconButton isDisabled={noMoreComps} style={{width: '8rem', height: '8rem'}}
+                <IconButton style={{width: '8rem', height: '8rem'}} bg={'#696969'}
                               icon={<HiOutlinePlusSm size={'6rem'}/>} color={'whitesmoke'}
-                              isRound={true} aria-label={'addChart'} _hover={{bg: "#5578b0"}}
+                              isRound={true} aria-label={'addChart'} _hover={{bg: "#4880cc"}}
                               onClick={() => setPlusClicked(true)}/>
             }
             {noMoreComps &&

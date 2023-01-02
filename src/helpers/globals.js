@@ -1,30 +1,17 @@
 export const lineChartOptions = {
   chart: {
-    animations: {
-      enabled: true,
-      easing: 'linear',
-      speed: 100,
-      animateGradually: {
-        enabled: false,
-        delay: 1000
-      },
-      dynamicAnimation: {
-        enabled: true,
-        speed: 500
-      }
-    },
     toolbar: {
       show: false,
     },
   },
   tooltip: {
-    theme: "dark",
+    enabled: false,
   },
   dataLabels: {
     enabled: false,
   },
   stroke: {
-    curve: "straight",
+    curve: "smooth",
   },
   // markers:{
   //     size: 2,
@@ -32,8 +19,8 @@ export const lineChartOptions = {
   //     strokeWidth: 3,
   // },
   xaxis: {
-    range: 10000,
     type: 'datetime',
+    tickPlacement: 'on',
     labels: {
       rotate: -30,
       rotateAlways: true,
@@ -67,6 +54,7 @@ export const lineChartOptions = {
   grid: {
     strokeDashArray: 5,
   },
+
   // fill: {
   //     type: "gradient",
   //     gradient: {
