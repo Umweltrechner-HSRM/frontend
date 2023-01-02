@@ -25,7 +25,7 @@ function CreateDashboard() {
     }
 
     return (
-        <Box borderRadius={5} bg={'#363636'} width={'40%'} padding={'1%'} margin={'2rem'}>
+        <Box borderRadius={'0.5rem'} bg={'#363636'} width={'40%'} padding={'1%'} margin={'2rem'}>
             <Text color={'white'} fontSize={'24'}>Create Dashboard</Text>
             <VStack alignItems={'left'} gap={'2%'} marginTop={'4%'}>
                 <form onSubmit={(e) => {

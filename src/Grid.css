@@ -8,8 +8,12 @@
 
 .dashboardGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-    grid-column-gap: 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+    grid-column-gap: 2rem;
     grid-row-gap: 2rem;
     margin: 2rem 4rem 1rem 1rem;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
