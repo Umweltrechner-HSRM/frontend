@@ -22,13 +22,14 @@ export const lineChartOptions = {
     type: 'datetime',
     tickPlacement: 'on',
     labels: {
-      rotate: -30,
-      rotateAlways: true,
+      // rotate: -20,
+      // rotateAlways: true,
       format: 'HH:mm:ss',
       style: {
-        colors: "#ffffff",
-        fontSize: "12px",
-        fontWeight: 600,
+        colors: '#ffffff',
+        fontSize: '12px',
+        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontWeight: 400,
       },
       minHeight: 40
     },
@@ -42,9 +43,10 @@ export const lineChartOptions = {
         return value.toFixed(2)
       },
       style: {
-        colors: "#ffffff",
-        fontSize: "12px",
-        fontWeight: 600,
+        colors: '#ffffff',
+        fontSize: '12px',
+        fontFamily: 'Helvetica, Arial, sans-serif',
+        fontWeight: 400,
       },
     },
   },

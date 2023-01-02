@@ -1,8 +1,6 @@
 import {
     Button,
-    Heading,
     Text,
-    Select,
     useToast,
     useDisclosure,
     Modal,
@@ -67,6 +65,7 @@ const Dashboard = () => {
     const stompSubs = useRef({})
     const TabProps = useContext(DashboardTabsContext)
     const [animation, setAnimation] = useState(true)
+    const [dashboardSelected, setDashboardSelected] = useState(null)
 
 
     const {data: dashboards} = useQuery(['dashboards'],
@@ -159,6 +158,7 @@ const Dashboard = () => {
     }
 
     useEffect(() => {
+        setDashboardSelected(tabIndex < dashboards?.data.length)
         Object.keys(stompSubs.current).forEach(variable => {
             stompSubs.current[variable]?.unsubscribe()
             stompSubs.current[variable] = null
@@ -216,7 +216,6 @@ const Dashboard = () => {
 
     console.log('data',data)
     // console.log('subs',stompSubs.current)
-    const dashboardSelected = (tabIndex !== dashboards?.data.length)
 
     return (dashboards &&
         <>
@@ -247,7 +246,7 @@ const Dashboard = () => {
                 }
                 {dashboardSelected && editState &&
                 <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps} editState={editState}/>}
-                {filteredDashboardComps?.components.length === 0 && !editState &&
+                {filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
                     <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{
                         display: 'flex', alignItems: 'center',
                         justifyContent: 'center'}} borderWidth={'0.2rem'} borderColor={'#363636'}>

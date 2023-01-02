@@ -1,10 +1,9 @@
 import {Box, Button, Flex, IconButton, Select, Text} from "@chakra-ui/react";
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
-import {HiPlus, HiOutlinePlusSm} from "react-icons/hi"
+import {useEffect, useRef, useState} from "react";
+import {HiOutlinePlusSm} from "react-icons/hi"
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import keycloak from "../keycloak.js";
-
 
 function AddChart({addComponent, filteredDashboardComps, editState}) {
     const [components, setComponents] = useState(null)

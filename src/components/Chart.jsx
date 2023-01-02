@@ -1,6 +1,5 @@
 import {Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack, Center, Spinner, Select} from "@chakra-ui/react";
 import {useEffect, useRef, useState} from "react";
-import {Client} from "@stomp/stompjs";
 import {lineChartOptions} from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
 import {RiDeleteBinLine} from "react-icons/ri"
@@ -43,21 +42,22 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
         setAnimation(true)
     }, [animation])
 
-    const chartOptions = {
+    console.log(userProps.variable, animation)
+    let chartOptions = {
         ...lineChartOptions,
         chart: {
             ...lineChartOptions.chart,
             animations: {
                 enabled: animation,
                 easing: 'easeinout',
-                speed: 100,
+                speed: 500,
                 animateGradually: {
                     enabled: true,
-                    delay: 1000
+                    delay: 700
                 },
                 dynamicAnimation: {
                     enabled: true,
-                    speed: 1000
+                    speed: 700
                 }
             },
         },
@@ -76,17 +76,23 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
         xaxis: {
             ...lineChartOptions.xaxis,
             range: range.current,
-        }
-        // annotations: { //Line for Critical Values
-        //     yaxis: [
-        //         {
-        //             y: userChartOptions.criticalValue,
-        //             borderColor: "#e30000",
-        //             strokeDashArray: 0,
-        //         }
-        //     ],
-        // },
+        },
     }
+
+    // if (userProps.variable === 'temperature') {
+    //     chartOptions = {
+    //         ...chartOptions,
+    //         annotations: { //Line for Critical Values
+    //             yaxis: [
+    //                 {
+    //                     y: 1.5,
+    //                     borderColor: "#e30000",
+    //                     strokeDashArray: 0,
+    //                 },
+    //             ],
+    //         },
+    //     }
+    // }
 
     return (
         <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'}
@@ -104,12 +110,12 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
                 <Text color={'white'} fontWeight={'bold'} marginLeft={'1.5rem'}>{userProps.name}</Text>
                 <Spacer/>
                 <Text color={'white'} fontWeight={'bold'}>Range</Text>
-                <Select width={'5rem'} height={'2rem'} color={'white'} bg={'#2D3748'} variant='outline'
-                _hover={{bg: "#3b485d"}} onChange={(e) => range.current = e.target.value}>
-                        <option value={10_000}>10s</option>
-                        <option value={20_000}>20s</option>
-                        <option value={30_000}>30s</option>
-                        <option value={60_000}>60s</option>
+                <Select width={'5rem'} height={'2.1rem'} color={'white'} bg={'#2D3748'} variant='outline'
+                        _hover={{bg: "#3b485d"}} onChange={(e) => range.current = e.target.value}>
+                    <option value={10_000}>10s</option>
+                    <option value={20_000}>20s</option>
+                    <option value={30_000}>30s</option>
+                    <option value={60_000}>60s</option>
                 </Select>
                 {data &&
                     <Button
@@ -118,13 +124,13 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
                     </Button>}
             </HStack>
             {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
-                data ? <ReactApexChart
-                        height={'320px'}
+                data ?
+                    <ReactApexChart
                         options={chartOptions}
                         series={chartData}
                         type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
                     :
-                    <Center marginTop={'10rem'}>
+                    <Center marginTop={'8.2rem'}>
                         <Spinner
                             thickness='4px'
                             speed='0.65s'
