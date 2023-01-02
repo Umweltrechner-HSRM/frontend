@@ -11,7 +11,7 @@ import {
     ModalHeader,
     ModalCloseButton,
     ModalBody,
-    ModalFooter, Flex, Box, Center, VStack, Spacer,
+    ModalFooter, Flex, Box, Center, VStack, Spacer, Stack,
 } from "@chakra-ui/react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
@@ -25,7 +25,7 @@ import CreateDashboard from "../components/CreateDashboard.jsx";
 import AddChart from "../components/AddChart.jsx";
 
 function convertData(json) {
-    return {x: json.timestamp, y: +json.value}
+    return {x: json.timestamp, y: +json.value.toFixed(2)}
 }
 
 const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}) => {
@@ -57,7 +57,7 @@ const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}
 let client = null
 
 const Dashboard = () => {
-    const [tabIndex, setTabIndex] = useState(0)
+    const [tabIndex, setTabIndex] = useState(+localStorage.getItem('tabIndex') || 0)
     const [filteredDashboardComps, setFilteredDashboardComps] = useState(null)
     const queryClient = useQueryClient()
     const [data, setData] = useState({})
@@ -66,6 +66,7 @@ const Dashboard = () => {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const stompSubs = useRef({})
     const TabProps = useContext(DashboardTabsContext)
+    const [animation, setAnimation] = useState(true)
 
 
     const {data: dashboards} = useQuery(['dashboards'],
@@ -162,11 +163,15 @@ const Dashboard = () => {
             stompSubs.current[variable]?.unsubscribe()
             stompSubs.current[variable] = null
         })
-        TabProps.setTabData({dashboards, setTabIndex, setEditState})
+        TabProps.setTabData({dashboards, setTabIndex, setEditState, editState})
         if (dashboards && tabIndex !== dashboards.data.length) {
             setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
         }
     }, [tabIndex, dashboards])
+
+    useEffect(() => {
+        TabProps.setTabData({dashboards, setTabIndex, setEditState, editState})
+    }, [editState])
 
 
     useEffect(() => {
@@ -187,10 +192,12 @@ const Dashboard = () => {
                                     const tempData = {...prev}
                                     if (!prev[comp.variable]) {
                                         tempData[comp.variable] = [convertData(msgJson)]
-                                    } else {
+                                    }
+                                    if (prev[comp.variable] && prev[comp.variable].at(-1).x !== convertData(msgJson).x) {
                                         tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
-                                        if (tempData[comp.variable].length > 300) {
-                                            tempData[comp.variable] = tempData[comp.variable].slice(-10)
+                                        if (tempData[comp.variable].length > 100) {
+                                            setAnimation(false)
+                                            tempData[comp.variable] = tempData[comp.variable].slice(-35)
                                         }
                                     }
                                     return tempData
@@ -207,7 +214,7 @@ const Dashboard = () => {
         };
     }, [filteredDashboardComps, tabIndex, dashboards]);
 
-    // console.log('data',data)
+    console.log('data',data)
     // console.log('subs',stompSubs.current)
     const dashboardSelected = (tabIndex !== dashboards?.data.length)
 
@@ -231,7 +238,7 @@ const Dashboard = () => {
                 {dashboardSelected &&
                     filteredDashboardComps?.components.map(chart => {
                         return (
-                            <Chart key={chart.id} userProps={{name: chart.name, color: chart.variableColor,
+                            <Chart setAnimation={setAnimation} animation={animation} key={chart.id} userProps={{name: chart.name, color: chart.variableColor,
                                 type: chart.type, variable: chart.variable}}
                                    data={data[chart.variable]} editState={editState}
                                    id={chart.id} deleteComponent={deleteComponent}/>
@@ -244,15 +251,18 @@ const Dashboard = () => {
                     <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{
                         display: 'flex', alignItems: 'center',
                         justifyContent: 'center'}} borderWidth={'0.2rem'} borderColor={'#363636'}>
-                        <VStack>
-                            <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
-                            <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT mode to add charts.</Text>
-                        </VStack>
+                        <Box style={{padding: 20, backgroundColor: '#4b4b4b', margin: 30, borderRadius: '0.5rem'}}>
+                            <Stack spacing={3}>
+                                <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
+                                <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT Mode to add charts.</Text>
+                            </Stack>
+                        </Box>
                     </Box>
                 }
             </div>
         </>
     );
 };
+
 
 export default Dashboard;
