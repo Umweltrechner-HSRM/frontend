@@ -16,15 +16,15 @@ function SensorRow({data, thresholds}) {
 
     return (
         <Tr>
-            <Td width={"10%"}><Checkbox bg='#04B4AE' isChecked={check} onChange={(e) => {
+            <Td><Checkbox bg='#04B4AE' isChecked={check} onChange={(e) => {
                 setCheck(!check);
                 handleChange(data,'','');
             }}/></Td>
-            <Td width={"30%"}><Box bg='#0B615E' color='white' p='2.5' borderRadius='15px' align={'center'}>
+            <Td><Box bg='#0B615E' color='white' p='2.5' borderRadius='15px' align={'center'}>
                 {data}</Box></Td>
-            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).minThreshold}
+            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).minThreshold}
                                      onChange={(e) => handleChange(data,e.target.value,varList.find(({name})=> name===data).maxThreshold)}/></Td>
-            <Td width={"30%"}><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).maxThreshold}
+            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).maxThreshold}
                                      onChange={(e) => handleChange(data,varList.find(({name})=> name===data).minThreshold,e.target.value)}/></Td>
         </Tr>
     );

@@ -1,11 +1,11 @@
 import React from 'react'
-import AlertSystem from "../components/AlertSystem";
+import DatasetsAlert from "../components/DatasetsAlert.jsx";
 
 
 const Datasets = () => {
     return (
         <>
-            <AlertSystem/>
+            <DatasetsAlert/>
         </>
     )
 }

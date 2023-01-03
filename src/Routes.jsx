@@ -4,7 +4,7 @@ import Settings from "./views/Settings.jsx";
 import ChartTest from "./views/ChartTest.jsx";
 import React from "react";
 import CreateChart from "./views/CreateChart.jsx";
-import Datasets from "./components/AlertSystem.jsx";
+import Datasets from "./views/Datasets.jsx";
 
 const ClientRoutes = [
     {
