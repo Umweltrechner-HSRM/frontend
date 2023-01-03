@@ -1,46 +1,97 @@
-import { Button, Text, HStack, useQuery } from "@chakra-ui/react";
+import { Button, Text, HStack} from "@chakra-ui/react";
 import { useKeycloak } from "@react-keycloak/web";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useState } from "react";
 
-const validate = async (token) => {
-    let resp = await fetch("http://localhost:8230/api/formula/validate", {
-      credentials: 'include',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        ContentType: "application/json",
-      }
-    });
-    return await resp.json();
+const validate = async (token,form) => {
+  let resp = await fetch("http://localhost:8230/api/formula/validate", {
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(form)
+  });
+  if (!resp.ok) {
+    // create error object and reject if not a 2xx response code
+    let err = new Error("HTTP status code: " + resp.status)
+    err.response = resp
+    err.status = resp.status
+    throw err
   }
 
+  return await resp;
+}
 
+function ValidateButton({token,form,setReturnMessage}){
+  const {isFetching, error, isSuccess, refetch} = useQuery({
+    queryKey: ['validate'],
+    queryFn: () => validate(token,form),
+    enabled: false,
+    retry: false,
+  })
 
-function ValidationButtons(){
-    let validateMessage = ''
+  let msg = 'Nothing Validated'
+  if(isFetching){
+    msg = 'Validating...'
+  }
+  if(error){
+    msg = 'Invalid'
+  }
+  if(isSuccess){
+    msg = 'Valid'
+  }
 
-    const {keycloak} = useKeycloak()
+  useEffect(() =>{
+    setReturnMessage(msg)
+  })
 
-    const {data, isLoading, error, isSuccess} = useQuery({
-        queryKey:['validate'],
-        queryFn: () => validate(keycloak.token)
-    })
+  return(
+    <Button onClick={refetch}>Validate</Button>
+  )
+}
 
-    if(isLoading){
-        validateMessage='Loading...'
-    }
-    if(error){
-        validateMessage='Error'
-    }
-    if(isSuccess){
-        validateMessage='Success'
-    }
+const save = async (token,form) => {
+  let resp = await fetch("http://localhost:8230/api/formula/add",{
+    method: "POST",
+    credentials: 'include',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      
+    },
+    body:JSON.stringify(form)
+  })
+  return await resp
+}
 
-    return(
-        <HStack>
-            <Text>{validateMessage}</Text>
-            <Button>Validate</Button>
-            <Button>Validate & Save</Button>
-        </HStack>
-    )
+function SaveButton({token,form,setReturnMessage}){
+  const {isFetching, error, isSuccess, refetch} = useQuery({
+    queryKey: ['save/validate'],
+    queryFn: () => save(token,form),
+    enabled: false
+  })
+
+  return(
+    <Button onClick={refetch}>Add</Button>
+  )
+}
+
+function ValidationButtons({form}){
+  const [message, setMessage] = useState()
+  let tmpForm = {formula: 'test2 := 6'}
+  form = {formula: form}
+  const {keycloak} = useKeycloak()
+  
+  return(
+    <HStack>
+      <Text>{message}</Text>
+      <ValidateButton token={keycloak.token} form={form} setReturnMessage={setMessage} />
+      <SaveButton token={keycloak.token} form={form} setReturnMessage={setMessage} />
+    </HStack>
+  )
 }
 
 export default ValidationButtons

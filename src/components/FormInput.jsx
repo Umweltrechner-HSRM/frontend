@@ -45,7 +45,7 @@ function connectToClient(sensors){
 }
 
 function connectSensors(sensors){
-  console.log("sensors:",sensors)
+  //console.log("sensors:",sensors)
   sensors.forEach((sensor, index) =>{
     client.subscribe(sensor.link,(msg) =>{
       let msgJson = JSON.parse(msg.body)
@@ -64,9 +64,9 @@ function getValidWords(input, sensors){
   let inArray = input.split(/(?:\n| )+/)
   let valid = sensors.map(sen => sen.name.toLowerCase())
 
-  console.log("sensors:",sensors)
-  console.log("valid:", valid)
-  console.log("inArray:",inArray)
+  //console.log("sensors:",sensors)
+  //console.log("valid:", valid)
+  //console.log("inArray:",inArray)
 
   inArray.forEach(inItem => {
     if(valid.includes(inItem.toLowerCase())){
@@ -78,11 +78,11 @@ function getValidWords(input, sensors){
       res.push(sensors[index])
     }*/
   })
-  console.log("res:",res)
+  //console.log("res:",res)
   return res
 }
 
-function InputField({sensors, setDisplayValue, setSensorData}){
+function InputField({sensors, setDisplayValue, setSensorData, setInputValue}){
 
   const [lastSelected, setSelected] = useState()
   const [displaySelected, setDisplay] = useState()
@@ -94,17 +94,18 @@ function InputField({sensors, setDisplayValue, setSensorData}){
   
   function onChangeHandler(e){
     let input = e.target.value
+    setInputValue(input)
     validWords = getValidWords(input, sensors)
-    console.log("validWords:",validWords)
+    //console.log("validWords:",validWords)
     //TODO change this to after form validation
     setSensorData(validWords)
     //end of TODO
-    console.log("connectedMessages:",connectedMessages)
+    //console.log("connectedMessages:",connectedMessages)
     setDisplayValue((curr) =>{
       let res = []
       let msgNames = connectedMessages.map(msg => msg.name.toLowerCase())
       validWords.forEach(val => {
-        console.log("val:",val)
+        //console.log("val:",val)
         let index = msgNames.indexOf(val.toLowerCase())
         if (index > -1){
           res.push(connectedMessages[index])
@@ -125,7 +126,7 @@ function InputField({sensors, setDisplayValue, setSensorData}){
     if(isOpen){
       onToggle();
       setDisplay(lastSelected);
-      console.log(lastSelected)
+      //console.log(lastSelected)
     }
   }
   function onClickHandler(e){
@@ -225,10 +226,10 @@ function DataTable({displayValue}){
           </Tr>
         </Thead>
         <Tbody>
-          {displayValue.map((item,index)=>{
+          {displayValue.map((item,dIndex)=>{
             let elems = Object.values(item)
             return(
-              <Tr key={index}>
+              <Tr key={dIndex}>
                 {elems.map((elem, index) => {
                   return(
                     <Td key={index}>{elem}</Td>
@@ -245,12 +246,13 @@ function DataTable({displayValue}){
 
 function FormInput({sensors, setSensorData}){
   const [displayValue, setDisplayValue] = useState([])
+  const [inputValue, setInputValue] = useState([])
   connectToClient(sensors);
 
   return(
     <Box>
-      <InputField sensors={sensors} setDisplayValue={setDisplayValue} setSensorData={setSensorData} />
-      <ValidationButtons />
+      <InputField sensors={sensors} setDisplayValue={setDisplayValue} setSensorData={setSensorData} setInputValue={setInputValue} />
+      <ValidationButtons form={inputValue} />
       <DataTable sensors={sensors} displayValue={displayValue} />
     </Box>
   );

@@ -54,7 +54,7 @@ function DatasetsFormula({setSensorData}) {
             divider={<StackDivider borderColor='inherit'/>}
         >
             <DataPreview channels={vars}/>
-            <FormInput sensors={CHANNELS} setSensorData={setSensorData} />
+            <FormInput sensors={vars} setSensorData={setSensorData} />
         </Stack>
         </div>
 
