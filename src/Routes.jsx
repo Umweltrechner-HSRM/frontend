@@ -15,9 +15,16 @@ const ClientRoutes = [
   {
     title: 'Manage Charts',
     icon: AiOutlineLineChart,
-    path: '/manageCharts',
-    element: <ManageCharts />,
-    permission: 'admin'
+    path: "/manageCharts",
+    element: <ManageCharts/>,
+    permission: "admin"
+  },
+  {
+    title: "Settings",
+    icon: FiSettings,
+    path: "/settings",
+    element: <Settings />,
+    permission: "admin"
   },
 ];
 

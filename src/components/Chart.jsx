@@ -65,22 +65,43 @@ const Chart = ({
     }
   ];
 
-  useEffect(() => {
-    setAnimation(true);
-  }, [animation]);
+    useEffect(() => {
+        setAnimation(true)
+    }, [data])
 
-  console.log(userProps.variable, animation);
-  let chartOptions = {
-    ...lineChartOptions,
-    chart: {
-      ...lineChartOptions.chart,
-      animations: {
-        enabled: animation,
-        easing: 'easeinout',
-        speed: 500,
-        animateGradually: {
-          enabled: true,
-          delay: 700
+    let chartOptions = {
+        ...lineChartOptions,
+        chart: {
+            ...lineChartOptions.chart,
+            animations: {
+                enabled: animation,
+                easing: 'easeinout',
+                speed: 500,
+                animateGradually: {
+                    enabled: true,
+                    delay: 700
+                },
+                dynamicAnimation: {
+                    enabled: true,
+                    speed: 700
+                }
+            },
+        },
+        title: {
+            show: false,
+        },
+        colors: [userProps.color],
+        fill: {
+            opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [1, 1],
+        },
+        yaxis: {
+            ...lineChartOptions.yaxis,
+            // max: Math.max.apply(Math, data?.slice(-50).map(d => d.y)),
+            // min: Math.min.apply(Math, data?.slice(-50).map(d => d.y)),
+        },
+        xaxis: {
+            ...lineChartOptions.xaxis,
+            range: range.current,
         },
         dynamicAnimation: {
           enabled: true,
@@ -121,78 +142,56 @@ const Chart = ({
   //     }
   // }
 
-  return (
-    <Box
-      height={'25rem'}
-      width={'38rem'}
-      borderRadius={'0.5rem'}
-      bg={'#363636'}
-      style={{ padding: '1rem', position: 'relative' }}
-      borderWidth={'0.2rem'}
-      borderColor={editState ? '#669ed5' : '#363636'}>
-      {editState && (
-        <IconButton
-          style={{ position: 'absolute', bottom: '23.4rem', left: '-0.9rem' }}
-          colorScheme="red"
-          size={'sm'}
-          isRound={true}
-          borderWidth={'2.5px'}
-          borderColor={'whitesmoke'}
-          icon={<RiDeleteBinLine />}
-          aria-label={'delete'}
-          onClick={() => deleteComponent(id)}></IconButton>
-      )}
-      <HStack>
-        <Text color={'white'} fontWeight={'bold'} marginLeft={'1.5rem'}>
-          {userProps.name}
-        </Text>
-        <Spacer />
-        <Text color={'white'} fontWeight={'bold'}>
-          Range
-        </Text>
-        <Select
-          width={'5rem'}
-          height={'2.1rem'}
-          color={'white'}
-          bg={'#2D3748'}
-          variant="outline"
-          _hover={{ bg: '#3b485d' }}
-          onChange={e => (range.current = e.target.value)}>
-          <option value={10_000}>10s</option>
-          <option value={20_000}>20s</option>
-          <option value={30_000}>30s</option>
-          <option value={60_000}>60s</option>
-        </Select>
-        {data && (
-          <Button
-            onClick={() => setInfoPressed(!infoPressed)}
-            colorScheme="teal"
-            size="sm">
-            {infoPressed ? 'Back' : 'Show Info'}
-          </Button>
-        )}
-      </HStack>
-      {infoPressed ? (
-        <InfoBox data={data} userProps={userProps} />
-      ) : data ? (
-        <ReactApexChart
-          options={chartOptions}
-          series={chartData}
-          type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}
-        />
-      ) : (
-        <Center marginTop={'8.2rem'}>
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </Center>
-      )}
-    </Box>
-  );
+    return (
+        <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'}
+             style={{padding: '1rem', position: 'relative'}}
+             borderWidth={'0.2rem'} borderColor={editState ? '#669ed5' : '#363636'}>
+            {editState &&
+                <IconButton style={{position: 'absolute', bottom: '23.4rem', left: '-0.9rem'}}
+                            colorScheme='red' size={'sm'} isRound={true}
+                            borderWidth={'2.5px'}
+                            borderColor={'whitesmoke'}
+                            icon={<RiDeleteBinLine/>} aria-label={'delete'}
+                            onClick={() => deleteComponent(id)}>
+                </IconButton>}
+            <HStack>
+                <Text color={'white'} fontWeight={'bold'} marginLeft={'1.5rem'}>{userProps.name}</Text>
+                <Spacer/>
+                <Text color={'white'} fontWeight={'bold'}>Range</Text>
+                <Select width={'5rem'} height={'2.1rem'} color={'white'} bg={'#2D3748'} variant='outline'
+                        _hover={{bg: "#3b485d"}} onChange={(e) => range.current = e.target.value}>
+                    <option value={10_000}>10s</option>
+                    <option value={20_000}>20s</option>
+                    <option value={30_000}>30s</option>
+                    <option value={40_000}>40s</option>
+                    <option value={50_000}>50s</option>
+                    <option value={60_000}>60s</option>
+                </Select>
+                {data &&
+                    <Button
+                        onClick={() => setInfoPressed(!infoPressed)} colorScheme='teal' size='sm'>
+                        {infoPressed ? 'Back' : 'Show Info'}
+                    </Button>}
+            </HStack>
+            {infoPressed ? <InfoBox data={data} userProps={userProps}/> :
+                data ?
+                    <ReactApexChart
+                        options={chartOptions}
+                        series={chartData}
+                        type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}/>
+                    :
+                    <Center marginTop={'8.2rem'}>
+                        <Spinner
+                            thickness='4px'
+                            speed='0.65s'
+                            emptyColor='gray.200'
+                            color='blue.500'
+                            size='xl'
+                        />
+                    </Center>
+            }
+        </Box>
+    )
 };
 
 export default Chart;
