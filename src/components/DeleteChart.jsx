@@ -14,7 +14,7 @@ function DeleteChart() {
     ['components'],
     async () => {
       return await axios.get(
-        `${getBaseURL()}api/dashboard//api/dashboard/components`,
+        `${getBaseURL()}/api/dashboard/components`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`

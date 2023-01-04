@@ -59,7 +59,7 @@ function CreateChart({ userProps, setUserProps }) {
 
   async function postComponent() {
     return await axios.post(
-      `${getBaseURL()}/api/sensor/api/dashboard/components`,
+      `${getBaseURL()}/api/dashboard/components`,
       {
         name: userProps.name,
         type: userProps.type,
