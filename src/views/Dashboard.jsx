@@ -27,7 +27,7 @@ import '../Grid.css';
 import { DashboardTabsContext } from '../App.jsx';
 import CreateDashboard from '../components/CreateDashboard.jsx';
 import AddChart from '../components/AddChart.jsx';
-import { getBaseURL } from '../helpers/api.jsx';
+import { getBaseURL, getWebSocketURL } from "../helpers/api.jsx";
 
 function convertData(json) {
   return { x: json.timestamp, y: +json.value.toFixed(2) };
@@ -207,7 +207,7 @@ const Dashboard = () => {
       });
       setData(dataCopy);
       client = new Client({
-        brokerURL: `wss://${getBaseURL()}/api/looping`,
+        brokerURL: `${getWebSocketURL()}/api/looping`,
         onConnect: () => {
           filteredDashboardComps.components.forEach(comp => {
             if (!stompSubs.current[comp.variable]) {
