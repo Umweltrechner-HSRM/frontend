@@ -207,7 +207,7 @@ const Dashboard = () => {
       });
       setData(dataCopy);
       client = new Client({
-        brokerURL: `ws://${getBaseURL()}/api/looping`,
+        brokerURL: `wss://${getBaseURL()}/api/looping`,
         onConnect: () => {
           filteredDashboardComps.components.forEach(comp => {
             if (!stompSubs.current[comp.variable]) {
