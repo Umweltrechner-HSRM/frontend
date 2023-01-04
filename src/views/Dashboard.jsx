@@ -21,6 +21,7 @@ import "../Grid.css"
 import {DashboardTabsContext} from "../App.jsx";
 import CreateDashboard from "../components/CreateDashboard.jsx";
 import AddChart from "../components/AddChart.jsx";
+import {useKeycloak} from "@react-keycloak/web";
 
 function convertData(json) {
     return {x: json.timestamp, y: +json.value.toFixed(2)}
@@ -66,7 +67,7 @@ const Dashboard = () => {
     const TabProps = useContext(DashboardTabsContext)
     const [animation, setAnimation] = useState(true)
     const [dashboardSelected, setDashboardSelected] = useState(null)
-
+    const {keycloak} = useKeycloak()
 
     const {data: dashboards} = useQuery(['dashboards'],
         async () => {
@@ -195,9 +196,9 @@ const Dashboard = () => {
                                     }
                                     if (prev[comp.variable] && prev[comp.variable].at(-1).x !== convertData(msgJson).x) {
                                         tempData[comp.variable] = [...prev[comp.variable], convertData(msgJson)]
-                                        if (tempData[comp.variable].length > 100) {
+                                        if (tempData[comp.variable].length > 150) {
                                             setAnimation(false)
-                                            tempData[comp.variable] = tempData[comp.variable].slice(-35)
+                                            tempData[comp.variable] = tempData[comp.variable].slice(-50)
                                         }
                                     }
                                     return tempData
@@ -229,8 +230,10 @@ const Dashboard = () => {
                             onClick={onOpen}>DELETE DASHBOARD</Button>
                     }
                     <Spacer/>
+                    {keycloak.hasRealmRole("admin") &&
                     <Button colorScheme={editState ? 'red' : 'blue'}
                         onClick={() => setEditState(!editState)}>{editState ? 'CANCEL' : 'EDIT MODE'}</Button>
+                    }
                 </Flex>
             }
             <div className={'dashboardGrid'}>

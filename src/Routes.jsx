@@ -18,7 +18,7 @@ const ClientRoutes = [
     icon: AiOutlineLineChart,
     path: "/manageCharts",
     element: <ManageCharts/>,
-    permission: null
+    permission: "admin"
   },
   {
     title: "Settings",
