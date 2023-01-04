@@ -1,7 +1,7 @@
-import { IconButton, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
-import { useKeycloak } from "@react-keycloak/web";
-import { FiLogOut } from "react-icons/fi";
+import { IconButton, useColorModeValue } from '@chakra-ui/react';
+import React from 'react';
+import { useKeycloak } from '@react-keycloak/web';
+import { FiLogOut } from 'react-icons/fi';
 
 const LogoutButton = () => {
   const { keycloak } = useKeycloak();
@@ -9,7 +9,7 @@ const LogoutButton = () => {
   return (
     <IconButton
       aria-label="Logout"
-      colorScheme={useColorModeValue("purple", "orange")}
+      colorScheme={useColorModeValue('purple', 'orange')}
       icon={<FiLogOut />}
       onClick={() => keycloak.logout()}
     />

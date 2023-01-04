@@ -1,17 +1,17 @@
 export const lineChartOptions = {
   chart: {
     toolbar: {
-      show: false,
-    },
+      show: false
+    }
   },
   tooltip: {
-    enabled: false,
+    enabled: false
   },
   dataLabels: {
-    enabled: false,
+    enabled: false
   },
   stroke: {
-    curve: "smooth",
+    curve: 'smooth'
   },
   // markers:{
   //     size: 2,
@@ -29,33 +29,32 @@ export const lineChartOptions = {
         colors: '#ffffff',
         fontSize: '12px',
         fontFamily: 'Helvetica, Arial, sans-serif',
-        fontWeight: 400,
+        fontWeight: 400
       },
       minHeight: 40
-    },
-
+    }
   },
   yaxis: {
     // max: 1.0,
     // min: -1.0,
     labels: {
-      formatter: function (value) {
-        return value.toFixed(2)
+      formatter: function(value) {
+        return value.toFixed(2);
       },
       style: {
         colors: '#ffffff',
         fontSize: '12px',
         fontFamily: 'Helvetica, Arial, sans-serif',
-        fontWeight: 400,
-      },
-    },
+        fontWeight: 400
+      }
+    }
   },
   legend: {
-    show: false,
+    show: false
   },
   grid: {
-    strokeDashArray: 5,
-  },
+    strokeDashArray: 5
+  }
 
   // fill: {
   //     type: "gradient",
