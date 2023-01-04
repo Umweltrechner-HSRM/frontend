@@ -3,7 +3,7 @@ export const getBaseURL = () => {
 };
 
 export const getWebSocketURL = () => {
-  return getBaseURL().contains('http') ? getBaseURL().replace('http', 'ws') : getBaseURL().replace('https', 'wss');
+  return getBaseURL().includes('http') ? getBaseURL().replace('http', 'ws') : getBaseURL().replace('https', 'wss');
 }
 
 export const getKeycloakURL = () => {
