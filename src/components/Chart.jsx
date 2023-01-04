@@ -40,9 +40,8 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
 
     useEffect(() => {
         setAnimation(true)
-    }, [animation])
+    }, [data])
 
-    console.log(userProps.variable, animation)
     let chartOptions = {
         ...lineChartOptions,
         chart: {
@@ -70,8 +69,8 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
         },
         yaxis: {
             ...lineChartOptions.yaxis,
-            // max: Math.max.apply(Math, data?.slice(-10).map(d => d.y)),
-            // min: Math.min.apply(Math, data?.slice(-10).map(d => d.y)),
+            // max: Math.max.apply(Math, data?.slice(-50).map(d => d.y)),
+            // min: Math.min.apply(Math, data?.slice(-50).map(d => d.y)),
         },
         xaxis: {
             ...lineChartOptions.xaxis,
@@ -115,6 +114,8 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
                     <option value={10_000}>10s</option>
                     <option value={20_000}>20s</option>
                     <option value={30_000}>30s</option>
+                    <option value={40_000}>40s</option>
+                    <option value={50_000}>50s</option>
                     <option value={60_000}>60s</option>
                 </Select>
                 {data &&
