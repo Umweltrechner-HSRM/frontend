@@ -13,14 +13,11 @@ function DeleteChart() {
   const getCharts = useQuery(
     ['components'],
     async () => {
-      return await axios.get(
-        `${getBaseURL()}/api/dashboard/components`,
-        {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`
-          }
+      return await axios.get(`${getBaseURL()}/api/dashboard/components`, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`
         }
-      );
+      });
     },
     {
       onSuccess: resp => {
