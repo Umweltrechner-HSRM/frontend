@@ -30,4 +30,4 @@ function DashboardTabs({setTabIndex, setEditState, dashboards, editState}) {
     )
 }
 
-export default DashboardTabs
+export default DashboardTabs;

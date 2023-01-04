@@ -1,9 +1,20 @@
-import {Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack, Center, Spinner, Select} from "@chakra-ui/react";
-import {useEffect, useRef, useState} from "react";
-import {lineChartOptions} from "../helpers/globals.js";
-import ReactApexChart from "react-apexcharts";
-import {RiDeleteBinLine} from "react-icons/ri"
-
+import {
+  Box,
+  Button,
+  Text,
+  Stack,
+  IconButton,
+  Flex,
+  Spacer,
+  HStack,
+  Center,
+  Spinner,
+  Select
+} from '@chakra-ui/react';
+import { useEffect, useRef, useState } from 'react';
+import { lineChartOptions } from '../helpers/globals.js';
+import ReactApexChart from 'react-apexcharts';
+import { RiDeleteBinLine } from 'react-icons/ri';
 
 // function criticalValueColor(value) {
 //     if (value > userChartOptions.criticalValue) {
@@ -13,30 +24,46 @@ import {RiDeleteBinLine} from "react-icons/ri"
 //     }
 // }
 
-function InfoBox({data, userProps}) {
-    const lastUpdate = (new Date(data?.at(-1)?.x)).toLocaleString('de', {timeZone: 'UTC'})
-    return (
-        <Box style={{padding: 20, backgroundColor: '#4b4b4b', margin: 30, borderRadius: '0.5rem'}}>
-            <Stack spacing={3}>
-                <Text fontWeight='bold'>Recent received value: {data.at(-1)?.y}</Text>
-                <Text fontWeight={'bold'}>Last Update: {lastUpdate}</Text>
-                {/*<Text fontWeight='bold'>Critical Value: {userChartOptions.criticalValue}</Text>*/}
-                <Text fontWeight='bold'>Variable used: {userProps.variable}</Text>
-            </Stack>
-        </Box>
-    )
+function InfoBox({ data, userProps }) {
+  const lastUpdate = new Date(data?.at(-1)?.x).toLocaleString('de', {
+    timeZone: 'UTC'
+  });
+  return (
+    <Box
+      style={{
+        padding: 20,
+        backgroundColor: '#4b4b4b',
+        margin: 30,
+        borderRadius: '0.5rem'
+      }}>
+      <Stack spacing={3}>
+        <Text fontWeight="bold">Recent received value: {data.at(-1)?.y}</Text>
+        <Text fontWeight={'bold'}>Last Update: {lastUpdate}</Text>
+        {/*<Text fontWeight='bold'>Critical Value: {userChartOptions.criticalValue}</Text>*/}
+        <Text fontWeight="bold">Variable used: {userProps.variable}</Text>
+      </Stack>
+    </Box>
+  );
 }
 
-const Chart = ({userProps, data, editState, id, deleteComponent, animation, setAnimation}) => {
-    const [infoPressed, setInfoPressed] = useState(false)
-    const range = useRef(10000)
+const Chart = ({
+  userProps,
+  data,
+  editState,
+  id,
+  deleteComponent,
+  animation,
+  setAnimation
+}) => {
+  const [infoPressed, setInfoPressed] = useState(false);
+  const range = useRef(10000);
 
-    const chartData = [
-        {
-            name: "sinus",
-            data: data
-        }
-    ]
+  const chartData = [
+    {
+      name: 'sinus',
+      data: data
+    }
+  ];
 
     useEffect(() => {
         setAnimation(true)
@@ -76,22 +103,44 @@ const Chart = ({userProps, data, editState, id, deleteComponent, animation, setA
             ...lineChartOptions.xaxis,
             range: range.current,
         },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 700
+        }
+      }
+    },
+    title: {
+      show: false
+    },
+    colors: [userProps.color],
+    fill: {
+      opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [1, 1]
+    },
+    yaxis: {
+      ...lineChartOptions.yaxis
+      // max: Math.max.apply(Math, data?.slice(-10).map(d => d.y)),
+      // min: Math.min.apply(Math, data?.slice(-10).map(d => d.y)),
+    },
+    xaxis: {
+      ...lineChartOptions.xaxis,
+      range: range.current
     }
+  };
 
-    // if (userProps.variable === 'temperature') {
-    //     chartOptions = {
-    //         ...chartOptions,
-    //         annotations: { //Line for Critical Values
-    //             yaxis: [
-    //                 {
-    //                     y: 1.5,
-    //                     borderColor: "#e30000",
-    //                     strokeDashArray: 0,
-    //                 },
-    //             ],
-    //         },
-    //     }
-    // }
+  // if (userProps.variable === 'temperature') {
+  //     chartOptions = {
+  //         ...chartOptions,
+  //         annotations: { //Line for Critical Values
+  //             yaxis: [
+  //                 {
+  //                     y: 1.5,
+  //                     borderColor: "#e30000",
+  //                     strokeDashArray: 0,
+  //                 },
+  //             ],
+  //         },
+  //     }
+  // }
 
     return (
         <Box height={'25rem'} width={'38rem'} borderRadius={'0.5rem'} bg={'#363636'}

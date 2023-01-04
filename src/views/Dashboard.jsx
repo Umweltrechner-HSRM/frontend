@@ -24,36 +24,45 @@ import AddChart from "../components/AddChart.jsx";
 import {useKeycloak} from "@react-keycloak/web";
 
 function convertData(json) {
-    return {x: json.timestamp, y: +json.value.toFixed(2)}
+  return { x: json.timestamp, y: +json.value.toFixed(2) };
 }
 
-const AreYouSure = React.memo(({isOpen, onClose, deleteDashboard, dashboardName}) => {
+const AreYouSure = React.memo(
+  ({ isOpen, onClose, deleteDashboard, dashboardName }) => {
     return (
-        <>
-            <Modal isCentered={true} marginTop={'4rem'} isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay/>
-                <ModalContent>
-                    <ModalHeader>Delete Dashboard {dashboardName}</ModalHeader>
-                    <ModalCloseButton/>
-                    <ModalBody>
-                        <Text color={'white'}>Are you sure?</Text>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={() => {
-                            deleteDashboard()
-                            onClose()
-                        }}>
-                            Yes
-                        </Button>
-                        <Button onClick={onClose}>Cancel</Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </>
-    )
-})
+      <>
+        <Modal
+          isCentered={true}
+          marginTop={'4rem'}
+          isOpen={isOpen}
+          onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Delete Dashboard {dashboardName}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text color={'white'}>Are you sure?</Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  deleteDashboard();
+                  onClose();
+                }}>
+                Yes
+              </Button>
+              <Button onClick={onClose}>Cancel</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
+    );
+  }
+);
 
-let client = null
+let client = null;
 
 const Dashboard = () => {
     const [tabIndex, setTabIndex] = useState(+localStorage.getItem('tabIndex') || 0)
@@ -69,111 +78,111 @@ const Dashboard = () => {
     const [dashboardSelected, setDashboardSelected] = useState(null)
     const {keycloak} = useKeycloak()
 
-    const {data: dashboards} = useQuery(['dashboards'],
-        async () => {
-            return await axios.get('http://localhost:8230/api/dashboard/', {
-                headers: {
-                    Authorization: `Bearer ${keycloak.token}`
-                }
-            })
-        }
-    )
-
-    const {mutate: addComponent} = useMutation(_addComponent, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['dashboards']).catch(console.log)
-        },
-        onError: (error) => {
-            if (error.response.status === 424) {
-                toast({
-                    title: 'Error adding chart',
-                    description: "Chart already added to Dashboard",
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                })
-            }
-        }
-    })
-
-    async function _addComponent(selectedComp) {
-        const existingComps = filteredDashboardComps.components.map(comp => {
-            return {id: comp.id, position: comp.position}
-        })
-        return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
-            {
-                id: dashboards.data[tabIndex].id,
-                name: dashboards.data[tabIndex].name,
-                components: [...existingComps,
-                    {
-                        id: selectedComp,
-                        position: existingComps.length
-                    }
-                ]
-            }, {
-                headers: {
-                    Authorization: `Bearer ${keycloak.token}`
-                }
-            }
-        )
+  const { mutate: addComponent } = useMutation(_addComponent, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
+    },
+    onError: error => {
+      if (error.response.status === 424) {
+        toast({
+          title: 'Error adding chart',
+          description: 'Chart already added to Dashboard',
+          status: 'error',
+          duration: 3000,
+          isClosable: true
+        });
+      }
     }
+  });
 
-    const {mutate: deleteComponent} = useMutation(_deleteComponent, {
-        onSuccess: () => {
-            queryClient.invalidateQueries(['dashboards']).catch(console.log)
+  async function _addComponent(selectedComp) {
+    const existingComps = filteredDashboardComps.components.map(comp => {
+      return { id: comp.id, position: comp.position };
+    });
+    return await axios.put(
+      `${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+      {
+        id: dashboards.data[tabIndex].id,
+        name: dashboards.data[tabIndex].name,
+        components: [
+          ...existingComps,
+          {
+            id: selectedComp,
+            position: existingComps.length
+          }
+        ]
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`
         }
-    })
+      }
+    );
+  }
 
-    async function _deleteComponent(id) {
-        const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id)
-        return await axios.put('http://localhost:8230/api/dashboard/' + dashboards.data[tabIndex].id,
-            {
-                id: filteredDashboardComps.id,
-                name: filteredDashboardComps.name,
-                components: newComps
-            }, {
-                headers: {
-                    Authorization: `Bearer ${keycloak.token}`
-                }
-            })
+  const { mutate: deleteComponent } = useMutation(_deleteComponent, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
     }
+  });
 
-    const {mutate: deleteDashboard} = useMutation(_deleteDashboard, {
-        onSuccess: () => {
-            setEditState(false)
-            queryClient.invalidateQueries(['dashboards']).catch(console.log)
-        },
-        onError: (error) => {
-            console.log(error)
+  async function _deleteComponent(id) {
+    const newComps = filteredDashboardComps.components.filter(
+      comp => comp.id !== id
+    );
+    return await axios.put(
+      `${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+      {
+        id: filteredDashboardComps.id,
+        name: filteredDashboardComps.name,
+        components: newComps
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`
         }
-    })
+      }
+    );
+  }
 
-    async function _deleteDashboard() {
-        const dashboardId = filteredDashboardComps.id
-        return await axios.delete('http://localhost:8230/api/dashboard/' + dashboardId,
-            {
-                headers: {
-                    Authorization: `Bearer ${keycloak.token}`
-                }
-            })
+  const { mutate: deleteDashboard } = useMutation(_deleteDashboard, {
+    onSuccess: () => {
+      setEditState(false);
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
+    },
+    onError: error => {
+      console.log(error);
     }
+  });
 
-    useEffect(() => {
-        setDashboardSelected(tabIndex < dashboards?.data.length)
-        Object.keys(stompSubs.current).forEach(variable => {
-            stompSubs.current[variable]?.unsubscribe()
-            stompSubs.current[variable] = null
-        })
-        TabProps.setTabData({dashboards, setTabIndex, setEditState, editState})
-        if (dashboards && tabIndex !== dashboards.data.length) {
-            setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0])
-        }
-    }, [tabIndex, dashboards])
+  async function _deleteDashboard() {
+    const dashboardId = filteredDashboardComps.id;
+    return await axios.delete(`${getBaseURL()}/api/dashboard/` + dashboardId, {
+      headers: {
+        Authorization: `Bearer ${keycloak.token}`
+      }
+    });
+  }
 
-    useEffect(() => {
-        TabProps.setTabData({dashboards, setTabIndex, setEditState, editState})
-    }, [editState])
+  useEffect(() => {
+    setDashboardSelected(tabIndex < dashboards?.data.length);
+    Object.keys(stompSubs.current).forEach(variable => {
+      stompSubs.current[variable]?.unsubscribe();
+      stompSubs.current[variable] = null;
+    });
+    TabProps.setTabData({ dashboards, setTabIndex, setEditState, editState });
+    if (dashboards && tabIndex !== dashboards.data.length) {
+      setFilteredDashboardComps(
+        dashboards.data.filter(
+          dashboard => dashboard.id === dashboards.data[tabIndex].id
+        )[0]
+      );
+    }
+  }, [tabIndex, dashboards]);
 
+  useEffect(() => {
+    TabProps.setTabData({ dashboards, setTabIndex, setEditState, editState });
+  }, [editState]);
 
     useEffect(() => {
         if (filteredDashboardComps) {
@@ -207,16 +216,20 @@ const Dashboard = () => {
                         }
                     })
                 }
-            });
-            client.activate();
+              );
+            }
+          });
         }
-        return () => {
-            client?.deactivate()
-        };
-    }, [filteredDashboardComps, tabIndex, dashboards]);
+      });
+      client.activate();
+    }
+    return () => {
+      client?.deactivate();
+    };
+  }, [filteredDashboardComps, tabIndex, dashboards]);
 
-    console.log('data',data)
-    // console.log('subs',stompSubs.current)
+  console.log('data', data);
+  // console.log('subs',stompSubs.current)
 
     return (dashboards &&
         <>
@@ -265,6 +278,5 @@ const Dashboard = () => {
         </>
     );
 };
-
 
 export default Dashboard;
