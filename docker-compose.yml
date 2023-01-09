@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  sensor_guard:
+    container_name: sensor_guard_frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:80'
