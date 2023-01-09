@@ -3,6 +3,7 @@ import { AiOutlineLineChart } from 'react-icons/ai';
 import Dashboard from './views/Dashboard.jsx';
 import React from 'react';
 import ManageCharts from './views/ManageCharts.jsx';
+import Datasets from "./views/Datasets.jsx";
 
 const ClientRoutes = [
   {
@@ -17,6 +18,13 @@ const ClientRoutes = [
     icon: AiOutlineLineChart,
     path: '/manageCharts',
     element: <ManageCharts />,
+    permission: 'admin'
+  },
+  {
+    title: 'Datasets',
+    icon: AiOutlineLineChart,
+    path: '/datasets',
+    element: <Datasets />,
     permission: 'admin'
   }
 ];

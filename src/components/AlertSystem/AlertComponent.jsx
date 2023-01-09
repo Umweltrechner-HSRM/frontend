@@ -1,5 +1,5 @@
 import {useKeycloak} from "@react-keycloak/web";
-import {Box, Button, Heading, useToast, VStack} from "@chakra-ui/react";
+import {Box, Button, Heading, useToast, VStack, Stack} from "@chakra-ui/react";
 import React from "react";
 import {useQuery} from "@tanstack/react-query";
 import TableCriticalValues from "./TableCriticalValues.jsx";
@@ -72,12 +72,14 @@ function AlertComponent({sensorData}) {
     return (
         <VStack align='stretch'>
             <Heading size='lg' color={'white'}>Alert System</Heading>
+            <Stack direction={{base: 'column', lg: 'row'}}>
             <Box>
                 <TableCriticalValues sensorData={sensorData} thresholds={thresholds}/>
             </Box>
             <Box>
                 <TableAlertType thresholds={thresholds}/>
             </Box>
+            </Stack>
             <Box>
                 <SaveButton thresholds={thresholds}/>
             </Box>
