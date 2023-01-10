@@ -94,7 +94,7 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
   // }
 
   return (
-    <Box height={"25rem"} width={"38rem"} borderRadius={"0.5rem"} bg={"#363636"}
+    <Box maxH={"25rem"} maxW={"38rem"} borderRadius={"0.5rem"} bg={"#363636"}
          style={{ padding: "1rem", position: "relative" }}
          borderWidth={"0.2rem"} borderColor={editState ? "#669ed5" : "#363636"}>
       {editState &&
@@ -131,7 +131,7 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
             series={chartData}
             type={userProps.type === "AREA_CHART" ? "area" : "line"} />
           :
-          <Center marginTop={"8.2rem"}>
+          <Center marginTop={"8.2rem"} marginBottom={'28%'}>
             <Spinner
               thickness="4px"
               speed="0.65s"

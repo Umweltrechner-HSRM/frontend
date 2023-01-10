@@ -61,7 +61,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
   return (
     <Box
       height={'25rem'}
-      width={'38rem'}
+      maxW={'38rem'}
       borderRadius={'0.5rem'}
       bg={'#363636'}
       style={{
