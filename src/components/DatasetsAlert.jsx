@@ -9,7 +9,7 @@ import AlertComponent from "./AlertSystem/AlertComponent.jsx";
 
 
 const DatasetsAlert = () => {
-    const [sensorData, setSensorData] = useState([{name: 'x'}, {name: 'var1'}])
+    const [sensorData, setSensorData] = useState([])
 
     return (
         <VStack ml={'10'} spacing={5} align='stretch'>

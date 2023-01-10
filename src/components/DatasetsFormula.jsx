@@ -40,9 +40,9 @@ function DatasetsFormula({setSensorData}) {
 
 
     let vars = []
-    data.forEach(item =>{
+    data.forEach((item) => {
         vars.push({name:item,link:`/topic/${item}`})
-    })
+    });
 
 
     return (
