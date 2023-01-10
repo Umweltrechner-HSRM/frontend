@@ -10,7 +10,7 @@ function SensorRow({data, thresholds}) {
     const [varList,setVarList] = useState(thresholds.variables);
 
     const handleChange = React.useCallback((name,minThreshold,maxThreshold) => {
-        let newVarList = varList.map(elem => elem.name===name ? Object.assign(elem,{minThreshold:minThreshold,maxThreshold:maxThreshold}) : elem);
+        let newVarList = thresholds.variables.map(elem => elem.name===name ? Object.assign(elem,{minThreshold:minThreshold,maxThreshold:maxThreshold}) : elem);
         setVarList(newVarList);
     },[varList]);
 
