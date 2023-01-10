@@ -1,11 +1,10 @@
-import Keycloak from "keycloak-js";
+import Keycloak from 'keycloak-js';
+import { getKeycloakURL } from './helpers/api.jsx';
 
-// Note: This needs to be transferred to a .env file
 const keycloak = new Keycloak({
-  url: "http://localhost:8084/auth",
-  realm: "Umweltrechner-keycloak",
-  clientId: "umweltrechner-frontend",
+  url: getKeycloakURL(),
+  realm: 'Umweltrechner-keycloak',
+  clientId: 'umweltrechner-frontend'
 });
-
 
 export default keycloak;

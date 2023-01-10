@@ -1,48 +1,24 @@
-import {FiArchive, FiActivity, FiCalendar, FiEdit, FiHome, FiSettings} from "react-icons/fi";
-import Dashboard from "./views/Dashboard.jsx";
-import Settings from "./views/Settings.jsx";
-import ChartTest from "./views/ChartTest.jsx";
-import React from "react";
-import CreateChart from "./views/CreateChart.jsx";
-import Datasets from "./components/AlertSystem.jsx";
+import { FiHome } from 'react-icons/fi';
+import { AiOutlineLineChart } from 'react-icons/ai';
+import Dashboard from './views/Dashboard.jsx';
+import React from 'react';
+import ManageCharts from './views/ManageCharts.jsx';
 
 const ClientRoutes = [
-    {
-        title: "Dashboard",
-        icon: FiHome,
-        path: "/",
-        element: <Dashboard/>,
-        permission: null
-    },
-    {
-        title: "Datasets",
-        icon: FiArchive,
-        path: "/datasets",
-        element: <Datasets/>,
-        permission: null
-    },
-    {
-        title: "Create Chart",
-        icon: FiEdit,
-        path: "/createChart",
-        element: <CreateChart/>,
-        permission: null
-    },
-    {
-        title: "Charts",
-        icon: FiActivity,
-        path: "/charts",
-        element: <ChartTest/>,
-        permission: null
-    },
-    {
-        title: "Settings",
-        icon: FiSettings,
-        path: "/settings",
-        element: <Settings/>,
-        permission: "admin"
-    }
+  {
+    title: 'Dashboard',
+    icon: FiHome,
+    path: '/',
+    element: <Dashboard />,
+    permission: null
+  },
+  {
+    title: 'Manage Charts',
+    icon: AiOutlineLineChart,
+    path: '/manageCharts',
+    element: <ManageCharts />,
+    permission: 'admin'
+  }
 ];
-
 
 export default ClientRoutes;
