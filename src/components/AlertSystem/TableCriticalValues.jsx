@@ -22,9 +22,9 @@ function SensorRow({data, thresholds}) {
             }}/></Td>
             <Td><Box bg='#0B615E' color='white' p='2.5' borderRadius='15px' align={'center'}>
                 {data}</Box></Td>
-            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).minThreshold}
+            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data)?.minThreshold}
                                      onChange={(e) => handleChange(data,e.target.value,varList.find(({name})=> name===data).maxThreshold)}/></Td>
-            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data).maxThreshold}
+            <Td><Input type='number' bg={'white'} color={'black'} isDisabled={!check} value={varList.find(({name})=> name===data)?.maxThreshold}
                                      onChange={(e) => handleChange(data,varList.find(({name})=> name===data).minThreshold,e.target.value)}/></Td>
         </Tr>
     );
@@ -32,8 +32,8 @@ function SensorRow({data, thresholds}) {
 
 function TableCriticalValues({sensorData, thresholds}) {
     const rows = [];
-    sensorData.forEach((data) => {
-            rows.push(<SensorRow data={data.name} key={data.name} thresholds={thresholds}/>);
+    sensorData.forEach((data, index) => {
+            rows.push(<SensorRow data={data.name} key={index} thresholds={thresholds}/>);
         }
     )
 

@@ -98,7 +98,7 @@ function InputField({sensors, setDisplayValue, setSensorData, setInputValue}){
     validWords = getValidWords(input, sensors)
     //console.log("validWords:",validWords)
     //TODO change this to after form validation
-    setSensorData(validWords)
+    setSensorData(validWords.map(item => {return{name:item}}))
     //end of TODO
     //console.log("connectedMessages:",connectedMessages)
     setDisplayValue((curr) =>{

@@ -11,7 +11,7 @@ const CHANNELS = [
 ]
 
 const fetchVariables = async (token) => {
-    let resp = await fetch("http://localhost:8230/api/variable", {
+    let resp = await fetch("http://localhost:8230/api/variable/getAllVariables", {
         credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -26,7 +26,7 @@ const fetchVariables = async (token) => {
 function DatasetsFormula({setSensorData}) {
     const {keycloak} = useKeycloak()
 
-    const{data, isLoading, error} = useQuery({
+    const{data, isLoading, error, isFetching} = useQuery({
         queryKey: ['variables'],
         queryFn:() => fetchVariables(keycloak.token),
     })
@@ -37,12 +37,12 @@ function DatasetsFormula({setSensorData}) {
     if(error){
         return <div>Error</div>
     }
-
-
     let vars = []
-    data.forEach(item =>{
-        vars.push({name:item,link:`/topic/${item}`})
-    })
+    if(!isFetching){
+      data.forEach(item =>{
+        vars.push({name:item.name,link:`/topic/${item.name}`})
+      })
+    }  
 
 
     return (
