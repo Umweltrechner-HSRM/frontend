@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Heading } from '@chakra-ui/react';
 import ChartPreview from '../components/ChartPreview.jsx';
 import DeleteChart from '../components/DeleteChart.jsx';
-import '../Grid.css';
+import '../styles/Grid.css';
 import CreateChart from '../components/CreateChart.jsx';
 
 function ManageCharts() {

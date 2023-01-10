@@ -30,7 +30,7 @@ function CreateChart({ userProps, setUserProps }) {
   useQuery(
     ['variables'],
     async () => {
-      return await axios.get(`${getBaseURL()}/api/sensor`, {
+      return await axios.get(`${getBaseURL()}/api/variable/getAllVariables`, {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
         }
