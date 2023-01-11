@@ -121,26 +121,17 @@ const Chart = ({
   // }
 
   return (
-    <Box
-      maxH={'25rem'}
-      maxW={'38rem'}
-      borderRadius={'0.5rem'}
-      bg={'#363636'}
-      style={{ padding: '1rem', position: 'relative' }}
-      borderWidth={'0.2rem'}
-      borderColor={editState ? '#669ed5' : '#363636'}>
-      {editState && (
-        <IconButton
-          style={{ position: 'absolute', bottom: '23.4rem', left: '-0.9rem' }}
-          colorScheme="red"
-          size={'sm'}
-          isRound={true}
-          borderWidth={'2.5px'}
-          borderColor={'whitesmoke'}
-          icon={<RiDeleteBinLine />}
-          aria-label={'delete'}
-          onClick={() => deleteComponent(id)}></IconButton>
-      )}
+    <Box borderRadius={"0.5rem"} bg={"#363636"}
+         style={{ padding: "1rem"}}
+         borderWidth={"0.2rem"} borderColor={editState ? "#669ed5" : "#363636"}>
+      {editState &&
+        <IconButton style={{ position: "absolute", bottom: "23.6rem", left: "-0.5rem" }}
+                    colorScheme="red" size={"sm"} isRound={true}
+                    borderWidth={"2.5px"}
+                    borderColor={"whitesmoke"}
+                    icon={<RiDeleteBinLine />} aria-label={"delete"}
+                    onClick={() => deleteComponent(id)}>
+        </IconButton>}
       <HStack>
         <Text color={'white'} fontWeight={'bold'} marginLeft={'1.5rem'}>
           {userProps.name}

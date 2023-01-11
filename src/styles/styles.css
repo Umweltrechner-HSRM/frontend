@@ -14,6 +14,18 @@
   margin: 2rem 4rem 1rem 1rem;
 }
 
+.grabbable {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+}
+
+/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }
+
+
