@@ -17,7 +17,7 @@ import keycloak from '../keycloak.js';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Chart from '../components/Chart.jsx';
 import { Client } from '@stomp/stompjs';
-import '../styles/Grid.css';
+import '../styles/styles.css';
 import { DashboardTabsContext } from '../App.jsx';
 import CreateDashboard from '../components/CreateDashboard.jsx';
 import AddChart from '../components/AddChart.jsx';
@@ -318,7 +318,7 @@ const Dashboard = () => {
           {dashboardSelected &&
             filteredDashboardComps?.components.map((chart) => {
               return (
-                <Box key={chart.id} position={'relative'}>
+                <Box key={chart.id} position={'relative'} className={editState ? 'grabbable' : null}>
                   <Chart setAnimation={setAnimation} animation={animation} userProps={{
                     name: chart.name, color: chart.variableColor,
                     type: chart.type, variable: chart.variable

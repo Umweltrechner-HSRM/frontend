@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Heading } from '@chakra-ui/react';
 import ChartPreview from '../components/ChartPreview.jsx';
 import DeleteChart from '../components/DeleteChart.jsx';
-import '../styles/Grid.css';
+import '../styles/styles.css';
 import CreateChart from '../components/CreateChart.jsx';
 import GridLayout from "react-grid-layout";
 
