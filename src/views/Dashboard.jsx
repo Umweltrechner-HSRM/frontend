@@ -274,7 +274,7 @@ const Dashboard = () => {
     newLayout.current = layout;
   };
 
-  // console.log('data', data);
+  console.log('data', data);
   // console.log('subs',stompSubs.current)
   // console.log(breakpoint);
 
