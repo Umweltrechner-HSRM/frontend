@@ -59,9 +59,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
   }, [components, plusClicked, filteredDashboardComps]);
 
   return (
-    <Box
-      height={'25rem'}
-      maxW={'38rem'}
+    <Box mr={'0.6rem'} ml={'0.6rem'} mt={'1rem'}
       borderRadius={'0.5rem'}
       bg={'#363636'}
       style={{
@@ -72,7 +70,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
       borderWidth={'0.2rem'}
       borderColor={'#363636'}>
       {plusClicked && !noMoreComps && (
-        <Flex gap={'0.3rem'} direction={'column'}>
+        <Flex gap={'0.3rem'} direction={'column'} mt={'2rem'} mb={'2.3rem'}>
           <Text color={'white'}>Select Chart</Text>
           <Select
             bg={'blue.700'}
@@ -100,10 +98,10 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
         </Flex>
       )}
       {!plusClicked && !noMoreComps && (
-        <IconButton
+        <IconButton mt={'2rem'} mb={'2rem'}
           style={{ width: '8rem', height: '8rem' }}
           bg={'#696969'}
-          icon={<HiOutlinePlusSm size={'6rem'} />}
+          icon={<HiOutlinePlusSm size={"70%"} />}
           color={'whitesmoke'}
           isRound={true}
           aria-label={'addChart'}

@@ -94,11 +94,11 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
   // }
 
   return (
-    <Box maxH={"25rem"} maxW={"38rem"} borderRadius={"0.5rem"} bg={"#363636"}
-         style={{ padding: "1rem", position: "relative" }}
+    <Box borderRadius={"0.5rem"} bg={"#363636"}
+         style={{ padding: "1rem"}}
          borderWidth={"0.2rem"} borderColor={editState ? "#669ed5" : "#363636"}>
       {editState &&
-        <IconButton style={{ position: "absolute", bottom: "23.4rem", left: "-0.9rem" }}
+        <IconButton style={{ position: "absolute", bottom: "23.6rem", left: "-0.5rem" }}
                     colorScheme="red" size={"sm"} isRound={true}
                     borderWidth={"2.5px"}
                     borderColor={"whitesmoke"}

@@ -10,19 +10,22 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter, Flex, Box, Center, VStack, Spacer, Stack
-} from "@chakra-ui/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import keycloak from "../keycloak.js";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import Chart from "../components/Chart.jsx";
-import { Client } from "@stomp/stompjs";
-import "../Grid.css";
-import { DashboardTabsContext } from "../App.jsx";
-import CreateDashboard from "../components/CreateDashboard.jsx";
-import AddChart from "../components/AddChart.jsx";
-import { useKeycloak } from "@react-keycloak/web";
-import { getBaseURL, getWebSocketURL } from "../helpers/api.jsx";
+} from '@chakra-ui/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import keycloak from '../keycloak.js';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import Chart from '../components/Chart.jsx';
+import { Client } from '@stomp/stompjs';
+import '../styles/Grid.css';
+import { DashboardTabsContext } from '../App.jsx';
+import CreateDashboard from '../components/CreateDashboard.jsx';
+import AddChart from '../components/AddChart.jsx';
+import { useKeycloak } from '@react-keycloak/web';
+import { getBaseURL, getWebSocketURL } from '../helpers/api.jsx';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 function convertData(json) {
   return { x: json.timestamp, y: +json.value.toFixed(2) };
@@ -31,16 +34,16 @@ function convertData(json) {
 const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName }) => {
   return (
     <>
-      <Modal isCentered={true} marginTop={"4rem"} isOpen={isOpen} onClose={onClose}>
+      <Modal isCentered={true} marginTop={'4rem'} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Delete Dashboard {dashboardName}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text color={"white"}>Are you sure?</Text>
+            <Text color={'white'}>Are you sure?</Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={() => {
+            <Button colorScheme='blue' mr={3} onClick={() => {
               deleteDashboard();
               onClose();
             }}>
@@ -55,9 +58,10 @@ const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName
 });
 
 let client = null;
+localStorage.setItem('layout', '');
 
 const Dashboard = () => {
-  const [tabIndex, setTabIndex] = useState(+localStorage.getItem("tabIndex") || 0);
+  const [tabIndex, setTabIndex] = useState(+localStorage.getItem('tabIndex') || 0);
   const [filteredDashboardComps, setFilteredDashboardComps] = useState(null);
   const queryClient = useQueryClient();
   const [data, setData] = useState({});
@@ -69,8 +73,12 @@ const Dashboard = () => {
   const [animation, setAnimation] = useState(true);
   const [dashboardSelected, setDashboardSelected] = useState(null);
   const { keycloak } = useKeycloak();
+  const [layout, setLayout] = useState([]);
+  const newLayout = useRef(null);
+  const [breakpoint, setBreakpoint] = useState('lg');
 
-  const { data: dashboards } = useQuery(["dashboards"],
+
+  const { data: dashboards } = useQuery(['dashboards'],
     async () => {
       return await axios.get(`${getBaseURL()}/api/dashboard/`, {
         headers: {
@@ -82,14 +90,14 @@ const Dashboard = () => {
 
   const { mutate: addComponent } = useMutation(_addComponent, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["dashboards"]).catch(console.log);
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
     },
     onError: (error) => {
       if (error.response.status === 424) {
         toast({
-          title: "Error adding chart",
-          description: "Chart already added to Dashboard",
-          status: "error",
+          title: 'Error adding chart',
+          description: 'Chart already added to Dashboard',
+          status: 'error',
           duration: 3000,
           isClosable: true
         });
@@ -98,19 +106,54 @@ const Dashboard = () => {
   });
 
   async function _addComponent(selectedComp) {
-    const existingComps = filteredDashboardComps.components.map(comp => {
-      return { id: comp.id, position: comp.position };
+    const existingComps = filteredDashboardComps.components.map(comp => comp.id);
+    return await axios.put(`${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+      {
+        id: dashboards.data[tabIndex].id,
+        name: dashboards.data[tabIndex].name,
+        components: [...existingComps, selectedComp]
+      }, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`
+        }
+      }
+    );
+  }
+
+  const { mutate: changeLayout } = useMutation(_changeLayout, {
+    onSuccess: (resp) => {
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
+      setEditState(!editState)
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
+  function compare(a, b) {
+    if (a.position < b.position) {
+      return -1;
+    }
+    if (a.position > b.position) {
+      return 1;
+    }
+    return 0;
+  }
+
+  async function _changeLayout() {
+    if (newLayout.current === null) {
+      setEditState(!editState)
+      return;
+    }
+    const changedLayout = newLayout?.current.map((comp) => {
+      const pos = (comp.x % 3) + comp.y * 3;
+      return { id: comp.i, position: pos };
     });
     return await axios.put(`${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
       {
         id: dashboards.data[tabIndex].id,
         name: dashboards.data[tabIndex].name,
-        components: [...existingComps,
-          {
-            id: selectedComp,
-            position: existingComps.length
-          }
-        ]
+        components: changedLayout.sort(compare).map((comp) => comp.id)
       }, {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
@@ -121,7 +164,7 @@ const Dashboard = () => {
 
   const { mutate: deleteComponent } = useMutation(_deleteComponent, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["dashboards"]).catch(console.log);
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
     }
   });
 
@@ -131,7 +174,7 @@ const Dashboard = () => {
       {
         id: filteredDashboardComps.id,
         name: filteredDashboardComps.name,
-        components: newComps
+        components: newComps.map(comp => comp.id)
       }, {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
@@ -142,7 +185,7 @@ const Dashboard = () => {
   const { mutate: deleteDashboard } = useMutation(_deleteDashboard, {
     onSuccess: () => {
       setEditState(false);
-      queryClient.invalidateQueries(["dashboards"]).catch(console.log);
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
     },
     onError: (error) => {
       console.log(error);
@@ -160,6 +203,7 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
+    setLayout(null);
     setDashboardSelected(tabIndex < dashboards?.data.length);
     Object.keys(stompSubs.current).forEach(variable => {
       stompSubs.current[variable]?.unsubscribe();
@@ -168,10 +212,20 @@ const Dashboard = () => {
     TabProps.setTabData({ dashboards, setTabIndex, setEditState, editState });
     if (dashboards && tabIndex !== dashboards.data.length) {
       setFilteredDashboardComps(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0]);
+      setLayout(dashboards.data.filter(dashboard => dashboard.id === dashboards.data[tabIndex].id)[0].components.map((comp, index) => {
+        return {
+          i: comp.id,
+          x: index % 3,
+          y: Math.floor(index / 3),
+          w: 1,
+          h: 1
+        };
+      }));
     }
   }, [tabIndex, dashboards]);
 
   useEffect(() => {
+    newLayout.current = null;
     TabProps.setTabData({ dashboards, setTabIndex, setEditState, editState });
   }, [editState]);
 
@@ -188,7 +242,7 @@ const Dashboard = () => {
         onConnect: () => {
           filteredDashboardComps.components.forEach(comp => {
             if (!stompSubs.current[comp.variable]) {
-              stompSubs.current[comp.variable] = client.subscribe("/topic/" + comp.variable, (msg) => {
+              stompSubs.current[comp.variable] = client.subscribe('/topic/' + comp.variable, (msg) => {
                 let msgJson = JSON.parse(msg.body);
                 setData(prev => {
                   const tempData = { ...prev };
@@ -216,8 +270,15 @@ const Dashboard = () => {
     };
   }, [filteredDashboardComps, tabIndex, dashboards]);
 
-  console.log("data", data);
+  const handleLayoutChange = (layout) => {
+    newLayout.current = layout;
+  };
+
+  // console.log('data', data);
   // console.log('subs',stompSubs.current)
+  // console.log(breakpoint);
+
+  const bpToHeight = {lg: 400, md: 450, sm: 600, xs: 500, xxs: 400};
 
   return (dashboards &&
     <>
@@ -225,48 +286,66 @@ const Dashboard = () => {
                   deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name} />
       {!dashboardSelected && <CreateDashboard />}
       {dashboardSelected &&
-        <Flex marginRight={"2rem"}>
+        <Flex marginRight={'2rem'}>
           {editState &&
-            <Button marginLeft="1rem" colorScheme={"red"}
+            <Button marginLeft='1rem' colorScheme={'red'}
                     onClick={onOpen}>DELETE DASHBOARD</Button>
           }
           <Spacer />
-          {keycloak.hasRealmRole("admin") &&
-            <Button colorScheme={editState ? "red" : "blue"}
-                    onClick={() => setEditState(!editState)}>{editState ? "CANCEL" : "EDIT MODE"}</Button>
+          {keycloak.hasRealmRole('admin') &&
+            <Button colorScheme={editState ? 'teal' : 'blue'}
+                    onClick={() => {
+                      changeLayout()
+                    }}>{editState ? 'EXIT EDIT MODE' : 'EDIT MODE'}</Button>
           }
         </Flex>
       }
-      <div className={"dashboardGrid"}>
-        {dashboardSelected &&
-          filteredDashboardComps?.components.map(chart => {
-            return (
-              <Chart setAnimation={setAnimation} animation={animation} key={chart.id} userProps={{
-                name: chart.name, color: chart.variableColor,
-                type: chart.type, variable: chart.variable
-              }}
-                     data={data[chart.variable]} editState={editState}
-                     id={chart.id} deleteComponent={deleteComponent} />
-            );
-          })
-        }
-        {dashboardSelected && editState &&
-          <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps}
-                    editState={editState} />}
-        {filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
-          <Box height={"25rem"} width={"38rem"} borderRadius={"0.5rem"} bg={"#363636"} style={{
-            display: "flex", alignItems: "center",
-            justifyContent: "center"
-          }} borderWidth={"0.2rem"} borderColor={"#363636"}>
-            <Box style={{ padding: 20, backgroundColor: "#4b4b4b", margin: 30, borderRadius: "0.5rem" }}>
+      {dashboardSelected && editState &&
+        <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps}
+                  editState={editState} />
+      }
+      {layout &&
+        <ResponsiveGridLayout style={{ position: 'relative', marginTop: '1rem' }}
+                              layouts={{ lg: layout }}
+                              breakpoints={{ lg: 1300, md: 900, sm: 700, xs: 500, xxs: 300 }}
+                              cols={{ lg: 3, md: 2, sm: 1, xs: 1, xxs: 1 }}
+                              onBreakpointChange={(bp) => setBreakpoint(bp)}
+                              rowHeight={bpToHeight[breakpoint]}
+                              width={800}
+                              isDraggable={editState}
+                              onLayoutChange={handleLayoutChange}
+                              compactType={'horizontal'}>
+          {dashboardSelected &&
+            filteredDashboardComps?.components.map((chart) => {
+              return (
+                <Box key={chart.id} position={'relative'}>
+                  <Chart setAnimation={setAnimation} animation={animation} userProps={{
+                    name: chart.name, color: chart.variableColor,
+                    type: chart.type, variable: chart.variable
+                  }}
+                         data={data[chart.variable]} editState={editState}
+                         id={chart.id} deleteComponent={deleteComponent} />
+                </Box>
+              );
+            })
+          }
+        </ResponsiveGridLayout>
+      }
+      {filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
+        <Box mr={'0.6rem'} ml={'0.6rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'center'
+        }} borderWidth={'0.2rem'} borderColor={'#363636'}>
+          <Flex gap={'0.3rem'} direction={'column'} mt={'2rem'} mb={'2.3rem'}>
+            <Box mt={'0.2rem'} mb={'0.2rem'} style={{ padding: 20, backgroundColor: '#4b4b4b', borderRadius: '0.5rem' }}>
               <Stack spacing={3}>
-                <Text fontWeight="bold" fontSize={"1.3rem"}>No charts added yet.</Text>
-                <Text fontWeight="bold" fontSize={"1.3rem"}>Activate EDIT Mode to add charts.</Text>
+                <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
+                <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT Mode to add charts.</Text>
               </Stack>
             </Box>
-          </Box>
-        }
-      </div>
+          </Flex>
+        </Box>
+      }
     </>
   );
 };
