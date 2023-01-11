@@ -27,9 +27,11 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+
 function convertData(json) {
   return { x: json.timestamp, y: +json.value.toFixed(2) };
 }
+
 
 const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName }) => {
   return (
@@ -57,6 +59,7 @@ const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName
   );
 });
 
+
 let client = null;
 localStorage.setItem('layout', '');
 
@@ -67,7 +70,16 @@ const Dashboard = () => {
   const [data, setData] = useState({});
   const [editState, setEditState] = useState(false);
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete
+  } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit
+  } = useDisclosure();
   const stompSubs = useRef({});
   const TabProps = useContext(DashboardTabsContext);
   const [animation, setAnimation] = useState(true);
@@ -92,7 +104,7 @@ const Dashboard = () => {
     onSuccess: () => {
       queryClient.invalidateQueries(['dashboards']).catch(console.log);
     },
-    onError: (error) => {
+    onError: error => {
       if (error.response.status === 424) {
         toast({
           title: 'Error adding chart',
@@ -149,7 +161,8 @@ const Dashboard = () => {
       const pos = (comp.x % 3) + comp.y * 3;
       return { id: comp.i, position: pos };
     });
-    return await axios.put(`${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+    return await axios.put(
+      `${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
       {
         id: dashboards.data[tabIndex].id,
         name: dashboards.data[tabIndex].name,
@@ -169,8 +182,11 @@ const Dashboard = () => {
   });
 
   async function _deleteComponent(id) {
-    const newComps = filteredDashboardComps.components.filter(comp => comp.id !== id);
-    return await axios.put(`${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+    const newComps = filteredDashboardComps.components.filter(
+      comp => comp.id !== id
+    );
+    return await axios.put(
+      `${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
       {
         id: filteredDashboardComps.id,
         name: filteredDashboardComps.name,
@@ -179,7 +195,8 @@ const Dashboard = () => {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
         }
-      });
+      }
+    );
   }
 
   const { mutate: deleteDashboard } = useMutation(_deleteDashboard, {
@@ -187,19 +204,40 @@ const Dashboard = () => {
       setEditState(false);
       queryClient.invalidateQueries(['dashboards']).catch(console.log);
     },
-    onError: (error) => {
+    onError: error => {
       console.log(error);
     }
   });
 
   async function _deleteDashboard() {
     const dashboardId = filteredDashboardComps.id;
-    return await axios.delete(`${getBaseURL()}/api/dashboard/` + dashboardId,
+    return await axios.delete(`${getBaseURL()}/api/dashboard/` + dashboardId, {
+      headers: {
+        Authorization: `Bearer ${keycloak.token}`
+      }
+    });
+  }
+
+  const { mutate: editDashboardName } = useMutation(_editDashboardName, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dashboards']).catch(console.log);
+    }
+  });
+
+  async function _editDashboardName(newName) {
+    return await axios.put(
+      `${getBaseURL()}/api/dashboard/` + dashboards.data[tabIndex].id,
+      {
+        id: dashboards.data[tabIndex].id,
+        name: newName,
+        components: filteredDashboardComps.components
+      },
       {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
         }
-      });
+      }
+    );
   }
 
   useEffect(() => {
@@ -229,7 +267,6 @@ const Dashboard = () => {
     TabProps.setTabData({ dashboards, setTabIndex, setEditState, editState });
   }, [editState]);
 
-
   useEffect(() => {
     if (filteredDashboardComps) {
       const dataCopy = {};
@@ -255,10 +292,10 @@ const Dashboard = () => {
                       setAnimation(false);
                       tempData[comp.variable] = tempData[comp.variable].slice(-50);
                     }
-                  }
-                  return tempData;
-                });
-              });
+                    return tempData;
+                  });
+                }
+              );
             }
           });
         }
@@ -349,6 +386,5 @@ const Dashboard = () => {
     </>
   );
 };
-
 
 export default Dashboard;
