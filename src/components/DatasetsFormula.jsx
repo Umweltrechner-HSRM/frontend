@@ -3,6 +3,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import { useQuery } from "@tanstack/react-query";
 import DataPreview from "./DataPreview.jsx";
 import FormInput from "./FormInput.jsx";
+import Test from "./FormInput/FormulaInput.jsx";
 
 const CHANNELS = [
     {name: 'Temperature', link: '/topic/temperature'},
@@ -20,8 +21,6 @@ const fetchVariables = async (token) => {
       });
       return await resp.json();
 }
-
-
 
 function DatasetsFormula({setSensorData}) {
     const {keycloak} = useKeycloak()
@@ -57,7 +56,6 @@ function DatasetsFormula({setSensorData}) {
             <FormInput sensors={vars} setSensorData={setSensorData} />
         </Stack>
         </div>
-
     )
 }
 

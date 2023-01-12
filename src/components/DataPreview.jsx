@@ -20,7 +20,7 @@ import {
     Textarea,
   } from "@chakra-ui/react";
 import { Client } from "@stomp/stompjs";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 let client = null;
 let connected = false;
@@ -28,12 +28,10 @@ let connected = false;
 
 function DataSelection({setLastMessage, channels}){
   const [subscription, setSubscription] = useState('');
-  const [selected, setSelected] = useState('');
 
   function handleChange(e){
 
     if (subscription !== '' ) {
-      setSelected(e.target.value);
       subscription.unsubscribe();
       client.unsubscribe();
       connected = false;
@@ -51,8 +49,8 @@ function DataSelection({setLastMessage, channels}){
       let msgJson = JSON.parse(msg.body);
       setLastMessage((curr) => limitData(curr, msgJson)); 
       connected = true;
-      console.log("Subscribe to", e.target.value);
     }))
+    console.log("Subscribe to", e.target.value);
     
     
     

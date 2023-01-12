@@ -6,6 +6,7 @@ import {
 import React, {useState} from "react";
 import DatasetsFormula from './DatasetsFormula.jsx'
 import AlertComponent from "./AlertSystem/AlertComponent.jsx";
+import FormulaInput from "./FormInput/FormulaInput.jsx";
 
 
 const DatasetsAlert = () => {
@@ -17,7 +18,12 @@ const DatasetsAlert = () => {
                 <Heading>Datasets</Heading>
             </Box>
             <Box>
-                <DatasetsFormula setSensorData={setSensorData}/>
+                
+                <FormulaInput />
+                
+                
+                {//<DatasetsFormula setSensorData={setSensorData}/>
+                }
             </Box>
             <Box>
                 <AlertComponent sensorData={sensorData}></AlertComponent>
