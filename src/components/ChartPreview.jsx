@@ -3,6 +3,7 @@ import Chart from 'react-apexcharts';
 import React from 'react';
 
 function ChartPreview({ userProps }) {
+
   const series = [
     {
       type: 'area',
@@ -27,7 +28,7 @@ function ChartPreview({ userProps }) {
     fill: {
       opacity: userProps.type === 'AREA_CHART' ? [0.35, 1] : [0, 0]
     },
-    colors: [userProps.color || '#00e7b0'],
+    colors: [userProps.variableColor || '#00e7b0'],
     tooltip: {
       enabled: false
     },
@@ -35,7 +36,7 @@ function ChartPreview({ userProps }) {
       enabled: false
     },
     stroke: {
-      curve: 'straight'
+      curve: userProps.stroke || 'smooth'
     },
     title: {
       text: userProps.name || 'Chart Name',
@@ -50,8 +51,6 @@ function ChartPreview({ userProps }) {
     xaxis: {
       labels: {
         show: true,
-        rotate: -50,
-        rotateAlways: true,
         hideOverlappingLabels: true,
         showDuplicates: false,
         trim: false,
@@ -78,12 +77,8 @@ function ChartPreview({ userProps }) {
   };
 
   return (
-    <Box
-      height={'360px'}
-      borderRadius={5}
-      bg={'#363636'}
-      style={{ padding: '1rem' }}>
-      <Text
+    <Box>
+      <Text align={'right'} mr={'2.5rem'}
         color={'white'}
         fontSize={'20'}
         fontWeight={'bold'}
@@ -91,7 +86,8 @@ function ChartPreview({ userProps }) {
         Chart Preview
       </Text>
       <Chart
-        height={'320px'}
+        height={'150%'}
+        width={'130%'}
         options={options}
         series={series}
         type={userProps.type === 'AREA_CHART' ? 'area' : 'line'}

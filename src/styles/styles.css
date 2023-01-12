@@ -14,6 +14,21 @@
   margin: 2rem 4rem 1rem 1rem;
 }
 
+.tableFixHead {
+    overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
+    height: 45rem; /* gives an initial height of 200px to the table */
+}
+.tableFixHead thead th {
+    height: 3.5rem;
+    background-color: #2a2c48;
+    color: white;
+    font-size: 16px;
+    font-family: Helvetica, Arial, sans-serif;
+    position: sticky; /* make the table heads sticky */
+    top: 0px; /* table head will be placed from the top of the table and sticks to it */
+    z-index: 2; /* make sure the table head is always on top of the table body */
+}
+
 .grabbable {
     cursor: move; /* fallback if grab cursor is unsupported */
     cursor: grab;
