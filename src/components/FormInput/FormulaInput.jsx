@@ -176,9 +176,7 @@ function TextInput({setInput}){
       resize='none'
       placeholder="Input Formula"
       onChange={handleChange}
-    >
-
-    </Textarea>
+    />
   )
 }
 function Validation({input}){
@@ -209,16 +207,16 @@ function Validation({input}){
   const {} = useQuery({
     queryKey: ['add'],
     queryFn: async () => {
-      return await axios.post(`${getBaseURL()}/api/formula/validate`,
+      return await axios.post(`${getBaseURL()}/api/formula/add`,
         {
           formula: input
         },
         {headers: {
           Authorization: `Bearer ${keycloak.token}`
         }},
-        
       )},
-      enabled: false
+      enabled: false,
+      onSuccess: () => console.log('TODO: delete text in textarea')
   })
 
 
@@ -227,6 +225,7 @@ function Validation({input}){
   }
   function handleAdd(){
     queryClient.fetchQuery(['add'])
+    queryClient.fetchQuery(['formulas'])
   }
 
   return(
@@ -240,13 +239,32 @@ function Validation({input}){
   )
 }
 function FormString(){
+  const [formulas, setFormulas] = useState()
+
+
+  const {} = useQuery({
+    queryKey: ['formulas'],
+    queryFn: async () => {
+      return await axios.get(`${getBaseURL()}/api/formula`,
+        {headers: {
+          Authorization: `Bearer ${keycloak.token}`
+        }}
+      )},
+      onSuccess: (resp) => {
+        let formulas = []
+        resp.data.forEach(item => formulas.push(item.formula))
+        let message = formulas.join('\n')
+        setFormulas(message)
+      }
+  })
+
+
   return(
     <Textarea
     resize='none'
     readOnly
-    value='String of all Forms:
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.'
     height='170px'
+    value={formulas}
     />
       
   )
