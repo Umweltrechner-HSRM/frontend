@@ -4,6 +4,7 @@ import Dashboard from './views/Dashboard.jsx';
 import React from 'react';
 import ManageCharts from './views/ManageCharts.jsx';
 import Datasets from "./views/Datasets.jsx";
+import {CgAlbum} from "react-icons/all.js";
 
 const ClientRoutes = [
   {
@@ -22,7 +23,7 @@ const ClientRoutes = [
   },
   {
     title: 'Datasets',
-    icon: AiOutlineLineChart,
+    icon: CgAlbum,
     path: '/datasets',
     element: <Datasets />,
     permission: 'admin'

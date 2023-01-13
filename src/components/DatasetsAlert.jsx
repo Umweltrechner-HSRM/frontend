@@ -4,7 +4,7 @@ import {
     Heading,
 } from "@chakra-ui/react";
 import React, {useState} from "react";
-import DatasetsFormula from './DatasetsFormula.jsx'
+import FormulaInput from "./FormInput/FormulaInput.jsx";
 import AlertComponent from "./AlertSystem/AlertComponent.jsx";
 
 
@@ -17,7 +17,7 @@ const DatasetsAlert = () => {
                 <Heading>Datasets</Heading>
             </Box>
             <Box>
-                <DatasetsFormula setSensorData={setSensorData}/>
+                <FormulaInput setSensorData={setSensorData}/>
             </Box>
             <Box>
                 <AlertComponent sensorData={sensorData}></AlertComponent>

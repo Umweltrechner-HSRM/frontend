@@ -1,17 +1,44 @@
 import {useKeycloak} from "@react-keycloak/web";
-import {Box, Button, Heading, useToast, VStack, ModalContent, ModalCloseButton, ModalOverlay,ModalBody, Modal, ModalFooter, ModalHeader, Text, useDisclosure} from "@chakra-ui/react";
+import {
+    Box,
+    Button,
+    Heading,
+    useToast,
+    VStack,
+    Stack,
+    ModalContent,
+    ModalCloseButton,
+    ModalOverlay,
+    ModalBody,
+    Modal,
+    ModalFooter,
+    ModalHeader,
+    Text,
+    useDisclosure,
+    StackDivider
+} from "@chakra-ui/react";
 import React from "react";
 import {useQuery} from "@tanstack/react-query";
 import TableCriticalValues from "./TableCriticalValues.jsx";
 import TableAlertType from "./TableAlertType.jsx";
-import '../../Grid.css'
 import {getKeyValue} from "eslint-plugin-react/lib/util/ast.js";
 import axios from "axios";
 import {getBaseURL} from "../../helpers/api.jsx";
 import keycloak from "../../keycloak.js";
 
-//noch offen: Längere Variablennamen testen,  evtl. useContext einbauen,
-// Rückmeldung an User bei Erfolg
+const boxStyle = {
+    backgroundColor: '#333',
+    borderRadius: 20,
+    color: '#eee',
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    margin: 30,
+    alignItems: 'center',
+    width: 530,
+    height: 350
+}
 
 const regExEMail = new RegExp('^(?:[a-z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*|"' +
     '(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")' +
@@ -19,21 +46,6 @@ const regExEMail = new RegExp('^(?:[a-z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\\.[a-z0-9!
     '[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:' +
     '(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])$');
 
-
-/*function SuccessModal({isOpen,onClose}) {
-    return (
-        <Modal isCentered isOpen={isOpen} onClose={onClose}>
-            <ModalHeader textAlign={'center'} fontWeight={'bold'} fontSize={'1.7rem'}
-                         color={'white'}>Alarmwerte wurden erfolgreich gesendet</ModalHeader>
-            <ModalBody textAlign={'center'} pb={6}>
-                <Text color={'white'}>Text.</Text>
-            </ModalBody>
-            <ModalFooter justifyContent={'center'}>
-                <Button width={'100%'} onClick={onClose} colorScheme='blue' mb={4}>Schließen</Button>
-            </ModalFooter>
-        </Modal>
-    )
-*/
 
 async function fetchThresholds(token,thresholds){
     console.log(thresholds)
@@ -81,7 +93,7 @@ function SaveButton({thresholds}) {
 
     return (
         <>
-        <Button onClick={handleClick}>SAVE</Button>
+        <Button onClick={handleClick}>SAVE ALERTS</Button>
         {isOpen && <Modal isCentered isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent >
@@ -115,48 +127,27 @@ function AlertComponent({sensorData}) {
         })), mail: '', mobile: ''
     };
 
-    /*const {error, refetch, isSuccess} = useQuery(["sendthres"], () => fetchThresholds(keycloak.token, thresholds),
-        {
-            enabled: false,
-            onSuccess: () => {onOpen(); console.log(thresholds)}
-        });
-
-    const handleClick = () => {
-        if(thresholds.mail==='' || regExEMail.test(thresholds.mail)){
-            for (const [key, value] of Object.entries(thresholds)) {
-                successMessage = successMessage.concat(`${key}: ${value}`);
-                console.log(successMessage)
-            };
-            refetch();
-            return;
-        }
-        else{
-            toast({
-                description: 'The E-Mail adress provided is invalid',
-                status: 'error',
-                duration: 1000,
-                isClosable: true
-            })
-        }
-    }*/
-
     return (
-        <>
+        <Box>
         <VStack align='stretch'>
             <Heading size='lg' color={'white'}>Alert System</Heading>
-            <div className={'grid'}>
-            <Box>
+            <Stack
+                align = 'flex-start'
+                direction={{base: 'column', lg: 'row'}}
+                dividers={<StackDivider borderColor='inherit' />}
+            >
+            <Box style={boxStyle}>
                 <TableCriticalValues sensorData={sensorData} thresholds={thresholds}/>
             </Box>
-            <Box>
+            <Box style={boxStyle}>
                 <TableAlertType thresholds={thresholds}/>
             </Box>
-            </div>
+            </Stack>
             <Box>
                 <SaveButton thresholds={thresholds}/>
             </Box>
         </VStack>
-        </>
+        </Box>
     );
 }
 
