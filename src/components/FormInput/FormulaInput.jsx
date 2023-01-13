@@ -224,6 +224,7 @@ function Validation({input, channels, setSensorData}){
         }},
       )},
       enabled: false,
+      retry:false,
       onSuccess: () => {
         console.log('TODO: delete text in textarea')
         queryClient.fetchQuery(['formulas'])
@@ -248,7 +249,6 @@ function Validation({input, channels, setSensorData}){
         result.push(inItem)
       }
     }) 
-    console.log(result.map(item => {return{name:item}}))
     setSensorData(result.map(item => {return{name:item}}))
 
   }
@@ -340,7 +340,6 @@ function limitData(currentData, message) {
 function FormulaInput({setSensorData}){
   const [lastMessage, setLastMessage] = useState([])
   const [channels, setChannels] = useState([])
-  console.log('Channels:', channels)
   
 
   //connect to WebSocket for receiving variable data
