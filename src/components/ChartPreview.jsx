@@ -35,17 +35,30 @@ function ChartPreview({ userProps }) {
     dataLabels: {
       enabled: false
     },
+    grid: {
+      strokeDashArray: 5
+    },
     stroke: {
       curve: userProps.stroke || 'smooth'
     },
     title: {
       text: userProps.name || 'Chart Name',
+      offsetX: 10,
       style: {
         fontSize: '14px',
         fontWeight: 'bold',
         fontFamily: 'Helvetica, Arial, sans-serif',
-        color: '#ffffff'
+        color: '#ffffff',
       }
+    },
+    markers: {
+      size: 3,
+      strokeWidth: 2,
+      colors: [userProps.variableColor || '#00e7b0'],
+      strokeOpacity: 0.7,
+      strokeColor: '#fff',
+      fillOpacity: 1,
+
     },
     labels: series[0].data.map(_data => _data[0]),
     xaxis: {

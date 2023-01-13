@@ -15,11 +15,13 @@ import { getBaseURL } from '../helpers/api.jsx';
 
 const colors = {
   Teal: '#00e7b0',
-  White: '#ffffff',
-  Blue: '#0741ff',
+  Blue: '#00b0ff',
   Yellow: '#f5e13c',
-  Purple: '#6f65ff',
-  Green: '#44ff55'
+  Purple: '#a500ff',
+  Green: '#44ff55',
+  Orange: '#ff8c00',
+  Pink: '#ff55a3',
+  White: '#ffffff',
 };
 
 function CreateChart({ userProps, setUserProps }) {
@@ -106,7 +108,7 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text color={'white'}>Select Color</Text>
           <Select
-            color={'white'}
+            color={userProps.variableColor || '#00e7b0'}
             value={userProps.variableColor}
             bg={'#2D3748'}
             variant='outline'
@@ -115,7 +117,7 @@ function CreateChart({ userProps, setUserProps }) {
               setUserProps({ ...userProps, variableColor: e.target.value })
             }>
             {Object.keys(colors).map(color => (
-              <option key={color} value={colors[color]}>
+              <option key={color} value={colors[color]} style={{color: colors[color]}}>
                 {color}
               </option>
             ))}
