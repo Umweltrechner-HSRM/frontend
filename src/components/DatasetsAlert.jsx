@@ -4,13 +4,13 @@ import {
     Heading,
 } from "@chakra-ui/react";
 import React, {useState} from "react";
-import DatasetsFormula from './DatasetsFormula.jsx'
 import AlertComponent from "./AlertSystem/AlertComponent.jsx";
 import FormulaInput from "./FormInput/FormulaInput.jsx";
 
 
 const DatasetsAlert = () => {
-    const [sensorData, setSensorData] = useState([{name: 'x'}, {name: 'var1'}])
+    const [sensorData, setSensorData] = useState([])
+    console.log(sensorData)
 
     return (
         <VStack ml={'10'} spacing={5} align='stretch'>
@@ -19,11 +19,8 @@ const DatasetsAlert = () => {
             </Box>
             <Box>
                 
-                <FormulaInput />
-                
-                
-                {//<DatasetsFormula setSensorData={setSensorData}/>
-                }
+                <FormulaInput setSensorData={setSensorData}/>
+
             </Box>
             <Box>
                 <AlertComponent sensorData={sensorData}></AlertComponent>

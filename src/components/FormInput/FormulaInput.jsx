@@ -47,9 +47,9 @@ let client = null
 //Everything used in the Data Preview
 //MAYBE TODO: Change this to a multi select that shows only latest value
 //            of all the variables selected
-function DataSelect({setLastMessage}){
+function DataSelect({setLastMessage, channels, setChannels}){
   const [subscription, setSubscription] = useState('')
-  const [channels, setChannels] = useState([])
+  
 
   const queryClient = useQueryClient()
 
@@ -62,9 +62,7 @@ function DataSelect({setLastMessage}){
         }
       })
     },
-    enabled: false,
     onSuccess: (resp) =>{
-      //TODO build Channels with {name: tmp, link: topic/tmp}
       let data = resp.data
       let result = []
       data.forEach(item => result.push({name: item.name, link:`/topic/${item.name}`}))
@@ -72,9 +70,6 @@ function DataSelect({setLastMessage}){
     }
 
   }) 
-  
-
-
   function handleChange(e){
     if (subscription !== '' ) {
       subscription.unsubscribe();
@@ -91,7 +86,6 @@ function DataSelect({setLastMessage}){
       setLastMessage((curr) => limitData(curr, msgJson)); 
     }))
   }
-
   function handleClick(){
     queryClient.fetchQuery(['variables'])
   }
@@ -151,13 +145,18 @@ function DataTable({lastMessage}){
     </TableContainer>
   )
 }
-function DataPreviewComponent({setLastMessage, lastMessage}){
+function DataPreviewComponent({setLastMessage, lastMessage, channels, setChannels}){
+  //TODO: Change Select to Multiselect and show only latest Value of all selected Variables
   return(
     <Box
       style={boxStyle}
     >
       <VStack>
-        <DataSelect setLastMessage={setLastMessage}/>
+        <DataSelect 
+          setLastMessage={setLastMessage}
+          channels={channels}
+          setChannels={setChannels}
+        />
         <DataTable lastMessage={lastMessage}/>
       </VStack>
     </Box>
@@ -168,7 +167,16 @@ function DataPreviewComponent({setLastMessage, lastMessage}){
 //Everything used to Input a Formula
 function TextInput({setInput}){
   function handleChange(e){
-    setInput(e.target.value)
+    let input = e.target.value;
+
+    //TODO: get valid Variables and send them to AlertSystem.
+    //TODO: maybe send them to Multiselect
+    setInput(input)
+    
+    
+
+
+
   }
 
   return(
@@ -179,7 +187,7 @@ function TextInput({setInput}){
     />
   )
 }
-function Validation({input}){
+function Validation({input, channels, setSensorData}){
   const queryClient = useQueryClient()
   const [validationText, setValidationText] = useState('Nothing Validated')
 
@@ -216,7 +224,11 @@ function Validation({input}){
         }},
       )},
       enabled: false,
-      onSuccess: () => console.log('TODO: delete text in textarea')
+      onSuccess: () => {
+        console.log('TODO: delete text in textarea')
+        queryClient.fetchQuery(['formulas'])
+       
+      }
   })
 
 
@@ -225,7 +237,20 @@ function Validation({input}){
   }
   function handleAdd(){
     queryClient.fetchQuery(['add'])
-    queryClient.fetchQuery(['formulas'])
+
+    queryClient.fetchQuery(['variables'])
+
+    let result = []
+    let inArray = input.split(/(?:\n| )+/)
+    let valid = channels.map(sen => sen.name.toLowerCase())
+    inArray.forEach((inItem) => {
+      if(valid.includes(inItem.toLowerCase())){
+        result.push(inItem)
+      }
+    }) 
+    console.log(result.map(item => {return{name:item}}))
+    setSensorData(result.map(item => {return{name:item}}))
+
   }
 
   return(
@@ -269,15 +294,21 @@ function FormString(){
       
   )
 }
-function FormInputComponent(){
+function FormInputComponent({setSensorData, channels}){
   const [input, setInput] = useState('')
   return(
     <Box
       style={boxStyle}
     >
       <VStack>
-        <TextInput setInput={setInput} />
-        <Validation input={input} />
+        <TextInput 
+          setInput={setInput}
+        />
+        <Validation 
+          input={input} 
+          channels={channels}
+          setSensorData={setSensorData}
+        />
         <FormString />
       </VStack>
 
@@ -306,8 +337,11 @@ function limitData(currentData, message) {
   return [message,...currentData];
 }
 
-function FormulaInput(){
+function FormulaInput({setSensorData}){
   const [lastMessage, setLastMessage] = useState([])
+  const [channels, setChannels] = useState([])
+  console.log('Channels:', channels)
+  
 
   //connect to WebSocket for receiving variable data
   connectToClient();
@@ -322,9 +356,13 @@ function FormulaInput(){
         <DataPreviewComponent 
           setLastMessage={setLastMessage} 
           lastMessage={lastMessage}
-          
+          channels={channels}
+          setChannels={setChannels}
         />
-        <FormInputComponent />
+        <FormInputComponent 
+          setSensorData={setSensorData}
+          channels={channels}
+        />
       </Stack>
     </Box>
   )
