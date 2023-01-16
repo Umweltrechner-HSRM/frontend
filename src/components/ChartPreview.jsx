@@ -51,15 +51,6 @@ function ChartPreview({ userProps }) {
         color: '#ffffff',
       }
     },
-    markers: {
-      size: 3,
-      strokeWidth: 2,
-      colors: [userProps.variableColor || '#00e7b0'],
-      strokeOpacity: 0.7,
-      strokeColor: '#fff',
-      fillOpacity: 1,
-
-    },
     labels: series[0].data.map(_data => _data[0]),
     xaxis: {
       labels: {

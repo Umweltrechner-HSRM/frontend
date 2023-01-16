@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { lineChartOptions } from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { getBaseURL } from '../helpers/api.jsx';
+import keycloak from '../keycloak.js';
 
 
 // function criticalValueColor(value) {
@@ -16,7 +20,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 function InfoBox({ data, userProps }) {
   const lastUpdate = (new Date(data?.at(-1)?.x)).toLocaleString("de", { timeZone: "UTC" });
   return (
-    <Box style={{ padding: 20, backgroundColor: "#4b4b4b", margin: 30, borderRadius: "0.5rem" }}>
+    <Box style={{ padding: 20, backgroundColor: "#4b4b4b", margin: "15% 10% 15% 10%", borderRadius: "0.5rem" }}>
       <Stack spacing={3}>
         <Text fontWeight="bold">Recent received value: {data.at(-1)?.y}</Text>
         <Text fontWeight={"bold"}>Last Update: {lastUpdate}</Text>
@@ -60,12 +64,15 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
         }
       }
     },
+    stroke: {
+      curve: userProps.stroke.toLowerCase() || "smooth",
+    },
     title: {
       show: false
     },
     colors: [userProps.color],
     fill: {
-      opacity: userProps.type === "AREA_CHART" ? [0.35, 1] : [1, 1]
+      opacity: userProps.type === "AREA_CHART" ? [0.1, 0.7] : [1, 1]
     },
     yaxis: {
       ...lineChartOptions.yaxis
@@ -75,30 +82,15 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
     xaxis: {
       ...lineChartOptions.xaxis,
       range: range.current
-    }
+    },
   };
-
-  // if (userProps.variable === 'temperature') {
-  //     chartOptions = {
-  //         ...chartOptions,
-  //         annotations: { //Line for Critical Values
-  //             yaxis: [
-  //                 {
-  //                     y: 1.5,
-  //                     borderColor: "#e30000",
-  //                     strokeDashArray: 0,
-  //                 },
-  //             ],
-  //         },
-  //     }
-  // }
 
   return (
     <Box borderRadius={"0.5rem"} bg={"#363636"}
          style={{ padding: "1rem"}}
          borderWidth={"0.2rem"} borderColor={editState ? "#669ed5" : "#363636"}>
       {editState &&
-        <IconButton style={{ position: "absolute", bottom: "23.6rem", left: "-0.5rem" }}
+        <IconButton style={{ position: "absolute", bottom: "95%", left: "-2%" }}
                     colorScheme="red" size={"sm"} isRound={true}
                     borderWidth={"2.5px"}
                     borderColor={"whitesmoke"}

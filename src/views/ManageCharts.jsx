@@ -2,13 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Box, Button,
   Flex,
-  Heading, HStack, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
+  HStack, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay,
   Table,
-  TableCaption,
-  TableContainer,
   Tbody,
   Td, Text,
-  Tfoot,
   Th,
   Thead,
   Tr, useDisclosure, useToast
@@ -22,8 +19,9 @@ import { getBaseURL } from '../helpers/api.jsx';
 import keycloak from '../keycloak.js';
 import { MdOutlineModeEditOutline, MdOutlineDeleteOutline } from 'react-icons/md';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
+import {TbAlertTriangle} from 'react-icons/tb';
 
-const DeleteModal = React.memo(({ isOpen, onClose, chartId }) => {
+const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   const toast = useToast();
   const queryClient = useQueryClient();
 
@@ -55,7 +53,7 @@ const DeleteModal = React.memo(({ isOpen, onClose, chartId }) => {
 
   async function _deleteChart() {
     return await axios.delete(
-      `${getBaseURL()}/api/dashboard/components/` + chartId,
+      `${getBaseURL()}/api/dashboard/components/` + chart.id,
       {
         headers: {
           Authorization: `Bearer ${keycloak.token}`
@@ -68,10 +66,15 @@ const DeleteModal = React.memo(({ isOpen, onClose, chartId }) => {
     <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay bg={'blackAlpha.800'} />
       <ModalContent bg={"#232323"}>
-        <ModalHeader>Delete Chart</ModalHeader>
+        <ModalHeader>
+          <HStack>
+            <TbAlertTriangle size={'30px'} color={"#ee5656"}/>
+            <Text ml={2} color={'white'}>Delete chart</Text>
+          </HStack>
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Are you sure you want to delete this chart?
+          Are you sure you want to delete "{chart?.name}"?
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="red" mr={3} onClick={() => {
@@ -97,7 +100,6 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   });
   const queryClient = useQueryClient();
   const toast = useToast();
-
 
   const { mutate: saveChart } = useMutation(postComponent, {
     onSuccess: resp => {
@@ -197,7 +199,7 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
           <ModalHeader fontWeight={'bold'} fontSize={'1.8rem'}
                        textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create new chart'}</ModalHeader>
           <ModalCloseButton />
-          <HStack justifyContent={'center'} gap={'5rem'} ml={'1rem'} mr={'1rem'} borderRadius={'0.5rem'}>
+          <HStack justifyContent={'center'} gap={'5rem'} ml={'1rem'} borderRadius={'0.5rem'}>
             <CreateChart userProps={userProps} setUserProps={setUserProps} />
             <ChartPreview userProps={userProps} />
           </HStack>
@@ -212,7 +214,6 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
     </>
   );
 });
-
 
 function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpenDel }) {
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'descending' });
@@ -247,7 +248,13 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
   }
 
   return (
-    <Box borderRadius={'0.6rem'} padding={'1rem'} textAlign={'center'} style={{ margin: '1rem 1rem 0rem 1rem' }}>
+    <Box borderRadius={'0.6rem'} padding={'1rem'} textAlign={'center'} style={{ margin: '0.2rem 1rem 0rem 1rem' }}>
+      <Flex justifyContent={'right'}>
+        <Button height={'3rem'} onClick={() => {
+          setEditChartId(null);
+          onOpen();
+        }} mb={'1.5rem'} colorScheme={'blue'} width={'10%'}>Create Chart</Button>
+      </Flex>
       <Box bg={'#424242'} borderRadius={'0.5rem'} className={'tableFixHead'}>
         <Table variant='simple' colorScheme={'facebook'}>
           <Thead>
@@ -315,12 +322,6 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
           </Tbody>
         </Table>
       </Box>
-      <Flex justifyContent={'center'}>
-        <Button height={'3rem'} onClick={() => {
-          setEditChartId(null);
-          onOpen();
-        }} mt={'1.5rem'} colorScheme={'blue'} width={'50%'}>Create Chart</Button>
-      </Flex>
     </Box>
   );
 }
@@ -348,7 +349,7 @@ function ManageCharts() {
 
   return (currentCharts &&
     <>
-      <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chartId={editChartId} />
+      <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={currentCharts.find(c => editChartId === c.id)} />
       <CreateNewModal isOpen={isOpen} onClose={onClose}
                       editChart={currentCharts.find(chart => chart.id === editChartId)} />
       <ChartTable currentCharts={currentCharts} onOpen={onOpen} setEditChartId={setEditChartId} onOpenDel={onOpenDel} />

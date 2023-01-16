@@ -18,6 +18,13 @@
     overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
     height: 73.5vh; /* gives an initial height of 200px to the table */
 }
+
+.tableFixHead tbody {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .tableFixHead thead th {
     height: 3.5rem;
     background-color: #3f5d77;
@@ -39,8 +46,8 @@
     cursor: grabbing;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
+/*::-webkit-scrollbar {*/
+/*  display: none;*/
+/*}*/
 
 

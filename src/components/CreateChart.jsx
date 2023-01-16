@@ -14,14 +14,8 @@ import { useState } from 'react';
 import { getBaseURL } from '../helpers/api.jsx';
 
 const colors = {
-  Teal: '#00e7b0',
-  Blue: '#00b0ff',
-  Yellow: '#f5e13c',
-  Purple: '#a500ff',
-  Green: '#44ff55',
-  Orange: '#ff8c00',
-  Pink: '#ff55a3',
-  White: '#ffffff',
+  Teal: '#00e7b0', Blue: '#00b0ff', Yellow: '#f5e13c', Purple: '#a500ff',
+  Green: '#44ff55', Orange: '#ff8c00', Pink: '#ff55a3', White: '#ffffff'
 };
 
 function CreateChart({ userProps, setUserProps }) {
@@ -65,9 +59,7 @@ function CreateChart({ userProps, setUserProps }) {
             bg={'#2D3748'}
             variant='outline'
             _hover={{ bg: '#3b485d' }}
-            onChange={e =>
-              setUserProps({ ...userProps, variable: e.target.value })
-            }>
+            onChange={e => setUserProps({ ...userProps, variable: e.target.value })}>
             {variables?.map(vari => (
               <option key={vari.name} value={vari.name}>
                 {vari.name}
@@ -117,7 +109,7 @@ function CreateChart({ userProps, setUserProps }) {
               setUserProps({ ...userProps, variableColor: e.target.value })
             }>
             {Object.keys(colors).map(color => (
-              <option key={color} value={colors[color]} style={{color: colors[color]}}>
+              <option key={color} value={colors[color]} style={{ color: colors[color] }}>
                 {color}
               </option>
             ))}
