@@ -1,0 +1,53 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-column-gap: 1rem;
+  grid-row-gap: 1rem;
+  margin: 2rem 4rem 1rem 4rem;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+  grid-column-gap: 2rem;
+  grid-row-gap: 2rem;
+  margin: 2rem 4rem 1rem 1rem;
+}
+
+.tableFixHead {
+    overflow-y: scroll; /* make the table scrollable if height is more than 200 px  */
+    height: 73.5vh; /* gives an initial height of 200px to the table */
+}
+
+.tableFixHead tbody {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.tableFixHead thead th {
+    height: 3.5rem;
+    background-color: #3f5d77;
+    color: white;
+    font-size: 16px;
+    font-family: Helvetica, Arial, sans-serif;
+    position: sticky; /* make the table heads sticky */
+    top: 0px; /* table head will be placed from the top of the table and sticks to it */
+    z-index: 2; /* make sure the table head is always on top of the table body */
+}
+
+.grabbable {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+}
+
+/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+}
+
+/*::-webkit-scrollbar {*/
+/*  display: none;*/
+/*}*/
+
+

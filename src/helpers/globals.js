@@ -10,9 +10,6 @@ export const lineChartOptions = {
   dataLabels: {
     enabled: false
   },
-  stroke: {
-    curve: 'smooth'
-  },
   // markers:{
   //     size: 2,
   //     strokeColors: '#7eefff',
@@ -54,7 +51,7 @@ export const lineChartOptions = {
   },
   grid: {
     strokeDashArray: 5
-  }
+  },
 
   // fill: {
   //     type: "gradient",

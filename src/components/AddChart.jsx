@@ -1,4 +1,4 @@
-import { Box, Button, Flex, IconButton, Select, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, IconButton, Select, Text } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlinePlusSm } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
@@ -59,57 +59,33 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
   }, [components, plusClicked, filteredDashboardComps]);
 
   return (
-    <Box
-      height={'25rem'}
-      maxW={'38rem'}
-      borderRadius={'0.5rem'}
-      bg={'#363636'}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}
-      borderWidth={'0.2rem'}
-      borderColor={'#363636'}>
-      {plusClicked && !noMoreComps && (
-        <Flex gap={'0.3rem'} direction={'column'}>
-          <Text color={'white'}>Select Chart</Text>
-          <Select
-            bg={'blue.700'}
-            width={'20rem'}
-            onChange={e => (selectedComp.current = e.target.value)}>
-            {filteredOptions?.map(comp => {
-              return (
-                comp && (
-                  <option key={comp.id} value={comp.id}>
-                    {comp.name} (Variable: {comp.variable})
-                  </option>
-                )
-              );
-            })}
-          </Select>
-          <Button
-            marginTop={'0.5rem'}
-            colorScheme={'blue'}
-            onClick={() => {
-              addComponent(selectedComp.current);
-              setPlusClicked(false);
-            }}>
-            ADD
-          </Button>
-        </Flex>
-      )}
-      {!plusClicked && !noMoreComps && (
-        <IconButton
-          style={{ width: '8rem', height: '8rem' }}
-          bg={'#696969'}
-          icon={<HiOutlinePlusSm size={'6rem'} />}
-          color={'whitesmoke'}
-          isRound={true}
-          aria-label={'addChart'}
-          _hover={{ bg: '#4880cc' }}
-          onClick={() => setPlusClicked(true)}
-        />
+    <>
+      {!noMoreComps && (
+          <HStack align={'right'}>
+            <Select
+              bg={'blue.700'}
+              width={'20rem'}
+              onChange={e => (selectedComp.current = e.target.value)}>
+              {filteredOptions?.map(comp => {
+                return (
+                  comp && (
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name} (Variable: {comp.variable})
+                    </option>
+                  )
+                );
+              })}
+            </Select>
+            <Button
+              marginTop={'0.5rem'}
+              colorScheme={'blue'}
+              onClick={() => {
+                addComponent(selectedComp.current);
+                setPlusClicked(false);
+              }}>
+              ADD CHART
+            </Button>
+          </HStack>
       )}
       {noMoreComps && (
         <Box
@@ -124,7 +100,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
           </Text>
         </Box>
       )}
-    </Box>
+    </>
   );
 }
 

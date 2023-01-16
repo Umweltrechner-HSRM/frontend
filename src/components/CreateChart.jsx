@@ -14,18 +14,12 @@ import { useState } from 'react';
 import { getBaseURL } from '../helpers/api.jsx';
 
 const colors = {
-  Teal: '#00e7b0',
-  White: '#ffffff',
-  Blue: '#0741ff',
-  Yellow: '#f5e13c',
-  Purple: '#6f65ff',
-  Green: '#44ff55'
+  Teal: '#00e7b0', Blue: '#00b0ff', Yellow: '#f5e13c', Purple: '#a500ff',
+  Green: '#44ff55', Orange: '#ff8c00', Pink: '#ff55a3', White: '#ffffff'
 };
 
 function CreateChart({ userProps, setUserProps }) {
   const [variables, setVariables] = useState(null);
-  const queryClient = useQueryClient();
-  const toast = useToast();
 
   useQuery(
     ['variables'],
@@ -43,46 +37,8 @@ function CreateChart({ userProps, setUserProps }) {
     }
   );
 
-  const { mutate } = useMutation(postComponent, {
-    onSuccess: resp => {
-      toast({
-        title: 'Success adding chart',
-        description: `Added chart ${userProps.name}`,
-        status: 'success',
-        duration: 4000,
-        isClosable: true
-      });
-      setUserProps({ ...userProps, name: '' });
-      queryClient.invalidateQueries(['components']).catch(console.log);
-    }
-  });
-
-  async function postComponent() {
-    return await axios.post(
-      `${getBaseURL()}/api/dashboard/components`,
-      {
-        name: userProps.name,
-        type: userProps.type,
-        variable: userProps.variable,
-        variableColor: userProps.color || '#00e7b0'
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`
-        }
-      }
-    );
-  }
-
   return (
-    <Box borderRadius={5} bg={'#363636'} padding={'1rem'}>
-      <Text
-        color={'white'}
-        fontSize={'20'}
-        fontWeight={'bold'}
-        marginBottom={'20px'}>
-        Create Chart
-      </Text>
+    <Box mt={'1rem'} mb={'1rem'}>
       <Flex gap={'0.3rem'} direction={'column'}>
         <>
           <Text color={'white'}>Name</Text>
@@ -98,13 +54,12 @@ function CreateChart({ userProps, setUserProps }) {
           <Text color={'white'}>Select Variable</Text>
           <Select
             placeholder={' '}
+            value={userProps.variable}
             color={'white'}
             bg={'#2D3748'}
-            variant="outline"
+            variant='outline'
             _hover={{ bg: '#3b485d' }}
-            onChange={e =>
-              setUserProps({ ...userProps, variable: e.target.value })
-            }>
+            onChange={e => setUserProps({ ...userProps, variable: e.target.value })}>
             {variables?.map(vari => (
               <option key={vari.name} value={vari.name}>
                 {vari.name}
@@ -116,9 +71,10 @@ function CreateChart({ userProps, setUserProps }) {
           <Text color={'white'}>Select Type</Text>
           <Select
             placeholder={'Line'}
+            value={userProps.type}
             color={'white'}
             bg={'#2D3748'}
-            variant="outline"
+            variant='outline'
             _hover={{ bg: '#3b485d' }}
             onChange={e =>
               setUserProps({ ...userProps, type: e.target.value })
@@ -127,30 +83,39 @@ function CreateChart({ userProps, setUserProps }) {
           </Select>
         </>
         <>
-          <Text color={'white'}>Select Color</Text>
+          <Text color={'white'}>Select Stroke</Text>
           <Select
+            placeholder={'Smooth'}
+            value={userProps.stroke.toLowerCase()}
             color={'white'}
             bg={'#2D3748'}
-            variant="outline"
+            variant='outline'
             _hover={{ bg: '#3b485d' }}
             onChange={e =>
-              setUserProps({ ...userProps, color: e.target.value })
+              setUserProps({ ...userProps, stroke: e.target.value })
+            }>
+            <option value={'straight'}>Straight</option>
+          </Select>
+        </>
+        <>
+          <Text color={'white'}>Select Color</Text>
+          <Select
+            color={userProps.variableColor || '#00e7b0'}
+            value={userProps.variableColor}
+            bg={'#2D3748'}
+            variant='outline'
+            _hover={{ bg: '#3b485d' }}
+            onChange={e =>
+              setUserProps({ ...userProps, variableColor: e.target.value })
             }>
             {Object.keys(colors).map(color => (
-              <option key={color} value={colors[color]}>
+              <option key={color} value={colors[color]} style={{ color: colors[color] }}>
                 {color}
               </option>
             ))}
           </Select>
         </>
       </Flex>
-      <Button
-        onClick={() => mutate()}
-        isDisabled={!userProps.name || !userProps.variable}
-        colorScheme={'blue'}
-        marginTop={'20px'}>
-        SAVE
-      </Button>
     </Box>
   );
 }
