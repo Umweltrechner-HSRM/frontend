@@ -10,8 +10,6 @@ import FormulaInput from "./FormInput/FormulaInput.jsx";
 
 const DatasetsAlert = () => {
     const [sensorData, setSensorData] = useState([])
-    console.log(sensorData)
-
     return (
         <VStack ml={'10'} spacing={5} align='stretch'>
             <Box>

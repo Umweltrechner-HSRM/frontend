@@ -225,10 +225,24 @@ function Validation({input, channels, setSensorData}){
       )},
       enabled: false,
       retry:false,
-      onSuccess: () => {
+      onSuccess: async () => {
         console.log('TODO: delete text in textarea')
         queryClient.fetchQuery(['formulas'])
-       
+        console.log('Before',channels)
+        const data = await queryClient.fetchQuery(['variables'], (data) => {
+          console.log(data)
+          return data
+        })
+        console.log(data)
+        /*let result = []
+        let inArray = input.split(/(?:\n| )+/)
+        let valid = data.map(sen => sen.name.toLowerCase())
+        inArray.forEach((inItem) => {
+          if(valid.includes(inItem.toLowerCase())){
+            result.push(inItem)
+          }
+        }) 
+        setSensorData(result.map(item => {return{name:item}}))*/
       }
   })
 
@@ -238,18 +252,7 @@ function Validation({input, channels, setSensorData}){
   }
   function handleAdd(){
     queryClient.fetchQuery(['add'])
-
-    queryClient.fetchQuery(['variables'])
-
-    let result = []
-    let inArray = input.split(/(?:\n| )+/)
-    let valid = channels.map(sen => sen.name.toLowerCase())
-    inArray.forEach((inItem) => {
-      if(valid.includes(inItem.toLowerCase())){
-        result.push(inItem)
-      }
-    }) 
-    setSensorData(result.map(item => {return{name:item}}))
+    
 
   }
 
