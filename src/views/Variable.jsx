@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
   FormLabel,
   FormControl,
-  Input, useToast,
+  Input, useToast, Textarea,
 } from "@chakra-ui/react";
 import "../styles/styles.css";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
@@ -39,7 +39,7 @@ const useGetVariables = () => {
 };
 
 const addThresholds = async (token, data) => {
-  return await axios.post(`${getBaseURL()}/api/variable/${data.name}`, data,
+  return await axios.put(`${getBaseURL()}/api/variable/${data.name}`, data,
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -48,12 +48,12 @@ const addThresholds = async (token, data) => {
 };
 
 const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
-  const { register } = useForm({
+  const { register, handleSubmit} = useForm({
     defaultValues: {
       name: data.name,
       minThreshold: '',
       maxThreshold: '',
-      customerAlertList: ''
+      emailList: ''
     }});
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -61,12 +61,9 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
 
   const { mutate } = useMutation({
     mutationKey: ["addThresholds"],
-    mutationFn: (data) => addThresholds(keycloak.token, {
-      name: data.name,
-      minThreshold: data.minThreshold,
-      maxThreshold: data.maxThreshold,
-      customerAlertList: data.customerAlertList.split(',')
-    }),
+    mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data,{
+      emailList: data.emailList?.split('\n')
+    })),
     onSuccess: () => {
       queryClient.invalidateQueries(["formulas"]);
       onClose();
@@ -88,7 +85,9 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
       });
     }
   });
-
+  const onFormSubmit = (data) => {
+    mutate(data);
+  }
 
   return (
     <>
@@ -97,19 +96,19 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
         <ModalContent>
           <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
           <ModalCloseButton />
-          <form onSubmit={() => mutate}>
+          <form onSubmit={handleSubmit(onFormSubmit)}>
           <ModalBody>
             <FormControl>
               <FormLabel>Min Threshold</FormLabel>
-              <Input type='number' name="Min Threshold" {...register('minThreshold')} />
+              <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
             </FormControl>
             <FormControl>
               <FormLabel>Max Threshold</FormLabel>
-              <Input type='number' name="Max Threshold" {...register('maxThreshold')} />
+              <Input type='number' step="0.01" name="Max Threshold" {...register('maxThreshold')} />
             </FormControl>
             <FormControl>
               <FormLabel>Mail</FormLabel>
-              <Input type='text' name="mail" {...register("customerAlertList")}/>
+              <Textarea placeholder="One email address per line" name="mail" {...register("emailList")}/>
             </FormControl>
           </ModalBody>
           <ModalFooter>
