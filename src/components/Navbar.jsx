@@ -17,6 +17,7 @@ const Navbar = () => {
       display="flex"
       justify="space-between"
       alignItems={'center'}
+      boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
       h={'8vh'}>
       <Flex w={{ base: '100%', md: '13vw' }}>
         <NavLink to={'/'}>

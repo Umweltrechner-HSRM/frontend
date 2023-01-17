@@ -53,7 +53,7 @@ const TableList = ({ data, columns, AddDialog }) => {
           h={"90%"} overflowY={"auto"}>
           <Table>
             <Thead
-              bg={useColorModeValue('#f0e7db', '#202023')}
+              bg={useColorModeValue('#fff', '#202023')}
               style={{
                 position: "sticky",
                 top: "-3px",

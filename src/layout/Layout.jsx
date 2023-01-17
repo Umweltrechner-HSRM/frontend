@@ -3,7 +3,6 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
-import { useKeycloak } from '@react-keycloak/web';
 
 export const Layout = () => {
   return (
@@ -14,10 +13,10 @@ export const Layout = () => {
         justifyContent={'space-between'}
         flexDir={{ base: 'column-reverse', md: 'row' }}
         h="90vh">
-        <Box>
+        <Box boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} borderRadius={"5px"} h={"99%"}>
           <Sidebar />
         </Box>
-        <Box padding={4} w="100%" overflow={'auto'}>
+        <Box padding={4} pb={0} w="100%" overflow={'auto'}>
           <Outlet />
         </Box>
       </Flex>
