@@ -42,12 +42,12 @@ const TableList = ({ data, columns, AddDialog }) => {
 
 
   return (
-    <Box p={3} h={"100%"}>
-      <Flex justifyContent={"flex-end"} h={"5%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} borderRadius={"5px"}
+    <Box p={3} pt={1} h={"100%"}>
+      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} borderRadius={"5px"}
             alignItems={"center"}>
         {AddDialog && <AddDialog />}
       </Flex>
-      <Flex flexDir={"column"} h={"94%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}>
+      <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}>
         <Box
           flex={1}
           h={"90%"} overflowY={"auto"}>
