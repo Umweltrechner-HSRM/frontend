@@ -2,10 +2,14 @@ import React, { useMemo } from "react";
 import {
   Box,
   Button,
-  Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure
+  Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure,
+  FormErrorMessage,
+  FormLabel,
+  FormControl,
+  Input, useToast, HStack,
 } from "@chakra-ui/react";
 import "../styles/styles.css";
-import { useQuery } from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import { getBaseURL } from "../helpers/api.jsx";
 import {
@@ -16,6 +20,7 @@ import {
   createColumnHelper
 } from "@tanstack/react-table";
 import { TableListView } from "../components/TableListView.jsx";
+import {useFieldArray, useForm, Controller} from 'react-hook-form'
 
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
@@ -33,26 +38,117 @@ const useGetVariables = () => {
   });
 };
 
-const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
-  return (
-    <>
-      <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-          </ModalBody>
+const addThresholds = async (token, data) => {
+  console.log(data);
+  return await axios.put(`${getBaseURL()}/api/variable/${data.name}`, data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+};
 
-          <ModalFooter>
-            <Button mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button>Save</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
+  const {control, register, handleSubmit, watch, getValues} = useForm({
+    defaultValues: {
+      name: data.name,
+      minThreshold: '',
+      maxThreshold: '',
+      emailList: [{mail:''}]
+    }});
+  const {fields, remove, append} = useFieldArray(
+      {
+        control,
+        name: 'emailList'
+      });
+  const watchThresholds = watch(["minThreshold","maxThreshold"]);
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const {keycloak} = useKeycloak();
+
+  const { mutate } = useMutation({
+    mutationKey: ["addThresholds"],
+    mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data,{
+      emailList: data.emailList.map((item) => item.mail)
+    })),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["formulas"]);
+      onClose();
+      toast({
+        position: "bottom-right",
+        title: "Thresholds added.",
+        status: "success",
+        duration: 5000,
+        isClosable: true
+      });
+    },
+    onError: () => {
+      toast({
+        position: "bottom-right",
+        title: "Error adding thresholds.",
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      });
+    }
+  });
+  const onFormSubmit = (data) => {
+    mutate(data);
+  }
+
+  return (
+      <>
+        <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay/>
+          <ModalContent>
+            <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
+            <ModalCloseButton/>
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+              <ModalBody>
+                <FormControl isInvalid={watchThresholds.minThreshold < watchThresholds.maxThreshold}>
+                  <FormLabel>Min Threshold</FormLabel>
+                  <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
+                  <FormErrorMessage>Min Thresholds is higher than Max threshold.</FormErrorMessage>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Max Threshold</FormLabel>
+                  <Input type='number' step="0.01" name="Max Threshold" {...register('maxThreshold')} />
+                </FormControl>
+                <ul>
+                  {fields.map((item, index) => {
+                    return (
+                        <div key={item.id}>
+                          <FormLabel>Mail</FormLabel>
+                          <HStack>
+                            <Input
+                                type={'email'}
+                                key={item.id}
+                                name={`emailList[${index}]`}
+                                defaultValue={''}
+                                {...register(`emailList.${index}.mail`)}
+                            />
+                            <Button type="button" onClick={() => remove(index)}>
+                              Delete
+                            </Button>
+                          </HStack>
+                        </div>
+                    );
+                  })}
+                </ul>
+                <Button type="button" onClick={() => {append({mail: ''});}}>
+                  Append
+                </Button>
+              </ModalBody>
+              <ModalFooter>
+                <Button mr={3} onClick={onClose}>
+                  Close
+                </Button>
+                <Button type={'submit'}>Save</Button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Modal>
+      </>
   );
 };
 
