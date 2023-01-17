@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box, Button,
   Flex,
@@ -19,7 +19,12 @@ import { getBaseURL } from '../helpers/api.jsx';
 import keycloak from '../keycloak.js';
 import { MdOutlineModeEditOutline, MdOutlineDeleteOutline } from 'react-icons/md';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
-import {TbAlertTriangle} from 'react-icons/tb';
+import { TbAlertTriangle } from 'react-icons/tb';
+import {
+  createColumnHelper
+} from '@tanstack/react-table';
+import { TableListView } from '../components/TableListView.jsx';
+import { AddIcon } from '@chakra-ui/icons';
 
 const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   const toast = useToast();
@@ -65,10 +70,10 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   return (
     <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay bg={'blackAlpha.800'} />
-      <ModalContent bg={"#232323"}>
+      <ModalContent bg={'#232323'}>
         <ModalHeader>
           <HStack>
-            <TbAlertTriangle size={'30px'} color={"#ee5656"}/>
+            <TbAlertTriangle size={'30px'} color={'#ee5656'} />
             <Text ml={2} color={'white'}>Delete chart</Text>
           </HStack>
         </ModalHeader>
@@ -77,7 +82,7 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
           Are you sure you want to delete "{chart?.name}"?
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="red" mr={3} onClick={() => {
+          <Button colorScheme='red' mr={3} onClick={() => {
             deleteChart();
             onClose();
           }}>
@@ -88,7 +93,7 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
       </ModalContent>
     </Modal>
   );
-})
+});
 
 const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   const [userProps, setUserProps] = useState({
@@ -195,7 +200,7 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
     <>
       <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay bg={'blackAlpha.800'} />
-        <ModalContent maxW={'56rem'} bg={"#232323"}>
+        <ModalContent maxW={'56rem'} bg={'#232323'}>
           <ModalHeader fontWeight={'bold'} fontSize={'1.8rem'}
                        textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create new chart'}</ModalHeader>
           <ModalCloseButton />
@@ -215,6 +220,9 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   );
 });
 
+/*
+* @deprecated
+*/
 function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpenDel }) {
   const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'descending' });
   let sortedCharts = [...currentCharts];
@@ -243,7 +251,7 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
     if (sortConfig?.key === key) {
       return sortConfig.direction === 'ascending' ? <BiSortUp size={'20px'} /> : <BiSortDown size={'20px'} />;
     } else {
-      return <BiSortUp size={'20px'} color={"rgba(255,255,255,0)"} />;
+      return <BiSortUp size={'20px'} color={'rgba(255,255,255,0)'} />;
     }
   }
 
@@ -289,11 +297,11 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
           <Tbody>
             {sortedCharts.map((chart, index) => {
               const createdAt = new Date(Date.parse(chart.createdAt));
-              const _createdAtString = `${createdAt.getDate()}/${createdAt.getMonth() + 1}/${createdAt.getFullYear()} ${('0'+createdAt.getHours()).slice(-2)}:${('0'+createdAt.getMinutes()).slice(-2)}`;
+              const _createdAtString = `${createdAt.getDate()}/${createdAt.getMonth() + 1}/${createdAt.getFullYear()} ${('0' + createdAt.getHours()).slice(-2)}:${('0' + createdAt.getMinutes()).slice(-2)}`;
               const updatedAt = new Date(Date.parse(chart.changedAt));
-              const _updatedAtString = `${updatedAt.getDate()}/${updatedAt.getMonth() + 1}/${updatedAt.getFullYear()} ${('0'+updatedAt.getHours()).slice(-2)}:${('0'+updatedAt.getMinutes()).slice(-2)}`;
+              const _updatedAtString = `${updatedAt.getDate()}/${updatedAt.getMonth() + 1}/${updatedAt.getFullYear()} ${('0' + updatedAt.getHours()).slice(-2)}:${('0' + updatedAt.getMinutes()).slice(-2)}`;
               return (
-                <Tr key={index} style={{ borderBottomWidth: '4px', borderTopColor: 'gray'}}>
+                <Tr key={index} style={{ borderBottomWidth: '4px', borderTopColor: 'gray' }}>
                   <Td textAlign={'center'}>{chart.name}</Td>
                   <Td textAlign={'center'} bg={'#383838'}>{chart.variable}</Td>
                   <Td textAlign={'center'}>{_createdAtString}</Td>
@@ -329,10 +337,12 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
 function ManageCharts() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenDel, onOpen: onOpenDel, onClose: onCloseDel } = useDisclosure();
-  const [currentCharts, setCurrentCharts] = useState([]);
-  const [editChartId, setEditChartId] = useState(null);
 
-  useQuery(['components'],
+  const columnHelper = createColumnHelper();
+  const [selected, setSelected] = React.useState(null);
+
+
+  const { data } = useQuery(['components'],
     async () => {
       return await axios.get(`${getBaseURL()}/api/dashboard/components`,
         {
@@ -340,19 +350,72 @@ function ManageCharts() {
             Authorization: `Bearer ${keycloak.token}`
           }
         });
-    }, {
-      onSuccess: resp => {
-        setCurrentCharts(resp.data);
-      }
     }
   );
 
-  return (currentCharts &&
+  function CreateChart() {
+    return (
+      <Button leftIcon={<AddIcon />} colorScheme='teal' variant='solid' onClick={() => {
+        setSelected(null);
+        onOpen();
+      }}>
+        Create Chart
+      </Button>
+    );
+  }
+
+  const columns = useMemo(() => [
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: info => info.getValue()
+    }),
+    columnHelper.accessor('variable', {
+      header: 'Variable',
+      cell: info => info.getValue()
+    }),
+    columnHelper.accessor('createdAt', {
+      header: 'Created At',
+      cell: info => info.getValue() && `${new Date(info.getValue()).toLocaleString()}`
+    }),
+    columnHelper.accessor('createdBy', {
+      header: 'Created By',
+      cell: info => info.getValue()
+    }),
+    columnHelper.accessor('changedAt', {
+      header: 'Edited At',
+      cell: info =>
+        info.getValue() && `${new Date(info.getValue()).toLocaleString()}`
+    }),
+    columnHelper.accessor('changedBy', {
+      header: 'Edited By',
+      cell: info => info.getValue()
+    }),
+    columnHelper.accessor('action', {
+      header: 'Actions',
+      cell: ({ cell }) => {
+        return (
+          <Flex justifyContent={'center'} gap={2}>
+            <Button onClick={() => {
+              setSelected(cell.row.original);
+              onOpen();
+            }
+            }><MdOutlineModeEditOutline /></Button>
+            <Button onClick={() => {
+              setSelected(cell.row.original);
+              onOpenDel();
+            }}><MdOutlineDeleteOutline /></Button>
+          </Flex>
+        );
+      }
+    })
+  ], []);
+
+  return (data &&
     <>
-      <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={currentCharts.find(c => editChartId === c.id)} />
+      <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
       <CreateNewModal isOpen={isOpen} onClose={onClose}
-                      editChart={currentCharts.find(chart => chart.id === editChartId)} />
-      <ChartTable currentCharts={currentCharts} onOpen={onOpen} setEditChartId={setEditChartId} onOpenDel={onOpenDel} />
+                      editChart={selected} />
+      {<TableListView data={data.data} columns={columns} AddDialog={CreateChart} />}
     </>
   );
 }
