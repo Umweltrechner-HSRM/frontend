@@ -2,10 +2,14 @@ import React, { useMemo } from "react";
 import {
   Box,
   Button,
-  Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure
+  Flex, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure,
+  FormErrorMessage,
+  FormLabel,
+  FormControl,
+  Input, useToast,
 } from "@chakra-ui/react";
 import "../styles/styles.css";
-import { useQuery } from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import axios from "axios";
 import { getBaseURL } from "../helpers/api.jsx";
 import {
@@ -16,6 +20,7 @@ import {
   createColumnHelper
 } from "@tanstack/react-table";
 import { TableListView } from "../components/TableListView.jsx";
+import { useForm } from 'react-hook-form'
 
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
@@ -33,7 +38,58 @@ const useGetVariables = () => {
   });
 };
 
+const addThresholds = async (token, data) => {
+  return await axios.post(`${getBaseURL()}/api/variable/${data.name}`, data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+};
+
 const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
+  const { register } = useForm({
+    defaultValues: {
+      name: data.name,
+      minThreshold: '',
+      maxThreshold: '',
+      customerAlertList: ''
+    }});
+  const queryClient = useQueryClient();
+  const toast = useToast();
+  const {keycloak} = useKeycloak();
+
+  const { mutate } = useMutation({
+    mutationKey: ["addThresholds"],
+    mutationFn: (data) => addThresholds(keycloak.token, {
+      name: data.name,
+      minThreshold: data.minThreshold,
+      maxThreshold: data.maxThreshold,
+      customerAlertList: data.customerAlertList.split(',')
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["formulas"]);
+      onClose();
+      toast({
+        position: "bottom-right",
+        title: "Thresholds added.",
+        status: "success",
+        duration: 5000,
+        isClosable: true
+      });
+    },
+    onError: () => {
+      toast({
+        position: "bottom-right",
+        title: "Error adding thresholds.",
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      });
+    }
+  });
+
+
   return (
     <>
       <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
@@ -41,15 +97,28 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
         <ModalContent>
           <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
           <ModalCloseButton />
+          <form onSubmit={() => mutate}>
           <ModalBody>
+            <FormControl>
+              <FormLabel>Min Threshold</FormLabel>
+              <Input type='number' name="Min Threshold" {...register('minThreshold')} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Max Threshold</FormLabel>
+              <Input type='number' name="Max Threshold" {...register('maxThreshold')} />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Mail</FormLabel>
+              <Input type='text' name="mail" {...register("customerAlertList")}/>
+            </FormControl>
           </ModalBody>
-
           <ModalFooter>
             <Button mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button>Save</Button>
+            <Button type={'submit'}>Save</Button>
           </ModalFooter>
+          </form>
         </ModalContent>
       </Modal>
     </>
