@@ -35,7 +35,7 @@ const getVariables = async token => {
 const useGetVariables = () => {
   const { keycloak } = useKeycloak();
   return useQuery({
-    queryKey: ["formulas"],
+    queryKey: ["variables"],
     queryFn: () => getVariables(keycloak.token)
   });
 };
@@ -76,7 +76,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
       emailList: data.emailList.map((item) => item.email)
     })),
     onSuccess: () => {
-      queryClient.invalidateQueries(["formulas"]);
+      queryClient.invalidateQueries(["variables"]);
       onClose();
       toast({
         position: "bottom-right",
