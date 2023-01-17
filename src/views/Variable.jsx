@@ -22,6 +22,8 @@ import {
 import { TableListView } from "../components/TableListView.jsx";
 import {useFieldArray, useForm, Controller} from 'react-hook-form'
 
+// offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
+
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
     headers: {
@@ -49,13 +51,15 @@ const addThresholds = async (token, data) => {
 };
 
 const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
-  const {control, register, handleSubmit, watch, getValues} = useForm({
+
+  const {control, register, handleSubmit, watch} = useForm({
     defaultValues: {
       name: data.name,
-      minThreshold: '',
-      maxThreshold: '',
-      emailList: [{mail:''}]
+      minThreshold: data.minThreshold,
+      maxThreshold: data.maxThreshold,
+      emailList: data.customerAlertList
     }});
+
   const {fields, remove, append} = useFieldArray(
       {
         control,
@@ -69,7 +73,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
   const { mutate } = useMutation({
     mutationKey: ["addThresholds"],
     mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data,{
-      emailList: data.emailList.map((item) => item.mail)
+      emailList: data.emailList.map((item) => item.email)
     })),
     onSuccess: () => {
       queryClient.invalidateQueries(["formulas"]);
@@ -105,14 +109,15 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
             <ModalCloseButton/>
             <form onSubmit={handleSubmit(onFormSubmit)}>
               <ModalBody>
-                <FormControl isInvalid={watchThresholds.minThreshold < watchThresholds.maxThreshold}>
+                <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
                   <FormLabel>Min Threshold</FormLabel>
                   <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
-                  <FormErrorMessage>Min Thresholds is higher than Max threshold.</FormErrorMessage>
+                  <FormErrorMessage>Min Thresholds is higher than Max Threshold.</FormErrorMessage>
                 </FormControl>
-                <FormControl>
+                <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
                   <FormLabel>Max Threshold</FormLabel>
                   <Input type='number' step="0.01" name="Max Threshold" {...register('maxThreshold')} />
+                  <FormErrorMessage>Max Thresholds is lower than Min Threshold.</FormErrorMessage>
                 </FormControl>
                 <ul>
                   {fields.map((item, index) => {
@@ -125,7 +130,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
                                 key={item.id}
                                 name={`emailList[${index}]`}
                                 defaultValue={''}
-                                {...register(`emailList.${index}.mail`)}
+                                {...register(`emailList.${index}.email`)}
                             />
                             <Button type="button" onClick={() => remove(index)}>
                               Delete
@@ -135,11 +140,11 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
                     );
                   })}
                 </ul>
-                <Button type="button" onClick={() => {append({mail: ''});}}>
-                  Append
-                </Button>
               </ModalBody>
               <ModalFooter>
+                <Button mr={3} onClick={() => {append({email: ''});}}>
+                  Add E-Mail
+                </Button>
                 <Button mr={3} onClick={onClose}>
                   Close
                 </Button>
