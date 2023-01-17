@@ -29,8 +29,8 @@ const Navbar = () => {
           </Flex>
         </NavLink>
       </Flex>
-      <Box flex={2} justifyContent={"flex-end"}>
-        <HStack>
+      <Box flex={2}>
+        <HStack justifyContent={"flex-end"}>
           {location.pathname === '/' && (
             <DashboardTabs
               setTabIndex={context.tabData?.setTabIndex}
