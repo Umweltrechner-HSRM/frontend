@@ -29,7 +29,8 @@
     "react-icons": "^4.6.0",
     "react-router-dom": "^6.4.2",
     "recharts": "^2.1.16",
-    "vite-plugin-pwa": "^0.13.3"
+    "vite-plugin-pwa": "^0.13.3",
+    "@tanstack/react-table": "^8.7.6"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",

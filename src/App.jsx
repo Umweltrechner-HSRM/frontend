@@ -7,7 +7,15 @@ import { Layout } from './layout/Layout.jsx';
 import { useKeycloak } from '@react-keycloak/web';
 import ClientRoutes from './Routes.jsx';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnmount: false,
+      refetchOnWindowFocus: false,
+      retry: 3,
+    },
+  },
+});
 
 const RoutesHandler = () => {
   const { keycloak } = useKeycloak();
