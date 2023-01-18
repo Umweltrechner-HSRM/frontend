@@ -1,12 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   Box,
-  Button,
   Flex,
   Input,
   Select,
   Text,
-  useToast
 } from '@chakra-ui/react';
 import axios from 'axios';
 import keycloak from '../keycloak.js';
@@ -41,24 +39,19 @@ function CreateChart({ userProps, setUserProps }) {
     <Box mt={'1rem'} mb={'1rem'}>
       <Flex gap={'0.3rem'} direction={'column'}>
         <>
-          <Text color={'white'}>Name</Text>
+          <Text>Name</Text>
           <Input
-            color={'white'}
-            bg={'#14181f'}
             value={userProps.name}
             maxLength={15}
             onChange={e => setUserProps({ ...userProps, name: e.target.value })}
           />
         </>
         <>
-          <Text color={'white'}>Select Variable</Text>
+          <Text>Select Variable</Text>
           <Select
             placeholder={' '}
             value={userProps.variable}
-            color={'white'}
-            bg={'#2D3748'}
             variant='outline'
-            _hover={{ bg: '#3b485d' }}
             onChange={e => setUserProps({ ...userProps, variable: e.target.value })}>
             {variables?.map(vari => (
               <option key={vari.name} value={vari.name}>
@@ -68,14 +61,12 @@ function CreateChart({ userProps, setUserProps }) {
           </Select>
         </>
         <>
-          <Text color={'white'}>Select Type</Text>
+          <Text>Select Type</Text>
           <Select
             placeholder={'Line'}
             value={userProps.type}
             color={'white'}
-            bg={'#2D3748'}
             variant='outline'
-            _hover={{ bg: '#3b485d' }}
             onChange={e =>
               setUserProps({ ...userProps, type: e.target.value })
             }>
@@ -83,14 +74,11 @@ function CreateChart({ userProps, setUserProps }) {
           </Select>
         </>
         <>
-          <Text color={'white'}>Select Stroke</Text>
+          <Text>Select Stroke</Text>
           <Select
             placeholder={'Smooth'}
             value={userProps.stroke.toLowerCase()}
-            color={'white'}
-            bg={'#2D3748'}
             variant='outline'
-            _hover={{ bg: '#3b485d' }}
             onChange={e =>
               setUserProps({ ...userProps, stroke: e.target.value })
             }>
@@ -98,18 +86,15 @@ function CreateChart({ userProps, setUserProps }) {
           </Select>
         </>
         <>
-          <Text color={'white'}>Select Color</Text>
+          <Text>Select Color</Text>
           <Select
-            color={userProps.variableColor || '#00e7b0'}
             value={userProps.variableColor}
-            bg={'#2D3748'}
             variant='outline'
-            _hover={{ bg: '#3b485d' }}
             onChange={e =>
               setUserProps({ ...userProps, variableColor: e.target.value })
             }>
             {Object.keys(colors).map(color => (
-              <option key={color} value={colors[color]} style={{ color: colors[color] }}>
+              <option key={color} value={colors[color]}>
                 {color}
               </option>
             ))}

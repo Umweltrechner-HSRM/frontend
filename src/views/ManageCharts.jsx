@@ -70,12 +70,12 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
 
   return (
     <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay bg={'blackAlpha.800'} />
-      <ModalContent bg={'#232323'}>
+      <ModalOverlay />
+      <ModalContent>
         <ModalHeader>
           <HStack>
-            <TbAlertTriangle size={'30px'} color={'#ee5656'} />
-            <Text ml={2} color={'white'}>Delete chart</Text>
+            <TbAlertTriangle size={'40px'} color={'#ee5656'}/>
+            <Text>Delete Chart</Text>
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
@@ -200,10 +200,10 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   return (
     <>
       <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay bg={'blackAlpha.800'} />
-        <ModalContent maxW={'56rem'} bg={'#232323'}>
+        <ModalOverlay />
+        <ModalContent maxW={'56rem'}>
           <ModalHeader fontWeight={'bold'} fontSize={'1.8rem'}
-                       textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create new chart'}</ModalHeader>
+                       textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create New Chart'}</ModalHeader>
           <ModalCloseButton />
           <HStack justifyContent={'center'} gap={'5rem'} ml={'1rem'} borderRadius={'0.5rem'}>
             <CreateChart userProps={userProps} setUserProps={setUserProps} />
