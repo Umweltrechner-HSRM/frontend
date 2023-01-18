@@ -65,7 +65,8 @@ const DeleteModal = React.memo(({ formula }) => {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Are you sure you want to delete this formula?
+            <Text>Are you sure you want to delete this formula?</Text>
+            <Text fontSize={"small"}>*Attention: Other formulas that depend on this formula <b>will</b> get deleted.</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={() => {
@@ -187,8 +188,8 @@ const EditDialog = ({ formulaId, form }) => {
                       defaultValue={formula}
                       onChange={(e) => setFormula(e.target.value)}
             />
+            <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal formulas that depend on this formula.</Text>
           </ModalBody>
-
           <ModalFooter>
             <Text mr={3} fontSize="lg">{validation}</Text>
             <Button mr={3} onClick={() => validate.mutate({
@@ -316,22 +317,27 @@ function FormulaEditor() {
   const columns = [
     columnHelper.accessor("formula", {
       header: "Formula",
+      enableSorting: false,
       cell: info => info.getValue()
     }),
     columnHelper.accessor("createdAt", {
       header: "Created At",
+      enableSorting: false,
       cell: info => info.getValue() && `${new Date(info.getValue()).toLocaleString()}`
     }),
     columnHelper.accessor("createdBy", {
       header: "Created By",
+      enableSorting: false,
       cell: info => info.getValue()
     }),
     columnHelper.accessor("changedAt", {
       header: "Changed At",
+      enableSorting: false,
       cell: info => info.getValue() && `${new Date(info.getValue()).toLocaleString()}`
     }),
     columnHelper.accessor("changedBy", {
       header: "Changed By",
+      enableSorting: false,
       cell: info => info.getValue()
     }),
     columnHelper.accessor("action", {
