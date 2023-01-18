@@ -43,6 +43,15 @@ const addFormula = async (token, data) => {
     });
 };
 
+const validateFormula = async (token, data) => {
+  return await axios.post(`${getBaseURL()}/api/formula/validate`, data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+};
+
 const EditDialog = ({ formulaId }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -74,7 +83,7 @@ const AddDialog = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
 
-  const { mutate } = useMutation({
+  const add = useMutation({
     mutationKey: ["addFormula"],
     mutationFn: (data) => addFormula(keycloak.token, data),
     onSuccess: () => {
@@ -98,6 +107,19 @@ const AddDialog = () => {
       });
     }
   });
+
+  const validate = useMutation({
+    mutationKey: ["validateFormula"],
+    mutationFn: (data) => validateFormula(keycloak.token, data),
+    onSuccess: () => {
+      console.log('Valid')      
+    },
+    onError: (data) => {
+      console.log(data.response.data)
+    }
+  });
+
+
   const [formula, setFormula] = useState("");
   return (
     <>
@@ -114,11 +136,14 @@ const AddDialog = () => {
                       onChange={(e) => setFormula(e.target.value)} />
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter >
             <Button mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button onClick={() => mutate({
+            <Button mr={3} onClick={() => validate.mutate({
+              formula:formula
+            })}>Validate</Button>
+            <Button onClick={() => add.mutate({
               formula: formula
             })}>Save</Button>
           </ModalFooter>
