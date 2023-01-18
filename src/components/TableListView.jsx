@@ -3,7 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
+  getPaginationRowModel, getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table";
 import {
@@ -14,15 +14,16 @@ import {
   Select,
   Table,
   Tbody,
-  Td,
+  Td, Text,
   Th,
   Thead,
   Tr,
   useColorModeValue
 } from "@chakra-ui/react";
+import { FiRefreshCcw } from "react-icons/fi";
 
 
-const TableList = ({ data, columns, AddDialog }) => {
+const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 15
@@ -34,6 +35,7 @@ const TableList = ({ data, columns, AddDialog }) => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       pagination
     },
@@ -45,6 +47,7 @@ const TableList = ({ data, columns, AddDialog }) => {
     <Box p={3} pt={1} h={"100%"}>
       <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} borderRadius={"5px"}
             alignItems={"center"}>
+        {refetch && <Button disabled={loading || !data} onClick={refetch} mr={3}><FiRefreshCcw/><Text ml={2}>Refresh</Text></Button>}
         {AddDialog && <AddDialog />}
       </Flex>
       <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}>
@@ -63,16 +66,27 @@ const TableList = ({ data, columns, AddDialog }) => {
             >
               {table.getHeaderGroups().map(headerGroup => (
                 <Tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <Th key={header.id} align={"center"}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
+                  {headerGroup.headers.map(header => {
+                    return (
+                      <Th key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder ? null : (
+                          <Box
+                            onClick={header.column.getToggleSortingHandler()}
+                            style={header.column.getCanSort() ? { cursor: "pointer", userSelect: "none" } : {}}
+                          >
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                            {{
+                              asc: ' 🔼',
+                              desc: ' 🔽',
+                            }[header.column.getIsSorted()] ?? null}
+                          </Box>
                         )}
-                    </Th>
-                  ))}
+                      </Th>
+                    )
+                  })}
                 </Tr>
               ))}
             </Thead>
@@ -90,56 +104,59 @@ const TableList = ({ data, columns, AddDialog }) => {
           </Table>
         </Box>
         <Divider />
-        <Flex justifyContent={"flex-end"} gap={5} m={2} mr={5} alignItems={"center"}>
-          <Button
-            size={"sm"}
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<<"}
-          </Button>
-          <Button
-            size={"sm"}
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </Button>
-          <Button
-            size={"sm"}
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            {">"}
-          </Button>
-          <Button
-            size={"sm"}
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            {">>"}
-          </Button>
-          <Box>
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </strong>
-          </Box>
-          <Select
-            size={"sm"}
-            w={"65px"}
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value));
-            }}
-          >
-            {[15, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </Select>
+        <Flex justifyContent={"space-between"} m={2} mr={5} alignItems={"center"}>
+          {updatedAt && <Text>Last updated at: {new Date(updatedAt).toLocaleString()}</Text>}
+          <Flex gap={5} alignItems={"center"} flex={2} justifyContent={"flex-end"}>
+            <Button
+              size={"sm"}
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<<"}
+            </Button>
+            <Button
+              size={"sm"}
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              {"<"}
+            </Button>
+            <Button
+              size={"sm"}
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              {">"}
+            </Button>
+            <Button
+              size={"sm"}
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              {">>"}
+            </Button>
+            <Box>
+              <div>Page</div>
+              <strong>
+                {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </strong>
+            </Box>
+            <Select
+              size={"sm"}
+              w={"65px"}
+              value={table.getState().pagination.pageSize}
+              onChange={e => {
+                table.setPageSize(Number(e.target.value));
+              }}
+            >
+              {[15, 20, 30, 40, 50].map(pageSize => (
+                <option key={pageSize} value={pageSize}>
+                  {pageSize}
+                </option>
+              ))}
+            </Select>
+          </Flex>
         </Flex>
       </Flex>
 

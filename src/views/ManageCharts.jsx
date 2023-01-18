@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box, Button,
   Flex,
@@ -342,7 +342,7 @@ function ManageCharts() {
   const [selected, setSelected] = React.useState(null);
 
 
-  const { data } = useQuery(['components'],
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useQuery(['components'],
     async () => {
       return await axios.get(`${getBaseURL()}/api/dashboard/components`,
         {
@@ -359,7 +359,7 @@ function ManageCharts() {
         setSelected(null);
         onOpen();
       }}>
-        Create Chart
+        Add
       </Button>
     );
   }
@@ -392,6 +392,7 @@ function ManageCharts() {
     }),
     columnHelper.accessor('action', {
       header: 'Actions',
+      enableSorting: false,
       cell: ({ cell }) => {
         return (
           <Flex justifyContent={'center'} gap={2}>
@@ -415,7 +416,8 @@ function ManageCharts() {
       <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
       <CreateNewModal isOpen={isOpen} onClose={onClose}
                       editChart={selected} />
-      {<TableListView data={data.data} columns={columns} AddDialog={CreateChart} />}
+      {<TableListView data={data.data} columns={columns} AddDialog={CreateChart}
+                      refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
     </>
   );
 }

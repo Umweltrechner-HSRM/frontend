@@ -147,7 +147,7 @@ const useGetFormulas = () => {
 };
 
 function FormulaEditor() {
-  const { data, error } = useGetFormulas();
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useGetFormulas();
   const columnHelper = createColumnHelper();
 
   const columns = [
@@ -173,6 +173,7 @@ function FormulaEditor() {
     }),
     columnHelper.accessor("action", {
       header: "Actions",
+      enableSorting: false,
       cell: ({ cell }) => {
         return (
           <Flex justifyContent={"center"} gap={2}>
@@ -185,7 +186,7 @@ function FormulaEditor() {
 
   return (
     <Box h={"100%"} overflowY={"auto"}>
-      {data && <TableListView data={data.data} columns={columns} AddDialog={AddDialog} />}
+      {data && <TableListView data={data.data} columns={columns} AddDialog={AddDialog} refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading}  />}
     </Box>
   );
 }

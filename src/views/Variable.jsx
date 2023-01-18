@@ -159,11 +159,10 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
 
 
 function VariablePage() {
-  const { data, error } = useGetVariables();
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useGetVariables();
   const [selected, setSelected] = React.useState(null);
   const columnHelper = createColumnHelper();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
 
   const columns = useMemo(() => [
     columnHelper.accessor("name", {
@@ -185,6 +184,7 @@ function VariablePage() {
     }),
     columnHelper.accessor("action", {
       header: "Actions",
+      enableSorting: false,
       cell: ({ cell }) => {
         return (
           <Flex justifyContent={"center"} gap={2}>
@@ -202,7 +202,7 @@ function VariablePage() {
   return (
     <Box h={"100%"} overflowY={"auto"}>
       {isOpen && <EditDialog data={selected} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />}
-      {data && <TableListView data={data.data} columns={columns} />}
+      {data && <TableListView data={data.data} columns={columns} refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
     </Box>
   );
 }
