@@ -1,10 +1,12 @@
 import { FiHome } from 'react-icons/fi';
 import { AiOutlineLineChart } from 'react-icons/ai';
+import { HiOutlineVariable } from 'react-icons/hi';
 import Dashboard from './views/Dashboard.jsx';
 import React from 'react';
 import ManageCharts from './views/ManageCharts.jsx';
 import FormulaEditor from "./views/FormelEditor.jsx";
 import VariablePage from "./views/Variable.jsx";
+import { TbMath } from "react-icons/tb";
 
 const ClientRoutes = [
   {
@@ -19,21 +21,21 @@ const ClientRoutes = [
     icon: AiOutlineLineChart,
     path: '/manageCharts',
     element: <ManageCharts />,
-    permission: 'admin'
+    permission: null
   },
   {
     title: 'Formula Editor',
-    icon: AiOutlineLineChart,
+    icon: TbMath,
     path: '/formula',
     element: <FormulaEditor />,
-    permission: 'admin'
+    permission: null
   },
   {
     title: 'Variables',
-    icon: AiOutlineLineChart,
+    icon: HiOutlineVariable,
     path: '/variable',
     element: <VariablePage />,
-    permission: 'admin'
+    permission: null
   }
 ];
 

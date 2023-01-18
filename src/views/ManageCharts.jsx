@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Box, Button,
   Flex,
@@ -25,6 +25,7 @@ import {
 } from '@tanstack/react-table';
 import { TableListView } from '../components/TableListView.jsx';
 import { AddIcon } from '@chakra-ui/icons';
+import { useKeycloak } from "@react-keycloak/web";
 
 const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   const toast = useToast();
@@ -69,12 +70,12 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
 
   return (
     <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay bg={'blackAlpha.800'} />
-      <ModalContent bg={'#232323'}>
+      <ModalOverlay />
+      <ModalContent>
         <ModalHeader>
           <HStack>
-            <TbAlertTriangle size={'30px'} color={'#ee5656'} />
-            <Text ml={2} color={'white'}>Delete chart</Text>
+            <TbAlertTriangle size={'40px'} color={'#ee5656'}/>
+            <Text>Delete Chart</Text>
           </HStack>
         </ModalHeader>
         <ModalCloseButton />
@@ -199,10 +200,10 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   return (
     <>
       <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay bg={'blackAlpha.800'} />
-        <ModalContent maxW={'56rem'} bg={'#232323'}>
+        <ModalOverlay />
+        <ModalContent maxW={'56rem'}>
           <ModalHeader fontWeight={'bold'} fontSize={'1.8rem'}
-                       textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create new chart'}</ModalHeader>
+                       textAlign={'center'}>{editChart ? 'Edit Chart' : 'Create New Chart'}</ModalHeader>
           <ModalCloseButton />
           <HStack justifyContent={'center'} gap={'5rem'} ml={'1rem'} borderRadius={'0.5rem'}>
             <CreateChart userProps={userProps} setUserProps={setUserProps} />
@@ -337,12 +338,13 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
 function ManageCharts() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenDel, onOpen: onOpenDel, onClose: onCloseDel } = useDisclosure();
+  const { keycloak } = useKeycloak();
 
   const columnHelper = createColumnHelper();
   const [selected, setSelected] = React.useState(null);
 
 
-  const { data } = useQuery(['components'],
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useQuery(['components'],
     async () => {
       return await axios.get(`${getBaseURL()}/api/dashboard/components`,
         {
@@ -359,7 +361,7 @@ function ManageCharts() {
         setSelected(null);
         onOpen();
       }}>
-        Create Chart
+        Add
       </Button>
     );
   }
@@ -392,8 +394,9 @@ function ManageCharts() {
     }),
     columnHelper.accessor('action', {
       header: 'Actions',
-      cell: ({ cell }) => {
-        return (
+      enableSorting: false,
+      cell: ({ cell }) => (
+        keycloak.hasRealmRole('admin') && (
           <Flex justifyContent={'center'} gap={2}>
             <Button onClick={() => {
               setSelected(cell.row.original);
@@ -405,8 +408,8 @@ function ManageCharts() {
               onOpenDel();
             }}><MdOutlineDeleteOutline /></Button>
           </Flex>
-        );
-      }
+        )
+      )
     })
   ], []);
 
@@ -415,7 +418,8 @@ function ManageCharts() {
       <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
       <CreateNewModal isOpen={isOpen} onClose={onClose}
                       editChart={selected} />
-      {<TableListView data={data.data} columns={columns} AddDialog={CreateChart} />}
+      {<TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole('admin') && CreateChart}
+                      refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
     </>
   );
 }
