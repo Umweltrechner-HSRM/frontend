@@ -25,6 +25,7 @@ import {
 } from '@tanstack/react-table';
 import { TableListView } from '../components/TableListView.jsx';
 import { AddIcon } from '@chakra-ui/icons';
+import { useKeycloak } from "@react-keycloak/web";
 
 const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   const toast = useToast();
@@ -337,6 +338,7 @@ function ChartTable({ currentCharts, onOpen, setEditChartId, deleteChart, onOpen
 function ManageCharts() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isOpenDel, onOpen: onOpenDel, onClose: onCloseDel } = useDisclosure();
+  const { keycloak } = useKeycloak();
 
   const columnHelper = createColumnHelper();
   const [selected, setSelected] = React.useState(null);
@@ -393,8 +395,8 @@ function ManageCharts() {
     columnHelper.accessor('action', {
       header: 'Actions',
       enableSorting: false,
-      cell: ({ cell }) => {
-        return (
+      cell: ({ cell }) => (
+        keycloak.hasRealmRole('admin') && (
           <Flex justifyContent={'center'} gap={2}>
             <Button onClick={() => {
               setSelected(cell.row.original);
@@ -406,8 +408,8 @@ function ManageCharts() {
               onOpenDel();
             }}><MdOutlineDeleteOutline /></Button>
           </Flex>
-        );
-      }
+        )
+      )
     })
   ], []);
 
@@ -416,7 +418,7 @@ function ManageCharts() {
       <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
       <CreateNewModal isOpen={isOpen} onClose={onClose}
                       editChart={selected} />
-      {<TableListView data={data.data} columns={columns} AddDialog={CreateChart}
+      {<TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole('admin') && CreateChart}
                       refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
     </>
   );

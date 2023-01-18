@@ -21,21 +21,21 @@ const ClientRoutes = [
     icon: AiOutlineLineChart,
     path: '/manageCharts',
     element: <ManageCharts />,
-    permission: 'admin'
+    permission: null
   },
   {
     title: 'Formula Editor',
     icon: TbMath,
     path: '/formula',
     element: <FormulaEditor />,
-    permission: 'admin'
+    permission: null
   },
   {
     title: 'Variables',
     icon: HiOutlineVariable,
     path: '/variable',
     element: <VariablePage />,
-    permission: 'admin'
+    permission: null
   }
 ];
 

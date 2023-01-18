@@ -149,6 +149,7 @@ const useGetFormulas = () => {
 function FormulaEditor() {
   const { data, isLoading, error, refetch, dataUpdatedAt } = useGetFormulas();
   const columnHelper = createColumnHelper();
+  const { keycloak } = useKeycloak();
 
   const columns = [
     columnHelper.accessor("formula", {
@@ -174,19 +175,19 @@ function FormulaEditor() {
     columnHelper.accessor("action", {
       header: "Actions",
       enableSorting: false,
-      cell: ({ cell }) => {
-        return (
+      cell: ({ cell }) => (
+        keycloak.hasRealmRole("admin") && (
           <Flex justifyContent={"center"} gap={2}>
             <EditDialog formulaId={cell.row.original.id} />
           </Flex>
-        );
-      }
+        )
+      )
     })
   ];
 
   return (
     <Box h={"100%"} overflowY={"auto"}>
-      {data && <TableListView data={data.data} columns={columns} AddDialog={AddDialog} refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading}  />}
+      {data && <TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole('admin') && AddDialog} refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading}  />}
     </Box>
   );
 }

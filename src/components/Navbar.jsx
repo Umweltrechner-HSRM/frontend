@@ -1,14 +1,18 @@
-import { Box, Flex, HStack, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, HStack, Icon, IconButton, Image, Link, Text, useColorModeValue } from "@chakra-ui/react";
 import ThemeToggleButton from './ToggleButton.jsx';
 import { NavLink, useLocation } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 import { DashboardTabsContext } from '../App.jsx';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import DashboardTabs from './DashboardTabs.jsx';
+import { FiLogOut, FiUser } from "react-icons/fi";
+import { useKeycloak } from "@react-keycloak/web";
 
 const Navbar = () => {
   const context = useContext(DashboardTabsContext);
   const location = useLocation();
+  const { keycloak } = useKeycloak()
+
 
   return (
     <Flex
@@ -41,8 +45,18 @@ const Navbar = () => {
             />
           )}
           <Flex gap={2}>
+            <Link target="_blank" href={`${keycloak.authServerUrl}/realms/${keycloak.realm}/account`} >
+              <Flex alignItems={"center"}>
+                <IconButton
+                  aria-label="Logout"
+                  colorScheme={useColorModeValue('purple', 'orange')}
+                  icon={<FiUser />}
+                />
+              </Flex>
+            </Link>
             <ThemeToggleButton />
             <LogoutButton />
+
           </Flex>
         </HStack>
       </Box>

@@ -163,6 +163,7 @@ function VariablePage() {
   const [selected, setSelected] = React.useState(null);
   const columnHelper = createColumnHelper();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { keycloak } = useKeycloak();
 
   const columns = useMemo(() => [
     columnHelper.accessor("name", {
@@ -185,8 +186,8 @@ function VariablePage() {
     columnHelper.accessor("action", {
       header: "Actions",
       enableSorting: false,
-      cell: ({ cell }) => {
-        return (
+      cell: ({ cell }) => (
+        keycloak.hasRealmRole("admin") && (
           <Flex justifyContent={"center"} gap={2}>
             <Button onClick={() => {
               setSelected(cell.row.original);
@@ -194,8 +195,8 @@ function VariablePage() {
             }
             }><MdOutlineModeEditOutline /></Button>
           </Flex>
-        );
-      }
+        )
+      )
     })
   ], []);
 
