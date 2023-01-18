@@ -65,7 +65,6 @@ function CreateChart({ userProps, setUserProps }) {
           <Select
             placeholder={'Line'}
             value={userProps.type}
-            color={'white'}
             variant='outline'
             onChange={e =>
               setUserProps({ ...userProps, type: e.target.value })
