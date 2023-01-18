@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Box, Button,
-  Flex,
+  Flex, HStack,
   Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select,
   Text,
   Textarea,
@@ -11,13 +11,76 @@ import "../styles/styles.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { getBaseURL } from "../helpers/api.jsx";
-import { MdOutlineModeEditOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline, MdOutlineModeEditOutline } from "react-icons/md";
 import { useKeycloak } from "@react-keycloak/web";
 import {
   createColumnHelper
 } from "@tanstack/react-table";
 import { AddIcon } from "@chakra-ui/icons";
 import { TableListView } from "../components/TableListView.jsx";
+import { TbAlertTriangle } from "react-icons/tb";
+
+
+const DeleteModal = React.memo(({ formula }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { keycloak } = useKeycloak();
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationKey: ["deleteFormula"],
+    mutationFn: () => deleteFormula(keycloak.token, formula.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["formulas"]);
+      onClose();
+      toast({
+        position: "bottom-right",
+        title: "Formula deleted.",
+        status: "success",
+        duration: 5000,
+        isClosable: true
+      });
+    },
+    onError: () => {
+      toast({
+        position: "bottom-right",
+        title: "Error deleting formula.",
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      });
+    }
+  });
+  return (
+    <>
+      <Button onClick={onOpen}><MdOutlineDeleteOutline /></Button>
+      <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack>
+              <TbAlertTriangle size={"40px"} color={"#ee5656"} />
+              <Text>Delete Formula</Text>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Are you sure you want to delete this formula?
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={() => {
+              mutate();
+              onClose();
+            }}>
+              Delete
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+});
 
 const editFormula = async (token, data) => {
   return await axios.put(`${getBaseURL()}/api/formula/${data.id}`, data,
@@ -28,11 +91,13 @@ const editFormula = async (token, data) => {
     });
 };
 
-const useEditFormula = () => {
-  const { keycloak } = useKeycloak();
-  return useMutation({
-    mutationFn: ({ data }) => editFormula(keycloak.token, data)
-  });
+const deleteFormula = async (token, data) => {
+  return await axios.delete(`${getBaseURL()}/api/formula/${data}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 };
 
 const addFormula = async (token, data) => {
@@ -55,17 +120,17 @@ const validateFormula = async (token, data) => {
 
 const EditDialog = ({ formulaId, form }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [formula, setFormula] = useState('');
+  const [formula, setFormula] = useState("");
   const { keycloak } = useKeycloak();
   const toast = useToast();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const [validation, setValidation] = useState('')
+  const [validation, setValidation] = useState("");
 
 
   const edit = useMutation({
-    mutationKey: ['editFormula'],
-    mutationFn: (data) => editFormula(keycloak.token,data),
+    mutationKey: ["editFormula"],
+    mutationFn: (data) => editFormula(keycloak.token, data),
     onSuccess: () => {
       queryClient.invalidateQueries(["formulas"]);
       onClose();
@@ -86,54 +151,54 @@ const EditDialog = ({ formulaId, form }) => {
         isClosable: true
       });
     }
-  })
+  });
 
   const validate = useMutation({
     mutationKey: ["validateFormula"],
     mutationFn: (data) => validateFormula(keycloak.token, data),
     onSuccess: () => {
-      setValidation('Valid')      
+      setValidation("Valid");
     },
     onError: (data) => {
-      let message = data.response.data
-      message = message.split(/^(.*?): /gm).pop()
-      setValidation(message)
+      let message = data.response.data;
+      message = message.split(/^(.*?): /gm).pop();
+      setValidation(message);
     }
   });
 
   return (
     <>
       <Button onClick={() => {
-        setFormula(form)
-        onOpen()
+        setFormula(form);
+        onOpen();
       }}
-      
+
       ><MdOutlineModeEditOutline /></Button>
       <Modal isCentered={true} isOpen={isOpen} onClose={() => {
-        onClose()
-        setValidation('')
+        onClose();
+        setValidation("");
       }}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Formula</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Textarea placeholder="Enter Formula here" 
-              defaultValue={formula} 
-              onChange={(e) => setFormula(e.target.value)}
+            <Textarea placeholder="Enter Formula here"
+                      defaultValue={formula}
+                      onChange={(e) => setFormula(e.target.value)}
             />
           </ModalBody>
 
           <ModalFooter>
-            <Text mr={3} fontSize='lg'>{validation}</Text>
+            <Text mr={3} fontSize="lg">{validation}</Text>
             <Button mr={3} onClick={() => validate.mutate({
-              formula:formula
+              formula: formula
             })}>Validate</Button>
-            <Button 
+            <Button
               mr={3}
               onClick={() => edit.mutate({
                 id: formulaId,
-                formula:formula
+                formula: formula
               })}
             >Save</Button>
           </ModalFooter>
@@ -178,18 +243,18 @@ const AddDialog = () => {
     mutationKey: ["validateFormula"],
     mutationFn: (data) => validateFormula(keycloak.token, data),
     onSuccess: () => {
-      setValidation('Valid')      
+      setValidation("Valid");
     },
     onError: (data) => {
-      let message = data.response.data
-      message = message.split(/^(.*?): /gm).pop()
-      setValidation(message)
+      let message = data.response.data;
+      message = message.split(/^(.*?): /gm).pop();
+      setValidation(message);
     }
   });
 
 
   const [formula, setFormula] = useState("");
-  const [validation, setValidation]= useState('')
+  const [validation, setValidation] = useState("");
 
 
   return (
@@ -197,9 +262,9 @@ const AddDialog = () => {
       <Button leftIcon={<AddIcon />} colorScheme="teal" variant="solid" onClick={onOpen}>
         Add
       </Button>
-      <Modal isCentered={true} isOpen={isOpen} onClose={()=>{
-        onClose()
-        setValidation('')
+      <Modal isCentered={true} isOpen={isOpen} onClose={() => {
+        onClose();
+        setValidation("");
       }}>
         <ModalOverlay />
         <ModalContent>
@@ -210,11 +275,11 @@ const AddDialog = () => {
                       onChange={(e) => setFormula(e.target.value)} />
           </ModalBody>
 
-          <ModalFooter >
-            <Text mr={3} fontSize='lg'>{validation}</Text>
-            
+          <ModalFooter>
+            <Text mr={3} fontSize="lg">{validation}</Text>
+
             <Button mr={3} onClick={() => validate.mutate({
-              formula:formula
+              formula: formula
             })}>Validate</Button>
             <Button onClick={() => add.mutate({
               formula: formula
@@ -248,7 +313,6 @@ function FormulaEditor() {
   const { data, isLoading, error, refetch, dataUpdatedAt } = useGetFormulas();
   const columnHelper = createColumnHelper();
   const { keycloak } = useKeycloak();
-
   const columns = [
     columnHelper.accessor("formula", {
       header: "Formula",
@@ -277,6 +341,7 @@ function FormulaEditor() {
         keycloak.hasRealmRole("admin") && (
           <Flex justifyContent={"center"} gap={2}>
             <EditDialog formulaId={cell.row.original.id} form={cell.row.original.formula} />
+            <DeleteModal formula={cell.row.original} />
           </Flex>
         )
       )
@@ -285,7 +350,8 @@ function FormulaEditor() {
 
   return (
     <Box h={"100%"} overflowY={"auto"}>
-      {data && <TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole('admin') && AddDialog} refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading}  />}
+      {data && <TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole("admin") && AddDialog}
+                              refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
     </Box>
   );
 }
