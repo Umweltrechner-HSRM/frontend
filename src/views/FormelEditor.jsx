@@ -3,6 +3,7 @@ import {
   Box, Button,
   Flex,
   Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select,
+  Text,
   Textarea,
   useDisclosure, useToast
 } from "@chakra-ui/react";
@@ -112,15 +113,18 @@ const AddDialog = () => {
     mutationKey: ["validateFormula"],
     mutationFn: (data) => validateFormula(keycloak.token, data),
     onSuccess: () => {
-      console.log('Valid')      
+      setValidation('Valid')      
     },
     onError: (data) => {
-      console.log(data.response.data)
+      let message = data.response.data
+      message = message.split(/^(.*?): /gm).pop()
+      setValidation(message)
     }
   });
 
 
   const [formula, setFormula] = useState("");
+  const [validation, setValidation]= useState('')
   return (
     <>
       <Button leftIcon={<AddIcon />} colorScheme="teal" variant="solid" onClick={onOpen}>
@@ -137,6 +141,7 @@ const AddDialog = () => {
           </ModalBody>
 
           <ModalFooter >
+            <Text mr={3} fontSize='lg'>{validation}</Text>
             <Button mr={3} onClick={onClose}>
               Close
             </Button>
