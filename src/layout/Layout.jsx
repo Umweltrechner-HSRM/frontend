@@ -20,7 +20,7 @@ export const Layout = () => {
         }}>
           <Sidebar />
         </Box>
-        <Box p={[1, 4]} pb={0} w="100%" overflow={"auto"} flexGrow={1}>
+        <Box pt={[0, 3]} pb={0} w="100%" overflow={"auto"} flexGrow={1}>
           <Outlet />
         </Box>
       </Flex>
