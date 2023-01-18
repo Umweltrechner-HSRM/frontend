@@ -20,7 +20,7 @@ import {
   createColumnHelper
 } from "@tanstack/react-table";
 import { TableListView } from "../components/TableListView.jsx";
-import {useFieldArray, useForm, Controller} from 'react-hook-form'
+import {useFieldArray, useForm} from 'react-hook-form'
 
 // offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
@@ -41,7 +41,6 @@ const useGetVariables = () => {
 };
 
 const addThresholds = async (token, data) => {
-  console.log(data);
   return await axios.put(`${getBaseURL()}/api/variable/${data.name}`, data,
       {
         headers: {

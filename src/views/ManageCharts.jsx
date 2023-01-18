@@ -357,7 +357,7 @@ function ManageCharts() {
 
   function CreateChart() {
     return (
-      <Button leftIcon={<AddIcon />} colorScheme='teal' variant='solid' onClick={() => {
+      <Button size={{base: "sm", md:"md"}} leftIcon={<AddIcon />} colorScheme='teal' variant='solid' onClick={() => {
         setSelected(null);
         onOpen();
       }}>

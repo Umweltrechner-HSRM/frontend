@@ -45,9 +45,11 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
 
   return (
     <Box p={3} pt={1} h={"100%"}>
-      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} borderRadius={"5px"}
+      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+            borderRadius={"5px"}
             alignItems={"center"}>
-        {refetch && <Button disabled={loading || !data} onClick={refetch} mr={3}><FiRefreshCcw/><Text ml={2}>Refresh</Text></Button>}
+        {refetch && <Button size={{ base: "sm", md: "md" }} disabled={loading || !data} onClick={refetch}
+                            mr={3}><FiRefreshCcw /><Text ml={2}>Refresh</Text></Button>}
         {AddDialog && <AddDialog />}
       </Flex>
       <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}>
@@ -56,12 +58,12 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
           h={"90%"} overflowY={"auto"}>
           <Table>
             <Thead
-              bg={useColorModeValue('#fff', '#202023')}
+              bg={useColorModeValue("#fff", "#202023")}
               style={{
                 position: "sticky",
                 top: "-3px",
                 margin: "0",
-                zIndex: "5",
+                zIndex: "5"
               }}
             >
               {table.getHeaderGroups().map(headerGroup => (
@@ -79,13 +81,13 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
                               header.getContext()
                             )}
                             {{
-                              asc: ' 🔼',
-                              desc: ' 🔽',
+                              asc: " 🔼",
+                              desc: " 🔽"
                             }[header.column.getIsSorted()] ?? null}
                           </Box>
                         )}
                       </Th>
-                    )
+                    );
                   })}
                 </Tr>
               ))}
@@ -105,42 +107,56 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
         </Box>
         <Divider />
         <Flex justifyContent={"space-between"} m={2} mr={5} alignItems={"center"}>
-          {updatedAt && <Text>Last updated at: {new Date(updatedAt).toLocaleString()}</Text>}
-          <Flex gap={5} alignItems={"center"} flex={2} justifyContent={"flex-end"}>
+          {updatedAt && <Text fontSize={{
+            base: "xs",
+            md: "sm"
+          }}
+                              display={{ base: "none", md: "block" }}>
+            Last updated: {new Date(updatedAt).toLocaleTimeString()}</Text>}
+          <Flex gap={{ base: 1, md: 5 }} alignItems={"center"} flex={2} justifyContent={"flex-end"}>
             <Button
-              size={"sm"}
+              size={["xs", "sm"]}
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
             >
               {"<<"}
             </Button>
             <Button
-              size={"sm"}
+              size={["xs", "sm"]}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               {"<"}
             </Button>
             <Button
-              size={"sm"}
+              size={["xs", "sm"]}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
               {">"}
             </Button>
             <Button
-              size={"sm"}
+              size={["xs", "sm"]}
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               disabled={!table.getCanNextPage()}
             >
               {">>"}
             </Button>
             <Box>
-              <div>Page</div>
-              <strong>
-                {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
-              </strong>
+              <Text fontSize={{
+                base: "xs",
+                md: "sm"
+              }} display={{ base: "none", md: "block" }}>
+                Page{" "}
+              </Text>
+              <Text fontSize={{
+                base: "xs",
+                md: "sm"
+              }}>
+                <strong>
+                  {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                </strong>
+              </Text>
             </Box>
             <Select
               size={"sm"}

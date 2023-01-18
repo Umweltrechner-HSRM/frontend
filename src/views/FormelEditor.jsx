@@ -260,7 +260,7 @@ const AddDialog = () => {
 
   return (
     <>
-      <Button leftIcon={<AddIcon />} colorScheme="teal" variant="solid" onClick={onOpen}>
+      <Button size={{base: "sm", md:"md"}} leftIcon={<AddIcon />} colorScheme="teal" variant="solid" onClick={onOpen}>
         Add
       </Button>
       <Modal isCentered={true} isOpen={isOpen} onClose={() => {
