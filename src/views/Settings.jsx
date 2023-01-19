@@ -27,7 +27,7 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
-  Tooltip
+  Tooltip, useColorModeValue
 } from "@chakra-ui/react";
 import { InfoOutlineIcon, SettingsIcon } from "@chakra-ui/icons";
 import axios from "axios";
@@ -65,6 +65,7 @@ const EditSettingsModal = ({ mail, frequency }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
+  const cardBg = useColorModeValue("#fff", "#202023");
 
   const {
     register,
@@ -149,11 +150,12 @@ const EditSettingsModal = ({ mail, frequency }) => {
 const SettingsPage = () => {
   const { keycloak } = useKeycloak();
   const { data, isLoading } = useGetMetaSettings();
+  const cardBg = useColorModeValue("#fff", "#202023");
 
   return (
     <Box p={3} pt={1} h={"100%"}>
       <SimpleGrid spacing={4} templateColumns="repeat(auto-fill, minmax(250px, 1fr))">
-        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"}>
+        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"} bg={cardBg}>
           <CardHeader display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
             <Heading size="md">Backend Settings</Heading>
           </CardHeader>
@@ -208,7 +210,7 @@ const SettingsPage = () => {
               <EditSettingsModal frequency={data?.data?.MAIL_FREQUENCY} mail={data?.data?.DEFAULT_MAIL} />}
           </CardFooter>
         </Card>
-        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"}>
+        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"} bg={cardBg}>
           <CardHeader>
             <Heading size="md"> Keycloak Admin Panel</Heading>
           </CardHeader>
