@@ -188,7 +188,7 @@ const EditDialog = ({ formulaId, form }) => {
                       defaultValue={formula}
                       onChange={(e) => setFormula(e.target.value)}
             />
-            <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal formulas that depend on this formula.</Text>
+            <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal of formulas that depend on this formula.</Text>
           </ModalBody>
           <ModalFooter>
             <Text mr={3} fontSize="lg">{validation}</Text>
