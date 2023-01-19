@@ -125,7 +125,7 @@ const EditSettingsModal = ({ mail, frequency }) => {
                 </FormControl>
 
                 <FormControl isInvalid={errors.MAIL_FREQUENCY}>
-                  <FormLabel htmlFor={"MAIL_FREQUENCY"}>{"MAIL_FREQUENCY"}</FormLabel>
+                  <FormLabel htmlFor={"MAIL_FREQUENCY"}>{"Mail Frequency"}</FormLabel>
                   <Input type={"number"}
                          {...register("MAIL_FREQUENCY")}
                   />
