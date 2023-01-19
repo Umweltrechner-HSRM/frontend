@@ -7,6 +7,8 @@ import ManageCharts from './views/ManageCharts.jsx';
 import FormulaEditor from "./views/FormelEditor.jsx";
 import VariablePage from "./views/Variable.jsx";
 import { TbMath } from "react-icons/tb";
+import { SettingsIcon } from "@chakra-ui/icons";
+import SettingsPage from "./views/Settings.jsx";
 
 const ClientRoutes = [
   {
@@ -35,6 +37,13 @@ const ClientRoutes = [
     icon: HiOutlineVariable,
     path: '/variable',
     element: <VariablePage />,
+    permission: null
+  },
+  {
+    title: "Settings",
+    icon: SettingsIcon,
+    path: "/settings",
+    element: <SettingsPage />,
     permission: null
   }
 ];
