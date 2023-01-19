@@ -9,7 +9,11 @@ const config = {
 const styles = {
   global: props => ({
     body: {
+      height: '-webkit-fill-available',
       bg: mode('#fff', '#202023')(props)
+    },
+    html: {
+      height: '-webkit-fill-available'
     }
   })
 };
