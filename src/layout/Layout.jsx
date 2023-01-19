@@ -6,7 +6,7 @@ import Sidebar from "../components/Sidebar.jsx";
 
 export const Layout = () => {
   return (
-    <Box h={"100vh"}>
+    <Box>
       <Navbar />
       <Divider orientation={"horizontal"} />
       <Flex
