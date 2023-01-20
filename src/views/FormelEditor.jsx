@@ -458,14 +458,14 @@ function FormulaEditor() {
           <FiRefreshCcw />
           <Text ml={2}>Refresh</Text>
         </Button>
-        <Button size={{ base: "sm", md: "md" }}
-                leftIcon={<AddIcon />} c
-                colorScheme="teal"
-                variant="solid"
-                onClick={addOnOpen}
+        {hasAdminRole && (<Button size={{ base: "sm", md: "md" }}
+                                  leftIcon={<AddIcon />} c
+                                  colorScheme="teal"
+                                  variant="solid"
+                                  onClick={addOnOpen}
         >
           Add
-        </Button>
+        </Button>)}
         {(addIsOpen && hasAdminRole) &&
           <EditDialog isOpen={addIsOpen} onClose={addOnClose} onOpen={addOnOpen} isNew={true} />}
       </Flex>
