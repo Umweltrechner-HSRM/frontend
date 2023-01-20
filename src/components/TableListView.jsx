@@ -20,10 +20,9 @@ import {
   Tr,
   useColorModeValue
 } from "@chakra-ui/react";
-import { FiRefreshCcw } from "react-icons/fi";
 
 
-const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) => {
+const TableList = ({ data, columns, updatedAt }) => {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 15
@@ -44,14 +43,6 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
 
 
   return (
-    <Box p={3} pt={1} h={"100%"}>
-      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}  borderWidth={1}
-            borderRadius={"5px"}
-            alignItems={"center"}>
-        {refetch && <Button size={{ base: "sm", md: "md" }} disabled={loading || !data} onClick={refetch}
-                            mr={3}><FiRefreshCcw /><Text ml={2}>Refresh</Text></Button>}
-        {AddDialog && <AddDialog />}
-      </Flex>
       <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}  borderWidth={1}>
         <Box
           flex={1}
@@ -175,8 +166,6 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
           </Flex>
         </Flex>
       </Flex>
-
-    </Box>
   );
 };
 
