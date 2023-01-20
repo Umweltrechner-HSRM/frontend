@@ -177,6 +177,13 @@ function VariablePage() {
       header: "Max Threshold",
       cell: info => info.getValue()
     }),
+    columnHelper.accessor("type", {
+      header: "Type",
+      cell: info => info.getValue() && info.getValue().toLowerCase()
+      .split(' ')
+        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+        .join(' ')
+    }),
     columnHelper.accessor("lastOverThreshold", {
       header: "Last Over Threshold",
       cell: info =>
