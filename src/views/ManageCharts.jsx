@@ -26,6 +26,7 @@ import {
 import { TableListView } from '../components/TableListView.jsx';
 import { AddIcon } from '@chakra-ui/icons';
 import { useKeycloak } from "@react-keycloak/web";
+import { FiRefreshCcw } from "react-icons/fi";
 
 const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
   const toast = useToast();
@@ -355,16 +356,6 @@ function ManageCharts() {
     }
   );
 
-  function CreateChart() {
-    return (
-      <Button size={{base: "sm", md:"md"}} leftIcon={<AddIcon />} colorScheme='teal' variant='solid' onClick={() => {
-        setSelected(null);
-        onOpen();
-      }}>
-        Add
-      </Button>
-    );
-  }
 
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
@@ -414,13 +405,32 @@ function ManageCharts() {
   ], []);
 
   return (data &&
-    <>
-      <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
-      <CreateNewModal isOpen={isOpen} onClose={onClose}
-                      editChart={selected} />
-      {<TableListView data={data.data} columns={columns} AddDialog={keycloak.hasRealmRole('admin') && CreateChart}
-                      refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />}
-    </>
+    <Box h={"100%"} overflowY={"auto"}>
+      <Box p={3} pt={1} h={"100%"}>
+        <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+              borderWidth={1}
+              borderRadius={"5px"}
+              alignItems={"center"}>
+          <Button size={{ base: "sm", md: "md" }} disabled={isLoading || !data} onClick={refetch} mr={3}>
+            <FiRefreshCcw />
+            <Text ml={2}>Refresh</Text>
+          </Button>
+          {keycloak.hasRealmRole('admin') &&
+            <Button size={{base: "sm", md:"md"}} leftIcon={<AddIcon />} colorScheme='teal' variant='solid' onClick={() => {
+              setSelected(null);
+              onOpen();
+            }}>
+              Add
+            </Button>}
+        </Flex>
+        <DeleteModal onClose={onCloseDel} isOpen={isOpenDel} chart={selected} />
+        <CreateNewModal isOpen={isOpen} onClose={onClose}
+                        editChart={selected} />
+        <TableListView data={data.data} columns={columns}
+                       refetch={refetch} updatedAt={dataUpdatedAt} loading={isLoading} />
+      </Box>
+
+    </Box>
   );
 }
 
