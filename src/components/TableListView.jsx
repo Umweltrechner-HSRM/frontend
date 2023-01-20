@@ -45,20 +45,19 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
 
   return (
     <Box p={3} pt={1} h={"100%"}>
-      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}  borderWidth={1}
             borderRadius={"5px"}
             alignItems={"center"}>
         {refetch && <Button size={{ base: "sm", md: "md" }} disabled={loading || !data} onClick={refetch}
                             mr={3}><FiRefreshCcw /><Text ml={2}>Refresh</Text></Button>}
         {AddDialog && <AddDialog />}
       </Flex>
-      <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}>
+      <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}  borderWidth={1}>
         <Box
           flex={1}
           h={"90%"} overflowY={"auto"}>
           <Table>
             <Thead
-              bg={useColorModeValue("#fff", "#202023")}
               style={{
                 position: "sticky",
                 top: "-3px",
@@ -106,7 +105,7 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
           </Table>
         </Box>
         <Divider />
-        <Flex justifyContent={"space-between"} m={2} mr={5} alignItems={"center"}>
+        <Flex justifyContent={"space-between"} m={2} ml={5} mr={5} alignItems={"center"}>
           {updatedAt && <Text fontSize={{
             base: "xs",
             md: "sm"

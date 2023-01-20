@@ -17,7 +17,7 @@ export const Layout = () => {
           md: "rgba(0, 0, 0, 0.35) 0px 5px 15px"
         }} borderRadius={"5px"} h={{
           md: "99%"
-        }}>
+        }}  borderWidth={"0 1px 1px 1px"}>
           <Sidebar />
         </Box>
         <Box pt={[0, 3]} pb={0} w="100%" overflow={"auto"} flexGrow={1}>
