@@ -155,7 +155,7 @@ const SettingsPage = () => {
   return (
     <Box p={3} pt={1} h={"100%"}>
       <SimpleGrid spacing={4} templateColumns="repeat(auto-fill, minmax(250px, 1fr))">
-        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"} bg={cardBg}>
+        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outline"} bg={cardBg}>
           <CardHeader display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
             <Heading size="md">Backend Settings</Heading>
           </CardHeader>
@@ -210,7 +210,7 @@ const SettingsPage = () => {
               <EditSettingsModal frequency={data?.data?.MAIL_FREQUENCY} mail={data?.data?.DEFAULT_MAIL} />}
           </CardFooter>
         </Card>
-        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outlined"} bg={cardBg}>
+        <Card boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} variant={"outline"} bg={cardBg}>
           <CardHeader>
             <Heading size="md"> Keycloak Admin Panel</Heading>
           </CardHeader>
