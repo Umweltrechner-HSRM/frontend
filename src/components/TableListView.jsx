@@ -58,6 +58,7 @@ const TableList = ({ data, columns, AddDialog, refetch, updatedAt, loading }) =>
           h={"90%"} overflowY={"auto"}>
           <Table>
             <Thead
+              bg={useColorModeValue('#fff', '#202023')}
               style={{
                 position: "sticky",
                 top: "-3px",
