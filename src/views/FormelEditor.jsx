@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Box, Button,
   Flex, HStack,
@@ -19,6 +19,76 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { TableListView } from "../components/TableListView.jsx";
 import { TbAlertTriangle } from "react-icons/tb";
+import { Mention, MentionsInput } from "react-mentions";
+
+const defaultStyle = {
+  control: {
+    fontSize: 14,
+    fontWeight: 'normal',
+  },
+
+  '&multiLine': {
+    control: {
+      fontFamily: 'monospace',
+      minHeight: 64,
+    },
+    highlighter: {
+      padding: 9,
+      border: '1px solid transparent',
+    },
+    input: {
+      padding: 9,
+      border: '1px solid silver',
+    },
+  },
+
+  '&singleLine': {
+    display: 'inline-block',
+    width: 180,
+
+    highlighter: {
+      padding: 1,
+      border: '2px inset transparent',
+    },
+    input: {
+      padding: 1,
+      border: '2px inset',
+    },
+  },
+
+  suggestions: {
+    list: {
+      backgroundColor: 'white',
+      border: '1px solid rgba(0,0,0,0.15)',
+      fontSize: 14,
+    },
+    item: {
+      padding: '5px 15px',
+      borderBottom: '1px solid rgba(0,0,0,0.15)',
+      '&focused': {
+        backgroundColor: '#cee4e5',
+      },
+    },
+  },
+}
+
+function CustomSuggestionsContainer({ value, data, onChange, onAdd }) {
+  return (
+    <Box>
+      <MentionsInput
+        value={value}
+        onChange={onChange}
+        placeholder={"Variable suggestions using '@'"}
+        a11ySuggestionsListLabel={"Suggested variables"}
+        allowSuggestionsAboveCursor={true}
+        style={defaultStyle}
+        customSuggestionsContainer={(children)=><div><span style={{fontWeight: "bold"}}><h2>Variables</h2></span>{children}</div>}
+      >
+        <Mention data={data} onAdd={onAdd} />
+      </MentionsInput>
+    </Box>
+  )
+}
 
 
 const DeleteModal = React.memo(({ formula }) => {
@@ -119,12 +189,40 @@ const validateFormula = async (token, data) => {
     });
 };
 
+
+
+const getVariables = async token => {
+  return await axios.get(`${getBaseURL()}/api/variable/getAllVariables`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+const useGetVariables = () => {
+  const { keycloak } = useKeycloak();
+  return useQuery({
+    queryKey: ["variables"],
+    queryFn: () => getVariables(keycloak.token)
+  });
+};
+
 const EditDialog = ({ formulaId, form }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formula, setFormula] = useState("");
   const { keycloak } = useKeycloak();
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { data: variables } = useGetVariables();
+
+  const data = useMemo(() => {
+    return variables?.data?.map(variable => {
+      return {
+        id: variable.name,
+        display: variable.name
+      }
+    });
+  }, [variables]);
 
   const [validation, setValidation] = useState("");
 
@@ -154,6 +252,7 @@ const EditDialog = ({ formulaId, form }) => {
     }
   });
 
+
   const validate = useMutation({
     mutationKey: ["validateFormula"],
     mutationFn: (data) => validateFormula(keycloak.token, data),
@@ -166,6 +265,19 @@ const EditDialog = ({ formulaId, form }) => {
       setValidation(message);
     }
   });
+
+  const handleMutate = () => {
+    let t = formula.split('').join('');
+    let matches = t.match(/@\[(.*?)]\((.*?)\)/g);
+    matches.forEach(function(match) {
+      let id = match.match(/\[(.*?)]/)[1];
+      t = t.replace(match, id);
+    });
+    validate.mutate({
+      formula: t
+    })
+  }
+
 
   return (
     <>
@@ -184,17 +296,12 @@ const EditDialog = ({ formulaId, form }) => {
           <ModalHeader>Edit Formula</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Textarea placeholder="Enter Formula here"
-                      defaultValue={formula}
-                      onChange={(e) => setFormula(e.target.value)}
-            />
+            <CustomSuggestionsContainer data={data} onChange={(e) => setFormula(e.target.value)} value={formula} />
             <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal of formulas that depend on this formula.</Text>
           </ModalBody>
           <ModalFooter>
             <Text mr={3} fontSize="lg">{validation}</Text>
-            <Button mr={3} onClick={() => validate.mutate({
-              formula: formula
-            })}>Validate</Button>
+            <Button mr={3} onClick={handleMutate}>Validate</Button>
             <Button
               mr={3}
               onClick={() => edit.mutate({
