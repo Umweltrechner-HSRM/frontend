@@ -22,7 +22,6 @@ import {
 import { TableListView } from "../components/TableListView.jsx";
 import {useFieldArray, useForm, Controller} from 'react-hook-form'
 
-// offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
@@ -65,7 +64,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
         control,
         name: 'emailList'
       });
-  const watchThresholds = watch(["minThreshold","maxThreshold"]);
+  const watchThresholds = watch("minThreshold")!=='' && watch("maxThreshold")!=='' && Number(watch("minThreshold")) > Number(watch("maxThreshold"));
   const queryClient = useQueryClient();
   const toast = useToast();
   const {keycloak} = useKeycloak();
@@ -109,15 +108,15 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
             <ModalCloseButton/>
             <form onSubmit={handleSubmit(onFormSubmit)}>
               <ModalBody>
-                <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
+                <FormControl isInvalid={watchThresholds || register.maxThreshold}>
                   <FormLabel>Min Threshold</FormLabel>
                   <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
-                  <FormErrorMessage>Min Thresholds is higher than Max Threshold.</FormErrorMessage>
+                  <FormErrorMessage>Min Threshold is higher than Max Threshold.</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
+                <FormControl isInvalid={watchThresholds}>
                   <FormLabel>Max Threshold</FormLabel>
                   <Input type='number' step="0.01" name="Max Threshold" {...register('maxThreshold')} />
-                  <FormErrorMessage>Max Thresholds is lower than Min Threshold.</FormErrorMessage>
+                  <FormErrorMessage>Max Threshold is lower than Min Threshold.</FormErrorMessage>
                 </FormControl>
                 <ul>
                   {fields.map((item, index) => {
