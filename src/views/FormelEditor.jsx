@@ -374,8 +374,8 @@ const EditDialog = ({ formulaId, form, isOpen, onClose, isNew = false }) => {
         <ModalCloseButton />
         <ModalBody>
           <CustomSuggestionsContainer data={data} onChange={(e) => setFormula(e.target.value)} value={formula} />
-          <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal of formulas
-            that depend on this formula.</Text>
+          {!isNew && <Text fontSize={"small"}>*Attention: Complete change of the formula might lead to the removal of formulas
+            that depend on this formula.</Text>}
         </ModalBody>
         <ModalFooter>
           <Text mr={3} fontSize="lg">{validation}</Text>
