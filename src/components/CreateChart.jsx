@@ -13,7 +13,7 @@ import { getBaseURL } from '../helpers/api.jsx';
 
 const colors = {
   Teal: '#00e7b0', Blue: '#00b0ff', Yellow: '#f5e13c', Purple: '#a500ff',
-  Green: '#44ff55', Orange: '#ff8c00', Pink: '#ff55a3', White: '#ffffff'
+  Green: '#44ff55', Orange: '#ff8c00', Pink: '#ff55a3'
 };
 
 function CreateChart({ userProps, setUserProps }) {
