@@ -33,7 +33,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
       const filtered = components.map(comp => {
         if (
           !filteredDashboardComps.components.find(
-            fComp => fComp.name === comp.name
+            fComp => fComp.id === comp.id
           )
         ) {
           return comp;
