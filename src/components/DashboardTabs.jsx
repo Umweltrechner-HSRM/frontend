@@ -4,6 +4,8 @@ import {HiPlusSm} from 'react-icons/hi';
 
 function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
   const { keycloak } = useKeycloak();
+  const selected = useColorModeValue('blue.200', 'blue.500');
+  const textColor= useColorModeValue("#4b4b4b", "#fff")
 
   return (
     <Tabs
@@ -20,14 +22,13 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
         {dashboards?.data.map(dash => {
           return (
             <Tab
-              _selected={{backgroundColor: useColorModeValue('blue.200', 'blue.500')}}
+              _selected={{backgroundColor: selected}}
               boxShadow={"rgba(0, 0, 0, 0.35) 0px 2px 5px"}
               borderRadius={'0.7rem'}
-              bg={useColorModeValue('gray.500', 'gray.700')}
-              color="whitesmoke"
               width={'fit-content'}
               height={'2.8rem'}
               borderWidth={'0.2rem'}
+              color={textColor}
               key={dash.id}>
               {dash.name}
             </Tab>
@@ -35,14 +36,13 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
         })}
         {keycloak.hasRealmRole('admin') && (
           <Tab
-            _selected={{backgroundColor: useColorModeValue('blue.200', 'blue.500')}}
+            _selected={{backgroundColor: selected}}
             boxShadow={"rgba(0, 0, 0, 0.35) 0px 2px 5px"}
             borderRadius={'0.7rem'}
             borderColor={'blue.300'}
-            bg={useColorModeValue('gray.500', 'gray.700')}
             overflowX={'clip'}
             borderWidth={'0.2rem'}
-            color="whitesmoke"
+            color={textColor}
             height={'2.8rem'}>
             {<HiPlusSm />}
           </Tab>

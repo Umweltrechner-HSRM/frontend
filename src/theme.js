@@ -22,6 +22,13 @@ const components = {
       }
     })
   },
+  Tab : {
+    baseStyle: (props) => ({
+      tab: {
+        bg: mode('#ff7a7a', "#7474fc")(props),
+      }
+    })
+  }
 }
 
 const theme = extendTheme({ config, styles, components });

@@ -11,7 +11,6 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
   const [plusClicked, setPlusClicked] = useState(false);
   const selectedComp = useRef(null);
   const [filteredOptions, setFilteredOptions] = useState(null);
-  const [noMoreComps, setNoMoreComps] = useState(false);
 
   useQuery(
     ['components'],
@@ -28,14 +27,6 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
       }
     }
   );
-
-  useEffect(() => {
-    if (components) {
-      setNoMoreComps(
-        filteredDashboardComps.components.length === components.length
-      );
-    }
-  }, [filteredDashboardComps, editState, components]);
 
   useEffect(() => {
     if (components) {
@@ -60,7 +51,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
 
   return (
     <>
-      {!noMoreComps && (
+      {!(filteredDashboardComps?.components.length === components?.length) && (
           <HStack align={'right'}>
             <Select borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
               width={'20rem'}
@@ -86,8 +77,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
             </Button>
           </HStack>
       )}
-      {noMoreComps && (
-
+      {filteredDashboardComps?.components.length === components?.length && (
           <Text pt={'2px'} fontWeight="bold" fontSize={'1.3rem'}>
             No more charts available
           </Text>

@@ -122,7 +122,7 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
   };
 
   return (
-    <Box borderRadius={"0.5rem"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+    <Box borderRadius={"5px"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
          style={{ padding: "1rem"}} bg={useColorModeValue("white", "gray.800")}
          borderWidth={"2px"} borderColor={editState ? "#669ed5" : useColorModeValue("white", "gray.700")}>
       {editState &&

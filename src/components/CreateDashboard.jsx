@@ -39,7 +39,7 @@ function CreateDashboard() {
 
   return (
     <Box
-      borderRadius={"0.5rem"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} bg={useColorModeValue("white", "gray.800")}
+      borderRadius={"5px"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} bg={useColorModeValue("white", "gray.800")}
       borderWidth={"2px"} borderColor={useColorModeValue("white", "gray.700")}
       width={'40%'}
       padding={'1%'}
