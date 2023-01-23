@@ -1,5 +1,6 @@
 import { Tab, TabList, Tabs, useColorModeValue } from '@chakra-ui/react';
 import { useKeycloak } from '@react-keycloak/web';
+import {HiPlusSm} from 'react-icons/hi';
 
 function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
   const { keycloak } = useKeycloak();
@@ -43,7 +44,7 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
             borderWidth={'0.2rem'}
             color="whitesmoke"
             height={'2.8rem'}>
-            +
+            {<HiPlusSm />}
           </Tab>
         )}
       </TabList>
