@@ -6,9 +6,9 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
 
   return (
     <Tabs
+      flexGrow={1}
       variant="soft-rounded"
       defaultIndex={+localStorage.getItem('tabIndex') || 0}
-      marginLeft={'5rem'}
       colorScheme="blue"
       onChange={index => {
         setTabIndex(index);

@@ -6,10 +6,10 @@ import {
   FormErrorMessage,
   FormLabel,
   FormControl,
-  Input, useToast, HStack,
+  Input, useToast, HStack
 } from "@chakra-ui/react";
 import "../styles/styles.css";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { getBaseURL } from "../helpers/api.jsx";
 import {
@@ -20,7 +20,7 @@ import {
   createColumnHelper
 } from "@tanstack/react-table";
 import { TableListView } from "../components/TableListView.jsx";
-import {useFieldArray, useForm, Controller} from 'react-hook-form'
+import { useFieldArray, useForm } from "react-hook-form";
 
 
 const getVariables = async token => {
@@ -40,38 +40,39 @@ const useGetVariables = () => {
 };
 
 const addThresholds = async (token, data) => {
-  console.log(data);
   return await axios.put(`${getBaseURL()}/api/variable/${data.name}`, data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
 };
 
 const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
 
-  const {control, register, handleSubmit, watch} = useForm({
+  const { control, register, handleSubmit, watch } = useForm({
     defaultValues: {
       name: data.name,
       minThreshold: data.minThreshold,
       maxThreshold: data.maxThreshold,
       emailList: data.customerAlertList
-    }});
+    }
+  });
 
-  const {fields, remove, append} = useFieldArray(
+const {fields, remove, append} = useFieldArray(
       {
         control,
         name: 'emailList'
       });
   const watchThresholds = watch("minThreshold")!=='' && watch("maxThreshold")!=='' && Number(watch("minThreshold")) > Number(watch("maxThreshold"));
+
   const queryClient = useQueryClient();
   const toast = useToast();
-  const {keycloak} = useKeycloak();
+  const { keycloak } = useKeycloak();
 
   const { mutate } = useMutation({
     mutationKey: ["addThresholds"],
-    mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data,{
+    mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data, {
       emailList: data.emailList.map((item) => item.email)
     })),
     onSuccess: () => {
@@ -97,7 +98,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
   });
   const onFormSubmit = (data) => {
     mutate(data);
-  }
+  };
 
   return (
       <>
@@ -158,11 +159,11 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
 
 
 function VariablePage() {
-  const { data, error } = useGetVariables();
+  const { data, isLoading, error, refetch, dataUpdatedAt } = useGetVariables();
   const [selected, setSelected] = React.useState(null);
   const columnHelper = createColumnHelper();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const { keycloak } = useKeycloak();
 
   const columns = useMemo(() => [
     columnHelper.accessor("name", {
@@ -177,6 +178,13 @@ function VariablePage() {
       header: "Max Threshold",
       cell: info => info.getValue()
     }),
+    columnHelper.accessor("type", {
+      header: "Type",
+      cell: info => info.getValue() && info.getValue().toLowerCase()
+        .split(" ")
+        .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+        .join(" ")
+    }),
     columnHelper.accessor("lastOverThreshold", {
       header: "Last Over Threshold",
       cell: info =>
@@ -184,8 +192,9 @@ function VariablePage() {
     }),
     columnHelper.accessor("action", {
       header: "Actions",
-      cell: ({ cell }) => {
-        return (
+      enableSorting: false,
+      cell: ({ cell }) => (
+        keycloak.hasRealmRole("admin") && (
           <Flex justifyContent={"center"} gap={2}>
             <Button onClick={() => {
               setSelected(cell.row.original);
@@ -193,15 +202,23 @@ function VariablePage() {
             }
             }><MdOutlineModeEditOutline /></Button>
           </Flex>
-        );
-      }
+        )
+      )
     })
   ], []);
 
   return (
     <Box h={"100%"} overflowY={"auto"}>
+      <Box p={3} pt={1} h={"100%"}>
+      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+            borderWidth={1}
+            borderRadius={"5px"}
+            alignItems={"center"}>
+      </Flex>
       {isOpen && <EditDialog data={selected} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />}
-      {data && <TableListView data={data.data} columns={columns} />}
+      {data && <TableListView data={data.data} columns={columns} refetch={refetch} updatedAt={dataUpdatedAt}
+                              loading={isLoading} />}
+      </Box>
     </Box>
   );
 }

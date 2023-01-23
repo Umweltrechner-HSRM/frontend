@@ -11,13 +11,13 @@ export default defineConfig({
     react(),
     VitePWA({
       manifest: {
-        name: "Umweltrechner",
-        short_name: "Umweltrechner",
+        name: "Sensor Guard",
+        short_name: "Sensor Guard",
         start_url: "/",
         display: "standalone",
         background_color: "#ffffff",
         theme_color: "#ffffff",
-        lang: "de",
+        lang: "en",
         scope: "/",
         icons: [
           {

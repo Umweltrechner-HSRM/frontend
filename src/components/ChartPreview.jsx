@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, useColorModeValue } from "@chakra-ui/react";
 import Chart from 'react-apexcharts';
 import React from 'react';
 
@@ -47,8 +47,7 @@ function ChartPreview({ userProps }) {
       style: {
         fontSize: '14px',
         fontWeight: 'bold',
-        fontFamily: 'Helvetica, Arial, sans-serif',
-        color: '#ffffff',
+        color: useColorModeValue('#000', '#fff')
       }
     },
     labels: series[0].data.map(_data => _data[0]),
@@ -61,19 +60,17 @@ function ChartPreview({ userProps }) {
         minHeight: undefined,
         maxHeight: 120,
         style: {
-          colors: '#ffffff',
           fontSize: '12px',
-          fontFamily: 'Helvetica, Arial, sans-serif',
-          fontWeight: 400
+          fontWeight: 400,
+          color: useColorModeValue('#000', '#fff')
         }
       }
     },
     yaxis: {
       labels: {
         style: {
-          colors: '#ffffff',
+          colors: useColorModeValue('#000', '#fff'),
           fontSize: '12px',
-          fontFamily: 'Helvetica, Arial, sans-serif',
           fontWeight: 400
         }
       }
