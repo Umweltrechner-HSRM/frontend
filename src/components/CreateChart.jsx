@@ -4,7 +4,7 @@ import {
   Flex,
   Input,
   Select,
-  Text,
+  Text, useColorModeValue
 } from '@chakra-ui/react';
 import axios from 'axios';
 import keycloak from '../keycloak.js';
@@ -41,6 +41,8 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Name</Text>
           <Input
+            color={useColorModeValue("#4b4b4b", "#fff")}
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             value={userProps.name}
             maxLength={15}
             onChange={e => setUserProps({ ...userProps, name: e.target.value })}
@@ -49,6 +51,7 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Variable</Text>
           <Select
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             placeholder={' '}
             value={userProps.variable}
             variant='outline'
@@ -63,6 +66,7 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Type</Text>
           <Select
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             placeholder={'Line'}
             value={userProps.type}
             variant='outline'
@@ -75,6 +79,7 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Stroke</Text>
           <Select
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             placeholder={'Smooth'}
             value={userProps.stroke.toLowerCase()}
             variant='outline'
@@ -87,6 +92,7 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Color</Text>
           <Select
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             value={userProps.variableColor}
             variant='outline'
             onChange={e =>

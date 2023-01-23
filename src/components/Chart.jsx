@@ -1,4 +1,17 @@
-import { Box, Button, Text, Stack, IconButton, Flex, Spacer, HStack, Center, Spinner, Select } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Text,
+  Stack,
+  IconButton,
+  Flex,
+  Spacer,
+  HStack,
+  Center,
+  Spinner,
+  Select,
+  useColorModeValue
+} from '@chakra-ui/react';
 import { useEffect, useRef, useState } from "react";
 import { lineChartOptions } from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
@@ -20,7 +33,7 @@ import keycloak from '../keycloak.js';
 function InfoBox({ data, userProps }) {
   const lastUpdate = (new Date(data?.at(-1)?.x)).toLocaleString("de", { timeZone: "UTC" });
   return (
-    <Box style={{ padding: 20, backgroundColor: "#4b4b4b", margin: "15% 10% 15% 10%", borderRadius: "0.5rem" }}>
+    <Box style={{ padding: 20, margin: "15% 10% 15% 10%", borderRadius: "0.5rem" }} bg={useColorModeValue("#e7e7e7", 'gray.700')}>
       <Stack spacing={3}>
         <Text fontWeight="bold">Recent received value: {data.at(-1)?.y}</Text>
         <Text fontWeight={"bold"}>Last Update: {lastUpdate}</Text>
@@ -74,35 +87,59 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
     fill: {
       opacity: userProps.type === "AREA_CHART" ? [0.1, 0.7] : [1, 1]
     },
-    yaxis: {
-      ...lineChartOptions.yaxis
-      // max: Math.max.apply(Math, data?.slice(-50).map(d => d.y)),
-      // min: Math.min.apply(Math, data?.slice(-50).map(d => d.y)),
-    },
     xaxis: {
-      ...lineChartOptions.xaxis,
+      type: 'datetime',
+      tickPlacement: 'on',
+      labels: {
+        // rotate: -20,
+        // rotateAlways: true,
+        format: 'HH:mm:ss',
+        style: {
+          colors: useColorModeValue("#4b4b4b", "#fff"),
+          fontSize: '12px',
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 400
+        },
+        minHeight: 40
+      },
       range: range.current
+    },
+    yaxis: {
+      // max: 1.0,
+      // min: -1.0,
+      labels: {
+        formatter: function(value) {
+          return value.toFixed(2);
+        },
+        style: {
+          colors: useColorModeValue("#4b4b4b", "#fff"),
+          fontSize: '12px',
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 400
+        }
+      }
     },
   };
 
   return (
-    <Box borderRadius={"0.5rem"} bg={"#363636"}
-         style={{ padding: "1rem"}}
-         borderWidth={"0.2rem"} borderColor={editState ? "#669ed5" : "#363636"}>
+    <Box borderRadius={"0.5rem"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
+         style={{ padding: "1rem"}} bg={useColorModeValue("white", "gray.800")}
+         borderWidth={"2px"} borderColor={editState ? "#669ed5" : useColorModeValue("white", "gray.700")}>
       {editState &&
         <IconButton style={{ position: "absolute", bottom: "95%", left: "-2%" }}
                     colorScheme="red" size={"sm"} isRound={true}
                     borderWidth={"2.5px"}
-                    borderColor={"whitesmoke"}
+                    borderColor={useColorModeValue("#ffcaca", "gray.700")}
                     icon={<RiDeleteBinLine />} aria-label={"delete"}
                     onClick={() => deleteComponent(id)}>
         </IconButton>}
       <HStack>
-        <Text color={"white"} fontWeight={"bold"} marginLeft={"1.5rem"}>{userProps.name}</Text>
+        <Text color={useColorModeValue("#4b4b4b", "#fff")} fontWeight={"bold"} marginLeft={"1.5rem"}>{userProps.name}</Text>
         <Spacer />
-        <Text color={"white"} fontWeight={"bold"}>Range</Text>
-        <Select width={"5rem"} height={"2.1rem"} color={"white"} bg={"#2D3748"} variant="outline"
-                _hover={{ bg: "#3b485d" }} onChange={(e) => range.current = e.target.value}>
+        <Text color={useColorModeValue("#4b4b4b", "#fff")} fontWeight={"bold"}>Range</Text>
+        <Select width={"5rem"} height={"2.1rem"} variant="outline"
+                borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+                onChange={(e) => range.current = e.target.value}>
           <option value={10_000}>10s</option>
           <option value={20_000}>20s</option>
           <option value={30_000}>30s</option>
@@ -123,13 +160,15 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
             series={chartData}
             type={userProps.type === "AREA_CHART" ? "area" : "line"} />
           :
-          <Center marginTop={"8.2rem"} marginBottom={'28%'}>
+          <Center marginTop={"8rem"} marginBottom={'28%'}>
+            <Text as={'span'}>Waiting for data...</Text>
             <Spinner
+              ml={'0.4rem'}
               thickness="4px"
               speed="0.65s"
               emptyColor="gray.200"
               color="blue.500"
-              size="xl"
+              size="md"
             />
           </Center>
       }

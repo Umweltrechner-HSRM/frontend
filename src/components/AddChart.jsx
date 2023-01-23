@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, IconButton, Select, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, IconButton, Select, Text, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { HiOutlinePlusSm } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
@@ -62,8 +62,7 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
     <>
       {!noMoreComps && (
           <HStack align={'right'}>
-            <Select
-              bg={'blue.700'}
+            <Select borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
               width={'20rem'}
               onChange={e => (selectedComp.current = e.target.value)}>
               {filteredOptions?.map(comp => {
@@ -88,17 +87,10 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
           </HStack>
       )}
       {noMoreComps && (
-        <Box
-          style={{
-            padding: 20,
-            backgroundColor: '#575757',
-            margin: 30,
-            borderRadius: '0.5rem'
-          }}>
-          <Text fontWeight="bold" fontSize={'1.3rem'}>
+
+          <Text pt={'2px'} fontWeight="bold" fontSize={'1.3rem'}>
             No more charts available
           </Text>
-        </Box>
       )}
     </>
   );
