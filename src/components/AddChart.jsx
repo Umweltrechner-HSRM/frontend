@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import keycloak from '../keycloak.js';
 import { getBaseURL } from '../helpers/api.jsx';
+import { ThreeDots } from 'react-loader-spinner';
 
 function AddChart({ addComponent, filteredDashboardComps, editState }) {
   const [components, setComponents] = useState(null);
@@ -49,41 +50,44 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
     }
   }, [components, plusClicked, filteredDashboardComps]);
 
-  return (
+  return (components ? (
     <>
       {!(filteredDashboardComps?.components.length === components?.length) && (
-          <HStack align={'right'}>
-            <Select borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
-              width={'20rem'}
-              onChange={e => (selectedComp.current = e.target.value)}>
-              {filteredOptions?.map(comp => {
-                return (
-                  comp && (
-                    <option key={comp.id} value={comp.id}>
-                      {comp.name} (Variable: {comp.variable})
-                    </option>
-                  )
-                );
-              })}
-            </Select>
-            <Button
-              marginTop={'0.5rem'}
-              colorScheme={'blue'}
-              onClick={() => {
-                addComponent(selectedComp.current);
-                setPlusClicked(false);
-              }}>
-              ADD CHART
-            </Button>
-          </HStack>
+        <HStack align={'right'}>
+          <Select borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+                  width={'20rem'}
+                  onChange={e => (selectedComp.current = e.target.value)}>
+            {filteredOptions?.map(comp => {
+              return (
+                comp && (
+                  <option key={comp.id} value={comp.id}>
+                    {comp.name} (Variable: {comp.variable})
+                  </option>
+                )
+              );
+            })}
+          </Select>
+          <Button
+            marginTop={'0.5rem'}
+            colorScheme={'blue'}
+            onClick={() => {
+              addComponent(selectedComp.current);
+              setPlusClicked(false);
+            }}>
+            ADD CHART
+          </Button>
+        </HStack>
       )}
       {filteredDashboardComps?.components.length === components?.length && (
-          <Text pt={'2px'} fontWeight="bold" fontSize={'1.3rem'}>
-            No more charts available
-          </Text>
+        <Text pt={'2px'} fontWeight='bold' fontSize={'1.3rem'}>
+          No more charts available
+        </Text>
       )}
     </>
-  );
+  ) : (
+    <ThreeDots height='10px' width='10lx' radius='9' color={useColorModeValue('#1c88ff', '#2fe9ff')}
+               ariaLabel='three-dots-loading' />
+  ));
 }
 
 export default AddChart;
