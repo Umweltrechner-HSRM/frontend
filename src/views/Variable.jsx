@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
   FormLabel,
   FormControl,
-  Input, useToast, HStack
+  Input, useToast, HStack, IconButton
 } from "@chakra-ui/react";
 import "../styles/styles.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +21,8 @@ import {
 } from "@tanstack/react-table";
 import { TableListView } from "../components/TableListView.jsx";
 import { useFieldArray, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { InfoIcon, LinkIcon } from "@chakra-ui/icons";
 
 // offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
@@ -198,6 +200,9 @@ function VariablePage() {
       cell: ({ cell }) => (
         keycloak.hasRealmRole("admin") && (
           <Flex justifyContent={"center"} gap={2}>
+            <Link to={`/variable/${cell.row.original.name}`}>
+              <IconButton aria-label={"info"} icon={<InfoIcon />} />
+            </Link>
             <Button onClick={() => {
               setSelected(cell.row.original);
               onOpen();

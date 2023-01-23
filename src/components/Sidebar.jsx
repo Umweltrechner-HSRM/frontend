@@ -52,8 +52,9 @@ const Sidebar = () => {
         as="nav">
         {ClientRoutes.map((route, index) => {
           if (
-            route.permission === null ||
-            keycloak.hasRealmRole(route.permission)
+            route.navbar &&
+            (route.permission === null ||
+            keycloak.hasRealmRole(route.permission))
           ) {
             return (
               <NavItem

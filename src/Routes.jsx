@@ -9,6 +9,7 @@ import VariablePage from "./views/Variable.jsx";
 import { TbMath } from "react-icons/tb";
 import { SettingsIcon } from "@chakra-ui/icons";
 import SettingsPage from "./views/Settings.jsx";
+import VariableView from "./views/VariableView.jsx";
 
 const ClientRoutes = [
   {
@@ -16,35 +17,48 @@ const ClientRoutes = [
     icon: FiHome,
     path: '/',
     element: <Dashboard />,
-    permission: null
+    permission: null,
+    navbar: true,
   },
   {
     title: 'Manage Charts',
     icon: AiOutlineLineChart,
     path: '/manageCharts',
     element: <ManageCharts />,
-    permission: null
+    permission: null,
+    navbar: true,
   },
   {
     title: 'Formula Editor',
     icon: TbMath,
     path: '/formula',
     element: <FormulaEditor />,
-    permission: null
+    permission: null,
+    navbar: true,
   },
   {
     title: 'Variables',
     icon: HiOutlineVariable,
     path: '/variable',
     element: <VariablePage />,
-    permission: null
+    permission: null,
+    navbar: true,
+  },
+  {
+    title: 'Variable',
+    icon: HiOutlineVariable,
+    path: '/variable/:id',
+    element: <VariableView />,
+    permission: null,
+    navbar: false,
   },
   {
     title: "Settings",
     icon: SettingsIcon,
     path: "/settings",
     element: <SettingsPage />,
-    permission: null
+    permission: null,
+    navbar: true
   }
 ];
 
