@@ -41,6 +41,8 @@ const TableList = ({ data, columns, updatedAt }) => {
     onPaginationChange: setPagination
   });
 
+  console.log(table.getCanNextPage(), table.getCanNextPage());
+
 
   return (
       <Flex flexDir={"column"} h={"92%"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} mt={3} borderRadius={"5px"}  borderWidth={1}>
@@ -108,28 +110,28 @@ const TableList = ({ data, columns, updatedAt }) => {
             <Button
               size={["xs", "sm"]}
               onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
+              isDisabled={!table.getCanPreviousPage()}
             >
               {"<<"}
             </Button>
             <Button
               size={["xs", "sm"]}
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              isDisabled={!table.getCanPreviousPage()}
             >
               {"<"}
             </Button>
             <Button
               size={["xs", "sm"]}
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              isDisabled={!table.getCanNextPage()}
             >
-              {">"}
+              >
             </Button>
             <Button
               size={["xs", "sm"]}
               onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
+              isDisabled={!table.getCanNextPage()}
             >
               {">>"}
             </Button>
