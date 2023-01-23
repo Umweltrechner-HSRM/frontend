@@ -387,9 +387,9 @@ const Dashboard = () => {
       {!dashboardSelected && <CreateDashboard />}
       {dashboardSelected &&
         <Box mr={'0.5rem'} ml={'0.5rem'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
-             // borderWidth={useColorModeValue('0', '2px')}
+             borderWidth={'2px'}
              style={{ position: 'sticky', zIndex: '999', top: '0' }}
-             borderColor={editState && useColorModeValue('white', 'gray.700')}
+             borderColor={useColorModeValue('transparent', 'gray.700')}
              bg={editState && useColorModeValue('white', 'gray.800')} borderRadius={'5px'} padding={'0.2rem'}>
           <HStack spacing={4} justifyContent={'space-between'} alignItems={'center'}>
             {editState &&
