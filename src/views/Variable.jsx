@@ -108,7 +108,7 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
             <ModalCloseButton/>
             <form onSubmit={handleSubmit(onFormSubmit)}>
               <ModalBody>
-                <FormControl isInvalid={watchThresholds || register.maxThreshold}>
+                <FormControl isInvalid={watchThresholds}>
                   <FormLabel>Min Threshold</FormLabel>
                   <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
                   <FormErrorMessage>Min Threshold is higher than Max Threshold.</FormErrorMessage>
