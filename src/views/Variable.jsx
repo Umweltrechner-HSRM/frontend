@@ -24,7 +24,6 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { InfoIcon, LinkIcon } from "@chakra-ui/icons";
 
-// offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
@@ -62,12 +61,13 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
     }
   });
 
-  const { fields, remove, append } = useFieldArray(
-    {
-      control,
-      name: "emailList"
-    });
-  const watchThresholds = watch(["minThreshold", "maxThreshold"]);
+const {fields, remove, append} = useFieldArray(
+      {
+        control,
+        name: 'emailList'
+      });
+  const watchThresholds = watch("minThreshold")!=='' && watch("maxThreshold")!=='' && Number(watch("minThreshold")) > Number(watch("maxThreshold"));
+
   const queryClient = useQueryClient();
   const toast = useToast();
   const { keycloak } = useKeycloak();
@@ -103,61 +103,59 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
   };
 
   return (
-    <>
-      <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
-          <ModalCloseButton />
-          <form onSubmit={handleSubmit(onFormSubmit)}>
-            <ModalBody>
-              <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
-                <FormLabel>Min Threshold</FormLabel>
-                <Input type="number" step="0.01" name="Min Threshold" {...register("minThreshold")} />
-                <FormErrorMessage>Min Thresholds is higher than Max Threshold.</FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
-                <FormLabel>Max Threshold</FormLabel>
-                <Input type="number" step="0.01" name="Max Threshold" {...register("maxThreshold")} />
-                <FormErrorMessage>Max Thresholds is lower than Min Threshold.</FormErrorMessage>
-              </FormControl>
-              <ul>
-                {fields.map((item, index) => {
-                  return (
-                    <div key={item.id}>
-                      <FormLabel>Mail</FormLabel>
-                      <HStack>
-                        <Input
-                          type={"email"}
-                          key={item.id}
-                          name={`emailList[${index}]`}
-                          defaultValue={""}
-                          {...register(`emailList.${index}.email`)}
-                        />
-                        <Button type="button" onClick={() => remove(index)}>
-                          Delete
-                        </Button>
-                      </HStack>
-                    </div>
-                  );
-                })}
-              </ul>
-            </ModalBody>
-            <ModalFooter>
-              <Button mr={3} onClick={() => {
-                append({ email: "" });
-              }}>
-                Add E-Mail
-              </Button>
-              <Button mr={3} onClick={onClose}>
-                Close
-              </Button>
-              <Button type={"submit"}>Save</Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
-    </>
+      <>
+        <Modal isCentered={true} isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay/>
+          <ModalContent>
+            <ModalHeader>Editing Variable "{data?.name}"</ModalHeader>
+            <ModalCloseButton/>
+            <form onSubmit={handleSubmit(onFormSubmit)}>
+              <ModalBody>
+                <FormControl isInvalid={watchThresholds}>
+                  <FormLabel>Min Threshold</FormLabel>
+                  <Input type='number' step="0.01" name="Min Threshold" {...register('minThreshold')} />
+                  <FormErrorMessage>Min Threshold is higher than Max Threshold.</FormErrorMessage>
+                </FormControl>
+                <FormControl isInvalid={watchThresholds}>
+                  <FormLabel>Max Threshold</FormLabel>
+                  <Input type='number' step="0.01" name="Max Threshold" {...register('maxThreshold')} />
+                  <FormErrorMessage>Max Threshold is lower than Min Threshold.</FormErrorMessage>
+                </FormControl>
+                <ul>
+                  {fields.map((item, index) => {
+                    return (
+                        <div key={item.id}>
+                          <FormLabel>Mail</FormLabel>
+                          <HStack>
+                            <Input
+                                type={'email'}
+                                key={item.id}
+                                name={`emailList[${index}]`}
+                                defaultValue={''}
+                                {...register(`emailList.${index}.email`)}
+                            />
+                            <Button type="button" onClick={() => remove(index)}>
+                              Delete
+                            </Button>
+                          </HStack>
+                        </div>
+                    );
+                  })}
+                </ul>
+              </ModalBody>
+              <ModalFooter>
+                <Button mr={3} onClick={() => {append({email: ''});}}>
+                  Add E-Mail
+                </Button>
+                <Button mr={3} onClick={onClose}>
+                  Close
+                </Button>
+                <Button type={'submit'}>Save</Button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Modal>
+      </>
   );
 };
 
