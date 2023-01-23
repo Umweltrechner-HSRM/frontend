@@ -394,7 +394,7 @@ const Dashboard = () => {
         <Box style={{position: 'sticky', zIndex: '999', top: '0'}}>
         <Flex mr={'0.5rem'} ml={'0.5rem'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'} borderWidth={'2px'}
               borderColor={useColorModeValue('white', 'gray.700')}
-              bg={useColorModeValue('white', 'gray.800')} borderRadius={'0.6rem'} padding={'0.2rem'}>
+              bg={editState && useColorModeValue('white', 'gray.800')} borderRadius={'0.6rem'} padding={'0.2rem'}>
           {editState &&
             <HStack>
               <Button colorScheme={'red'}
