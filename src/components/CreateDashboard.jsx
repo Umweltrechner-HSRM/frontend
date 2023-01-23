@@ -7,7 +7,7 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Text,
+  Text, useColorModeValue,
   VStack
 } from '@chakra-ui/react';
 import { useState } from 'react';
@@ -39,12 +39,12 @@ function CreateDashboard() {
 
   return (
     <Box
-      borderRadius={'0.5rem'}
-      bg={'#363636'}
+      borderRadius={"5px"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} bg={useColorModeValue("white", "gray.800")}
+      borderWidth={"2px"} borderColor={useColorModeValue("white", "gray.700")}
       width={'40%'}
       padding={'1%'}
       margin={'2rem'}>
-      <Text color={'white'} fontSize={'24'}>
+      <Text fontWeight={'bold'} color={useColorModeValue("#4b4b4b", "#fff")} fontSize={'24'}>
         Create Dashboard
       </Text>
       <VStack alignItems={'left'} gap={'2%'} marginTop={'4%'}>
@@ -53,10 +53,10 @@ function CreateDashboard() {
             e.preventDefault();
             addDashboard();
           }}>
-          <FormLabel>Name</FormLabel>
+          <FormLabel color={useColorModeValue("#4b4b4b", "#fff")}>Name</FormLabel>
           <Input
-            color={'white'}
-            bg={'black'}
+            color={useColorModeValue("#4b4b4b", "#fff")}
+            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
             maxLength={20}
             onChange={e => setDashboardName(e.target.value)}
           />

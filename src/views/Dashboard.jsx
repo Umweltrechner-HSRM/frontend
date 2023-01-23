@@ -9,7 +9,19 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter, Flex, Box, Center, VStack, Spacer, Stack, Input, FormControl, FormLabel, Divider, HStack
+  ModalFooter,
+  Flex,
+  Box,
+  Center,
+  VStack,
+  Spacer,
+  Stack,
+  Input,
+  FormControl,
+  FormLabel,
+  Divider,
+  HStack,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -24,6 +36,7 @@ import AddChart from '../components/AddChart.jsx';
 import { useKeycloak } from '@react-keycloak/web';
 import { getBaseURL, getWebSocketURL } from '../helpers/api.jsx';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+import { TbAlertTriangle } from 'react-icons/tb';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -50,30 +63,23 @@ const ChangeDashboardName = React.memo(({ isOpen, onClose, editDashboardName }) 
       <>
         <Modal isCentered isOpen={isOpen} onClose={onClose}>
           <ModalOverlay bg={'blackAlpha.700'} />
-          <ModalContent bg={'#172646'}>
-            <ModalCloseButton
-              _hover={{ bg: 'whiteAlpha.200' }}
-              color={'white'}
-            />
+          <ModalContent>
+            <ModalCloseButton />
             <>
               <ModalHeader
                 textAlign={'center'}
                 fontWeight={'bold'}
-                fontSize={'1.7rem'}
-                color={'white'}>
+                fontSize={'1.7rem'}>
                 Edit Dashboard name
               </ModalHeader>
               <form onSubmit={e => handleSubmit(e)}>
                 <ModalBody pb={4}>
                   <FormControl>
-                    <FormLabel color={'white'}>New Name</FormLabel>
+                    <FormLabel>New Name</FormLabel>
                     <Input
                       autoFocus
-                      variant={'filled'}
-                      backgroundColor={'#313131'}
-                      _hover={{ borderWidth: '2px', borderColor: 'gray' }}
-                      _focus={{ bg: '#1e1e1e' }}
-                      color={'white'}
+                      bg={useColorModeValue('white', 'gray.800')}
+                      color={useColorModeValue("#4b4b4b", "#fff")}
                       maxLength={20}
                       onChange={e => setNewName(e.target.value)}
                     />
@@ -84,7 +90,7 @@ const ChangeDashboardName = React.memo(({ isOpen, onClose, editDashboardName }) 
                     width={'100%'}
                     disabled={newName === ''}
                     type={'submit'}
-                    colorScheme="blue"
+                    colorScheme='blue'
                     mb={4}>
                     Apply
                   </Button>
@@ -104,10 +110,15 @@ const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName
       <Modal isCentered={true} marginTop={'4rem'} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Delete Dashboard {dashboardName}</ModalHeader>
+          <ModalHeader>
+            <HStack>
+              <TbAlertTriangle size={'40px'} color={'#ee5656'}/>
+              <Text>Delete Dashboard {dashboardName}</Text>
+            </HStack>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text color={'white'}>Are you sure?</Text>
+            <Text>Are you sure?</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={() => {
@@ -364,48 +375,49 @@ const Dashboard = () => {
     newLayout.current = layout;
   };
 
-  console.log('data', data);
-  // console.log('subs',stompSubs.current)
-  // console.log(breakpoint);
-
   const bpToHeight = { lg: 400, md: 450, sm: 600, xs: 500, xxs: 400 };
 
   return (dashboards &&
     <>
       <ChangeDashboardName isOpen={isOpenEdit} onClose={onCloseEdit}
-        editDashboardName={editDashboardName}
+                           editDashboardName={editDashboardName}
       />
       <AreYouSure isOpen={isOpenDelete} onClose={onCloseDelete}
                   deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name} />
       {!dashboardSelected && <CreateDashboard />}
       {dashboardSelected &&
-        <Flex mr={"0.5rem"} ml={'0.5rem'} bg={editState && "#363636"} borderRadius={'0.6rem'} padding={'0.5rem'}>
-          {editState &&
-            <HStack>
-              <Button colorScheme={'red'}
-                      onClick={onOpenDelete}>DELETE DASHBOARD</Button>
-              <Button marginLeft="0.5rem" colorScheme={'red'} onClick={onOpenEdit}>
-                EDIT NAME
-              </Button>
-            </HStack>
-          }
-          {dashboardSelected && editState &&
-            <Box flex={2} align={'right'} ml={'0.5rem'} mr={'0.5rem'}>
+        <Box mr={'0.5rem'} ml={'0.5rem'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
+             borderWidth={'2px'}
+             style={{ position: 'sticky', zIndex: '999', top: '0' }}
+             borderColor={useColorModeValue('transparent', 'gray.700')}
+             bg={editState && useColorModeValue('white', 'gray.800')} borderRadius={'5px'} padding={'0.2rem'}>
+          <HStack spacing={4} justifyContent={'space-between'} alignItems={'center'}>
+            {editState &&
+              <>
+                <Button colorScheme={'red'}
+                        onClick={onOpenDelete}>DELETE DASHBOARD</Button>
+                <Button marginLeft='0.5rem' colorScheme={'red'} onClick={onOpenEdit}>
+                  EDIT NAME
+                </Button>
+              </>
+            }
+            {dashboardSelected && editState &&
               <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps}
                         editState={editState} />
-            </Box>
-          }
-          {keycloak.hasRealmRole('admin') &&
-            <Box flex={2} align={'right'}>
-              <Button colorScheme={editState ? 'teal' : 'blue'}
-                      onClick={() => {
-                        changeLayout();
-                      }}>{editState ? 'EXIT EDIT MODE' : 'EDIT MODE'}</Button>
-            </Box>
-          }
-        </Flex>
+            }
+            {keycloak.hasRealmRole('admin') &&
+              <Box flex={2} align={'right'}>
+                <Button colorScheme={editState ? 'teal' : 'blue'}
+                        onClick={() => {
+                          changeLayout();
+                        }}>{editState ? 'EXIT EDIT MODE' : 'EDIT MODE'}</Button>
+              </Box>
+            }
+          </HStack>
+        </Box>
       }
-      {layout &&
+      {
+        layout &&
         <ResponsiveGridLayout style={{ position: 'relative', marginTop: '1rem' }}
                               layouts={{ lg: layout }}
                               breakpoints={{ lg: 1300, md: 900, sm: 700, xs: 500, xxs: 300 }}
@@ -432,14 +444,16 @@ const Dashboard = () => {
           }
         </ResponsiveGridLayout>
       }
-      {filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
-        <Box mr={'0.6rem'} ml={'0.6rem'} borderRadius={'0.5rem'} bg={'#363636'} style={{
+      {
+        filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
+        <Box mr={'0.6rem'} ml={'0.6rem'} bg={'blackAlpha.1000'} style={{
           display: 'flex', alignItems: 'center',
           justifyContent: 'center'
-        }} borderWidth={'0.2rem'} borderColor={'#363636'}>
+        }}>
           <Flex gap={'0.3rem'} direction={'column'} mt={'2rem'} mb={'2.3rem'}>
-            <Box mt={'0.2rem'} mb={'0.2rem'}
-                 style={{ padding: 20, backgroundColor: '#4b4b4b', borderRadius: '0.5rem' }}>
+            <Box mt={'0.2rem'} mb={'0.2rem'} borderRadius={'5px'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
+                 style={{ padding: 20 }} bg={useColorModeValue('white', 'gray.800')}
+                 borderWidth={'2px'} borderColor={useColorModeValue('white', 'gray.700')}>
               <Stack spacing={3}>
                 <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
                 <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT Mode to add charts.</Text>
@@ -449,7 +463,7 @@ const Dashboard = () => {
         </Box>
       }
     </>
-  );
+  )
 };
 
 

@@ -15,37 +15,6 @@ export const lineChartOptions = {
   //     strokeColors: '#7eefff',
   //     strokeWidth: 3,
   // },
-  xaxis: {
-    type: 'datetime',
-    tickPlacement: 'on',
-    labels: {
-      // rotate: -20,
-      // rotateAlways: true,
-      format: 'HH:mm:ss',
-      style: {
-        colors: '#ffffff',
-        fontSize: '12px',
-        fontFamily: 'Helvetica, Arial, sans-serif',
-        fontWeight: 400
-      },
-      minHeight: 40
-    }
-  },
-  yaxis: {
-    // max: 1.0,
-    // min: -1.0,
-    labels: {
-      formatter: function(value) {
-        return value.toFixed(2);
-      },
-      style: {
-        colors: '#ffffff',
-        fontSize: '12px',
-        fontFamily: 'Helvetica, Arial, sans-serif',
-        fontWeight: 400
-      }
-    }
-  },
   legend: {
     show: false
   },
