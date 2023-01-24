@@ -68,7 +68,7 @@ const defaultStyle = {
 const getVariablesFromMentions = (formula) => {
   let t = formula.split("").join("");
   let matches = t.match(/@\[(.*?)]\((.*?)\)/g);
-  matches.forEach(function(match) {
+  matches?.forEach(function(match) {
     let id = match.match(/\[(.*?)]/)[1];
     t = t.replace(match, id);
   });
@@ -77,7 +77,7 @@ const getVariablesFromMentions = (formula) => {
 
 const formulaToMentions = (f, variables) => {
   let t = f;
-  variables.forEach(variable => {
+  variables?.forEach(variable => {
     const match = new RegExp(`\\b${variable.name}\\b`, "g");
     if (t.match(match)) {
       t = t.replace(match, `@[${variable.name}](${variable.name})`);

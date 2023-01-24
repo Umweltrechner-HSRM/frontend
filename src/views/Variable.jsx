@@ -22,7 +22,6 @@ import {
 import { TableListView } from '../components/TableListView.jsx';
 import { useFieldArray, useForm } from 'react-hook-form';
 
-// offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
 const getVariables = async token => {
   return await axios.get(`${getBaseURL()}/api/variable`, {
@@ -60,12 +59,13 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
     }
   });
 
-  const { fields, remove, append } = useFieldArray(
-    {
-      control,
-      name: 'emailList'
-    });
-  const watchThresholds = watch(['minThreshold', 'maxThreshold']);
+const {fields, remove, append} = useFieldArray(
+      {
+        control,
+        name: 'emailList'
+      });
+  const watchThresholds = watch("minThreshold")!=='' && watch("maxThreshold")!=='' && Number(watch("minThreshold")) > Number(watch("maxThreshold"));
+
   const queryClient = useQueryClient();
   const toast = useToast();
   const { keycloak } = useKeycloak();
