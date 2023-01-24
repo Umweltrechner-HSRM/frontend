@@ -372,9 +372,6 @@ const Dashboard = () => {
   };
 
   const innerHeight = window.innerHeight;
-  const innerWidth = window.innerWidth;
-  console.log(breakpoint);
-
   const bpToHeight = { lg: 0.44 * innerHeight, md: 0.47 * innerHeight, sm: 0.56* innerHeight, xs: 0.49 * innerHeight, xxs: 0.65 * innerHeight };
 
   return (dashboards &&
