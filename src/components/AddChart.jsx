@@ -1,5 +1,5 @@
 import { Box, Button, Flex, HStack, IconButton, Select, Text, useColorModeValue } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { HiOutlinePlusSm } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -7,13 +7,12 @@ import keycloak from '../keycloak.js';
 import { getBaseURL } from '../helpers/api.jsx';
 import { ThreeDots } from 'react-loader-spinner';
 
-function AddChart({ addComponent, filteredDashboardComps, editState }) {
-  const [components, setComponents] = useState(null);
+const AddChart = memo(({ addComponent, filteredDashboardComps, editState }) => {
   const [plusClicked, setPlusClicked] = useState(false);
   const selectedComp = useRef(null);
   const [filteredOptions, setFilteredOptions] = useState(null);
 
-  useQuery(
+  const {data: components} = useQuery(
     ['components'],
     async () => {
       return await axios.get(`${getBaseURL()}/api/dashboard/components`, {
@@ -22,16 +21,11 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
         }
       });
     },
-    {
-      onSuccess: resp => {
-        setComponents(resp.data);
-      }
-    }
   );
 
   useEffect(() => {
     if (components) {
-      const filtered = components.map(comp => {
+      const filtered = components.data.map(comp => {
         if (
           !filteredDashboardComps.components.find(
             fComp => fComp.id === comp.id
@@ -52,9 +46,10 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
 
   return (components ? (
     <>
-      {!(filteredDashboardComps?.components.length === components?.length) && (
+      {!(filteredDashboardComps?.components.length === components?.data.length) && (
         <HStack align={'right'}>
-          <Select borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+          <Select borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+                  borderColor={useColorModeValue('gray.400', 'gray.600')}
                   width={'20rem'}
                   onChange={e => (selectedComp.current = e.target.value)}>
             {filteredOptions?.map(comp => {
@@ -78,16 +73,16 @@ function AddChart({ addComponent, filteredDashboardComps, editState }) {
           </Button>
         </HStack>
       )}
-      {filteredDashboardComps?.components.length === components?.length && (
+      {filteredDashboardComps?.components.length === components?.data.length && (
         <Text pt={'2px'} fontWeight='bold' fontSize={'1.3rem'}>
           No more charts available
         </Text>
       )}
     </>
   ) : (
-    <ThreeDots height='10px' width='10lx' radius='9' color={useColorModeValue('#1c88ff', '#2fe9ff')}
+    <ThreeDots height='10px' width='10lx' radius='9' color={'#008fff'}
                ariaLabel='three-dots-loading' />
   ));
-}
+})
 
 export default AddChart;

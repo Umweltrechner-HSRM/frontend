@@ -18,9 +18,6 @@ export const lineChartOptions = {
   legend: {
     show: false
   },
-  grid: {
-    strokeDashArray: 5
-  },
 
   // fill: {
   //     type: "gradient",

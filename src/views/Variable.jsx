@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 import {
   Box,
   Button,
@@ -6,21 +6,21 @@ import {
   FormErrorMessage,
   FormLabel,
   FormControl,
-  Input, useToast, HStack
-} from "@chakra-ui/react";
-import "../styles/styles.css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { getBaseURL } from "../helpers/api.jsx";
+  Input, useToast, HStack, useColorModeValue
+} from '@chakra-ui/react';
+import '../styles/styles.css';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { getBaseURL } from '../helpers/api.jsx';
 import {
   MdOutlineModeEditOutline
-} from "react-icons/md";
-import { useKeycloak } from "@react-keycloak/web";
+} from 'react-icons/md';
+import { useKeycloak } from '@react-keycloak/web';
 import {
   createColumnHelper
-} from "@tanstack/react-table";
-import { TableListView } from "../components/TableListView.jsx";
-import { useFieldArray, useForm } from "react-hook-form";
+} from '@tanstack/react-table';
+import { TableListView } from '../components/TableListView.jsx';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 // offen: Default werte aus Datenbank bei Edit, FormControl + Error Messages
 
@@ -35,7 +35,7 @@ const getVariables = async token => {
 const useGetVariables = () => {
   const { keycloak } = useKeycloak();
   return useQuery({
-    queryKey: ["variables"],
+    queryKey: ['variables'],
     queryFn: () => getVariables(keycloak.token)
   });
 };
@@ -63,34 +63,34 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
   const { fields, remove, append } = useFieldArray(
     {
       control,
-      name: "emailList"
+      name: 'emailList'
     });
-  const watchThresholds = watch(["minThreshold", "maxThreshold"]);
+  const watchThresholds = watch(['minThreshold', 'maxThreshold']);
   const queryClient = useQueryClient();
   const toast = useToast();
   const { keycloak } = useKeycloak();
 
   const { mutate } = useMutation({
-    mutationKey: ["addThresholds"],
+    mutationKey: ['addThresholds'],
     mutationFn: (data) => addThresholds(keycloak.token, Object.assign(data, {
       emailList: data.emailList.map((item) => item.email)
     })),
     onSuccess: () => {
-      queryClient.invalidateQueries(["variables"]);
+      queryClient.invalidateQueries(['variables']);
       onClose();
       toast({
-        position: "bottom-right",
-        title: "Thresholds added.",
-        status: "success",
+        position: 'bottom-right',
+        title: 'Thresholds added.',
+        status: 'success',
         duration: 5000,
         isClosable: true
       });
     },
     onError: () => {
       toast({
-        position: "bottom-right",
-        title: "Error adding thresholds.",
-        status: "error",
+        position: 'bottom-right',
+        title: 'Error adding thresholds.',
+        status: 'error',
         duration: 5000,
         isClosable: true
       });
@@ -111,12 +111,17 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
             <ModalBody>
               <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
                 <FormLabel>Min Threshold</FormLabel>
-                <Input type="number" step="0.01" name="Min Threshold" {...register("minThreshold")} />
+                <Input borderColor={useColorModeValue('gray.400', 'gray.600')}
+                       borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+                       type='number' step='0.01' name='Min Threshold' {...register('minThreshold')} />
                 <FormErrorMessage>Min Thresholds is higher than Max Threshold.</FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={watchThresholds[0] > watchThresholds[1]}>
                 <FormLabel>Max Threshold</FormLabel>
-                <Input type="number" step="0.01" name="Max Threshold" {...register("maxThreshold")} />
+                <Input
+                  borderColor={useColorModeValue('gray.400', 'gray.600')}
+                  borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')} type='number' step='0.01'
+                  name='Max Threshold' {...register('maxThreshold')} />
                 <FormErrorMessage>Max Thresholds is lower than Min Threshold.</FormErrorMessage>
               </FormControl>
               <ul>
@@ -126,13 +131,15 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
                       <FormLabel>Mail</FormLabel>
                       <HStack>
                         <Input
-                          type={"email"}
+                          borderColor={useColorModeValue('gray.400', 'gray.600')}
+                          borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+                          type={'email'}
                           key={item.id}
                           name={`emailList[${index}]`}
-                          defaultValue={""}
+                          defaultValue={''}
                           {...register(`emailList.${index}.email`)}
                         />
-                        <Button type="button" onClick={() => remove(index)}>
+                        <Button type='button' onClick={() => remove(index)}>
                           Delete
                         </Button>
                       </HStack>
@@ -143,14 +150,14 @@ const EditDialog = ({ isOpen, onOpen, onClose, data }) => {
             </ModalBody>
             <ModalFooter>
               <Button mr={3} onClick={() => {
-                append({ email: "" });
+                append({ email: '' });
               }}>
                 Add E-Mail
               </Button>
               <Button mr={3} onClick={onClose}>
                 Close
               </Button>
-              <Button type={"submit"}>Save</Button>
+              <Button type={'submit'}>Save</Button>
             </ModalFooter>
           </form>
         </ModalContent>
@@ -168,36 +175,36 @@ function VariablePage() {
   const { keycloak } = useKeycloak();
 
   const columns = useMemo(() => [
-    columnHelper.accessor("name", {
-      header: "Name",
+    columnHelper.accessor('name', {
+      header: 'Name',
       cell: info => info.getValue()
     }),
-    columnHelper.accessor("minThreshold", {
-      header: "Min Threshold",
+    columnHelper.accessor('minThreshold', {
+      header: 'Min Threshold',
       cell: info => info.getValue()
     }),
-    columnHelper.accessor("maxThreshold", {
-      header: "Max Threshold",
+    columnHelper.accessor('maxThreshold', {
+      header: 'Max Threshold',
       cell: info => info.getValue()
     }),
-    columnHelper.accessor("type", {
-      header: "Type",
+    columnHelper.accessor('type', {
+      header: 'Type',
       cell: info => info.getValue() && info.getValue().toLowerCase()
-        .split(" ")
+        .split(' ')
         .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-        .join(" ")
+        .join(' ')
     }),
-    columnHelper.accessor("lastOverThreshold", {
-      header: "Last Over Threshold",
+    columnHelper.accessor('lastOverThreshold', {
+      header: 'Last Over Threshold',
       cell: info =>
         info.getValue() && `${new Date(info.getValue()).toLocaleString()}`
     }),
-    columnHelper.accessor("action", {
-      header: "Actions",
+    columnHelper.accessor('action', {
+      header: 'Actions',
       enableSorting: false,
       cell: ({ cell }) => (
-        keycloak.hasRealmRole("admin") && (
-          <Flex justifyContent={"center"} gap={2}>
+        keycloak.hasRealmRole('admin') && (
+          <Flex justifyContent={'center'} gap={2}>
             <Button onClick={() => {
               setSelected(cell.row.original);
               onOpen();
@@ -210,16 +217,16 @@ function VariablePage() {
   ], []);
 
   return (
-    <Box h={"100%"} overflowY={"auto"}>
-      <Box p={3} pt={1} h={"100%"}>
-      <Flex justifyContent={"flex-end"} maxH={"7%"} h={"7%"} pr={3} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
-            borderWidth={1}
-            borderRadius={"5px"}
-            alignItems={"center"}>
-      </Flex>
-      {isOpen && <EditDialog data={selected} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />}
-      {data && <TableListView data={data.data} columns={columns} refetch={refetch} updatedAt={dataUpdatedAt}
-                              loading={isLoading} />}
+    <Box h={'100%'} overflowY={'auto'}>
+      <Box p={3} pt={1} h={'100%'}>
+        <Flex justifyContent={'flex-end'} maxH={'7%'} h={'7%'} pr={3} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
+              borderWidth={1}
+              borderRadius={'5px'}
+              alignItems={'center'}>
+        </Flex>
+        {isOpen && <EditDialog data={selected} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />}
+        {data && <TableListView data={data.data} columns={columns} refetch={refetch} updatedAt={dataUpdatedAt}
+                                loading={isLoading} />}
       </Box>
     </Box>
   );

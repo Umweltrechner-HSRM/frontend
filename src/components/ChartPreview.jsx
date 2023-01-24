@@ -62,7 +62,7 @@ function ChartPreview({ userProps }) {
         style: {
           fontSize: '12px',
           fontWeight: 400,
-          color: useColorModeValue('#000', '#fff')
+          colors: useColorModeValue('#000', '#fff')
         }
       }
     },

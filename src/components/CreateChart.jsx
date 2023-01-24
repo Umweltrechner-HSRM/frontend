@@ -42,7 +42,8 @@ function CreateChart({ userProps, setUserProps }) {
           <Text>Name</Text>
           <Input
             color={useColorModeValue("#4b4b4b", "#fff")}
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             value={userProps.name}
             maxLength={15}
             onChange={e => setUserProps({ ...userProps, name: e.target.value })}
@@ -51,7 +52,8 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Variable</Text>
           <Select
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             placeholder={' '}
             value={userProps.variable}
             variant='outline'
@@ -66,7 +68,8 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Type</Text>
           <Select
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             placeholder={'Line'}
             value={userProps.type}
             variant='outline'
@@ -79,7 +82,8 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Stroke</Text>
           <Select
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             placeholder={'Smooth'}
             value={userProps.stroke.toLowerCase()}
             variant='outline'
@@ -92,7 +96,8 @@ function CreateChart({ userProps, setUserProps }) {
         <>
           <Text>Select Color</Text>
           <Select
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
             value={userProps.variableColor}
             variant='outline'
             onChange={e =>
