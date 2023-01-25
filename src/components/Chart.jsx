@@ -12,7 +12,7 @@ import {
   Select,
   useColorModeValue
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from 'react';
 import { lineChartOptions } from "../helpers/globals.js";
 import ReactApexChart from "react-apexcharts";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -44,7 +44,7 @@ function InfoBox({ data, userProps }) {
   );
 }
 
-const Chart = ({ userProps, data, editState, id, deleteComponent, animation, setAnimation }) => {
+const Chart = memo(({ userProps, data, editState, id, deleteComponent, animation, setAnimation }) => {
   const [infoPressed, setInfoPressed] = useState(false);
   const range = useRef(10000);
 
@@ -95,14 +95,24 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
         // rotateAlways: true,
         format: 'HH:mm:ss',
         style: {
-          colors: useColorModeValue("#4b4b4b", "#fff"),
+          colors: useColorModeValue("#000000", "#fff"),
           fontSize: '12px',
           fontFamily: 'Helvetica, Arial, sans-serif',
           fontWeight: 400
         },
         minHeight: 40
       },
-      range: range.current
+      range: range.current,
+      axisBorder: {
+        show: true,
+        color: useColorModeValue("#424242", "#bebebe"),
+        height: 1.5,
+      },
+      axisTicks: {
+        show: true,
+        borderType: 'solid',
+        color: useColorModeValue("#000000", "#fff"),
+      },
     },
     yaxis: {
       // max: 1.0,
@@ -112,18 +122,22 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
           return value.toFixed(2);
         },
         style: {
-          colors: useColorModeValue("#4b4b4b", "#fff"),
+          colors: useColorModeValue("#000000", "#fff"),
           fontSize: '12px',
           fontFamily: 'Helvetica, Arial, sans-serif',
           fontWeight: 400
         }
       }
     },
+    grid: {
+      strokeDashArray: 6,
+      borderColor: "#808080",
+    },
   };
 
   return (
     <Box borderRadius={"5px"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"}
-         style={{ padding: "1rem"}} bg={useColorModeValue("white", "gray.800")}
+         style={{ padding: "1rem 1rem 0rem 1rem"}} bg={useColorModeValue("white", "gray.800")}
          borderWidth={"2px"} borderColor={editState ? "#669ed5" : useColorModeValue("white", "gray.700")}>
       {editState &&
         <IconButton style={{ position: "absolute", bottom: "95%", left: "-2%" }}
@@ -136,9 +150,10 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
       <HStack>
         <Text color={useColorModeValue("#4b4b4b", "#fff")} fontWeight={"bold"} marginLeft={"1.5rem"}>{userProps.name}</Text>
         <Spacer />
-        <Text color={useColorModeValue("#4b4b4b", "#fff")} fontWeight={"bold"}>Range</Text>
-        <Select width={"5rem"} height={"2.1rem"} variant="outline"
-                borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+        <Text color={useColorModeValue("#4b4b4b", "#fff")} fontWeight={'semibold'}>Range</Text>
+        <Select width={"5rem"} height={"2.1rem"} variant="outline" isDisabled={editState}
+                borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
+                borderColor={useColorModeValue('gray.400', 'gray.600')}
                 onChange={(e) => range.current = e.target.value}>
           <option value={10_000}>10s</option>
           <option value={20_000}>20s</option>
@@ -174,6 +189,6 @@ const Chart = ({ userProps, data, editState, id, deleteComponent, animation, set
       }
     </Box>
   );
-};
+});
 
 export default Chart;

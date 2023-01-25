@@ -12,20 +12,15 @@ import {
   ModalFooter,
   Flex,
   Box,
-  Center,
-  VStack,
-  Spacer,
   Stack,
   Input,
   FormControl,
   FormLabel,
-  Divider,
   HStack,
   useColorModeValue
 } from '@chakra-ui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import keycloak from '../keycloak.js';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import Chart from '../components/Chart.jsx';
 import { Client } from '@stomp/stompjs';
@@ -78,8 +73,9 @@ const ChangeDashboardName = React.memo(({ isOpen, onClose, editDashboardName }) 
                     <FormLabel>New Name</FormLabel>
                     <Input
                       autoFocus
+                      borderColor={useColorModeValue('gray.400', 'gray.600')}
                       bg={useColorModeValue('white', 'gray.800')}
-                      color={useColorModeValue("#4b4b4b", "#fff")}
+                      color={useColorModeValue('#4b4b4b', '#fff')}
                       maxLength={20}
                       onChange={e => setNewName(e.target.value)}
                     />
@@ -112,7 +108,7 @@ const AreYouSure = React.memo(({ isOpen, onClose, deleteDashboard, dashboardName
         <ModalContent>
           <ModalHeader>
             <HStack>
-              <TbAlertTriangle size={'40px'} color={'#ee5656'}/>
+              <TbAlertTriangle size={'40px'} color={'#ee5656'} />
               <Text>Delete Dashboard {dashboardName}</Text>
             </HStack>
           </ModalHeader>
@@ -375,7 +371,8 @@ const Dashboard = () => {
     newLayout.current = layout;
   };
 
-  const bpToHeight = { lg: 400, md: 450, sm: 600, xs: 500, xxs: 400 };
+  const innerHeight = window.innerHeight;
+  const bpToHeight = { lg: 0.44 * innerHeight, md: 0.47 * innerHeight, sm: 0.56* innerHeight, xs: 0.49 * innerHeight, xxs: 0.65 * innerHeight };
 
   return (dashboards &&
     <>
@@ -420,8 +417,8 @@ const Dashboard = () => {
         layout &&
         <ResponsiveGridLayout style={{ position: 'relative', marginTop: '1rem' }}
                               layouts={{ lg: layout }}
-                              breakpoints={{ lg: 1300, md: 900, sm: 700, xs: 500, xxs: 300 }}
-                              cols={{ lg: 3, md: 2, sm: 1, xs: 1, xxs: 1 }}
+                              breakpoints={{ lg: 1500, md: 1250, sm: 1050, xs: 800, xxs: 300 }}
+                              cols={{ lg: 3, md: 3, sm: 2, xs: 2, xxs: 1 }}
                               onBreakpointChange={(bp) => setBreakpoint(bp)}
                               rowHeight={bpToHeight[breakpoint]}
                               width={800}
@@ -463,7 +460,7 @@ const Dashboard = () => {
         </Box>
       }
     </>
-  )
+  );
 };
 
 

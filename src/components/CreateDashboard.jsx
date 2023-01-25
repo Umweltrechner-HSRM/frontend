@@ -10,10 +10,10 @@ import {
   Text, useColorModeValue,
   VStack
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { getBaseURL } from '../helpers/api.jsx';
 
-function CreateDashboard() {
+const CreateDashboard = memo(() => {
   const queryClient = useQueryClient();
   const [dashboardName, setDashboardName] = useState('');
 
@@ -41,9 +41,7 @@ function CreateDashboard() {
     <Box
       borderRadius={"5px"} boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px"} bg={useColorModeValue("white", "gray.800")}
       borderWidth={"2px"} borderColor={useColorModeValue("white", "gray.700")}
-      width={'40%'}
-      padding={'1%'}
-      margin={'2rem'}>
+      width={'50%'} padding={'1%'} margin={'2rem'}>
       <Text fontWeight={'bold'} color={useColorModeValue("#4b4b4b", "#fff")} fontSize={'24'}>
         Create Dashboard
       </Text>
@@ -56,7 +54,8 @@ function CreateDashboard() {
           <FormLabel color={useColorModeValue("#4b4b4b", "#fff")}>Name</FormLabel>
           <Input
             color={useColorModeValue("#4b4b4b", "#fff")}
-            borderWidth={'3px'} bg={useColorModeValue('white', 'gray.800')}
+            borderColor={useColorModeValue('gray.400', 'gray.600')}
+            borderWidth={'2px'} bg={useColorModeValue('white', 'gray.800')}
             maxLength={20}
             onChange={e => setDashboardName(e.target.value)}
           />
@@ -70,6 +69,6 @@ function CreateDashboard() {
       </VStack>
     </Box>
   );
-}
+})
 
 export default CreateDashboard;

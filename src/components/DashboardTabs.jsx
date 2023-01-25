@@ -27,7 +27,7 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
               borderRadius={'0.7rem'}
               width={'fit-content'}
               height={'2.8rem'}
-              borderWidth={'0.2rem'}
+              borderWidth={'0.15rem'}
               color={textColor}
               key={dash.id}>
               {dash.name}
@@ -41,7 +41,7 @@ function DashboardTabs({ setTabIndex, setEditState, dashboards, editState }) {
             borderRadius={'0.7rem'}
             borderColor={'blue.300'}
             overflowX={'clip'}
-            borderWidth={'0.2rem'}
+            borderWidth={'0.15rem'}
             color={textColor}
             height={'2.8rem'}>
             {<HiPlusSm />}
