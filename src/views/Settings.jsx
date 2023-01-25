@@ -65,7 +65,6 @@ const EditSettingsModal = ({ mail, frequency }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
-  const cardBg = useColorModeValue("#fff", "#202023");
 
   const {
     register,
@@ -90,7 +89,7 @@ const EditSettingsModal = ({ mail, frequency }) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("meta-settings");
+        queryClient.invalidateQueries(["meta-settings"]);
         toast({
           title: "Settings updated.",
           status: "success",
