@@ -39,7 +39,7 @@ function ChartPreview({ userProps }) {
       strokeDashArray: 5
     },
     stroke: {
-      curve: userProps.stroke || 'smooth'
+      curve: userProps.stroke.toLowerCase() || 'smooth'
     },
     title: {
       text: userProps.name || 'Chart Name',

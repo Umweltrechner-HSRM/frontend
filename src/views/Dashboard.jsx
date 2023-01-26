@@ -372,16 +372,16 @@ const Dashboard = () => {
   };
 
   const innerHeight = window.innerHeight;
-  const bpToHeight = { lg: 0.44 * innerHeight, md: 0.47 * innerHeight, sm: 0.56* innerHeight, xs: 0.49 * innerHeight, xxs: 0.65 * innerHeight };
+  const bpToHeight = {
+    lg: 0.44 * innerHeight,
+    md: 0.47 * innerHeight,
+    sm: 0.56 * innerHeight,
+    xs: 0.49 * innerHeight,
+    xxs: 0.65 * innerHeight
+  };
 
   return (dashboards &&
-    <div style={{overflowX: 'hidden', scrollbarGutter: 'stable'}}>
-      <ChangeDashboardName isOpen={isOpenEdit} onClose={onCloseEdit}
-                           editDashboardName={editDashboardName}
-      />
-      <AreYouSure isOpen={isOpenDelete} onClose={onCloseDelete}
-                  deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name} />
-      {!dashboardSelected && <CreateDashboard />}
+    <>
       {dashboardSelected &&
         <Box mr={'0.5rem'} ml={'0.5rem'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
              borderWidth={'2px'}
@@ -413,53 +413,61 @@ const Dashboard = () => {
           </HStack>
         </Box>
       }
-      {
-        layout &&
-        <ResponsiveGridLayout style={{ position: 'relative', marginTop: '1rem' }}
-                              layouts={{ lg: layout }}
-                              breakpoints={{ lg: 1500, md: 1250, sm: 1050, xs: 800, xxs: 300 }}
-                              cols={{ lg: 3, md: 3, sm: 2, xs: 2, xxs: 1 }}
-                              onBreakpointChange={(bp) => setBreakpoint(bp)}
-                              rowHeight={bpToHeight[breakpoint]}
-                              width={800}
-                              isDraggable={editState}
-                              onLayoutChange={handleLayoutChange}
-                              compactType={'horizontal'} verticalCompact={true}>
-          {dashboardSelected &&
-            filteredDashboardComps?.components.map((chart) => {
-              return (
-                <Box key={chart.id} position={'relative'} className={editState ? 'grabbable' : null}>
-                  <Chart setAnimation={setAnimation} animation={animation} userProps={{
-                    name: chart.name, color: chart.variableColor,
-                    type: chart.type, variable: chart.variable, stroke: chart.stroke
-                  }}
-                         data={data[chart.variable]} editState={editState}
-                         id={chart.id} deleteComponent={deleteComponent} />
-                </Box>
-              );
-            })
-          }
-        </ResponsiveGridLayout>
-      }
-      {
-        filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
-        <Box mr={'0.6rem'} ml={'0.6rem'} bg={'blackAlpha.1000'} style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Flex gap={'0.3rem'} direction={'column'} mt={'2rem'} mb={'2.3rem'}>
-            <Box mt={'0.2rem'} mb={'0.2rem'} borderRadius={'5px'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
-                 style={{ padding: 20 }} bg={useColorModeValue('white', 'gray.800')}
-                 borderWidth={'2px'} borderColor={useColorModeValue('white', 'gray.700')}>
-              <Stack spacing={3}>
-                <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
-                <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT Mode to add charts.</Text>
-              </Stack>
-            </Box>
-          </Flex>
-        </Box>
-      }
-    </div>
+      <div style={{ overflowX: 'hidden', scrollbarGutter: 'stable' }}>
+        <ChangeDashboardName isOpen={isOpenEdit} onClose={onCloseEdit}
+                             editDashboardName={editDashboardName}
+        />
+        <AreYouSure isOpen={isOpenDelete} onClose={onCloseDelete}
+                    deleteDashboard={deleteDashboard} dashboardName={filteredDashboardComps?.name} />
+        {!dashboardSelected && <CreateDashboard />}
+        {
+          layout &&
+          <ResponsiveGridLayout style={{ position: 'relative', marginTop: '1rem' }}
+                                layouts={{ lg: layout }}
+                                breakpoints={{ lg: 1500, md: 1250, sm: 1050, xs: 800, xxs: 300 }}
+                                cols={{ lg: 3, md: 3, sm: 2, xs: 2, xxs: 1 }}
+                                onBreakpointChange={(bp) => setBreakpoint(bp)}
+                                rowHeight={bpToHeight[breakpoint]}
+                                width={800}
+                                isDraggable={editState}
+                                onLayoutChange={handleLayoutChange}
+                                compactType={'horizontal'} verticalCompact={true}>
+            {dashboardSelected &&
+              filteredDashboardComps?.components.map((chart) => {
+                return (
+                  <Box key={chart.id} position={'relative'} className={editState ? 'grabbable' : null}>
+                    <Chart setAnimation={setAnimation} animation={animation} userProps={{
+                      name: chart.name, color: chart.variableColor,
+                      type: chart.type, variable: chart.variable, stroke: chart.stroke
+                    }}
+                           data={data[chart.variable]} editState={editState}
+                           id={chart.id} deleteComponent={deleteComponent} />
+                  </Box>
+                );
+              })
+            }
+          </ResponsiveGridLayout>
+        }
+        {
+          filteredDashboardComps?.components.length === 0 && dashboardSelected && !editState &&
+          <Box mr={'0.6rem'} ml={'0.6rem'} bg={'blackAlpha.1000'} style={{
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Flex gap={'0.3rem'} direction={'column'} mt={'2rem'} mb={'2.3rem'}>
+              <Box mt={'0.2rem'} mb={'0.2rem'} borderRadius={'5px'} boxShadow={'rgba(0, 0, 0, 0.35) 0px 5px 15px'}
+                   style={{ padding: 20 }} bg={useColorModeValue('white', 'gray.800')}
+                   borderWidth={'2px'} borderColor={useColorModeValue('white', 'gray.700')}>
+                <Stack spacing={3}>
+                  <Text fontWeight='bold' fontSize={'1.3rem'}>No charts added yet.</Text>
+                  <Text fontWeight='bold' fontSize={'1.3rem'}>Activate EDIT Mode to add charts.</Text>
+                </Stack>
+              </Box>
+            </Flex>
+          </Box>
+        }
+      </div>
+    </>
   );
 };
 
