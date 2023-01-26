@@ -100,7 +100,7 @@ const DeleteModal = React.memo(({ isOpen, onClose, chart }) => {
 const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
   const [userProps, setUserProps] = useState({
     name: '',
-    type: 'LINE_CHART',
+    type: '',
     variable: '',
     variableColor: '',
     stroke: 'smooth'
@@ -164,7 +164,7 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
         name: userProps.name,
         type: userProps.type,
         variable: userProps.variable,
-        stroke: userProps.stroke.toUpperCase() || 'SMOOTH',
+        stroke: userProps.stroke.toUpperCase(),
         variableColor: userProps.variableColor || '#00e7b0'
       },
       {
@@ -179,9 +179,9 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
     if (!isOpen) {
       setUserProps({
         name: '',
-        type: 'LINE_CHART',
+        type: '',
         variable: '',
-        color: '',
+        variableColor: '#00e7b0',
         stroke: 'smooth'
       });
     } else {
