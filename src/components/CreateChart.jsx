@@ -39,7 +39,9 @@ function CreateChart({ userProps, setUserProps }) {
     menuList: (provided, state) => ({
       ...provided,
       borderWidth: '2px',
-      borderColor: useColorModeValue('gray.400', 'gray.600')
+      borderColor: useColorModeValue('gray.400', 'gray.600'),
+      width: "max-content",
+      minWidth: "100%"
     }),
   };
 

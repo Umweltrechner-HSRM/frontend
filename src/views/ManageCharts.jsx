@@ -128,7 +128,7 @@ const CreateNewModal = React.memo(({ isOpen, onClose, editChart }) => {
       `${getBaseURL()}/api/dashboard/components`,
       {
         name: userProps.name,
-        type: userProps.type,
+        type: userProps.type || 'LINE_CHART',
         variable: userProps.variable,
         stroke: userProps.stroke.toUpperCase(),
         variableColor: userProps.variableColor || '#00e7b0'
