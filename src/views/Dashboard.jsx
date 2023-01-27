@@ -163,7 +163,7 @@ const Dashboard = () => {
     }
   );
 
-  const { mutate: addComponent } = useMutation(_addComponent, {
+  const { mutate: addComponent, isLoading: addLoading } = useMutation(_addComponent, {
     onSuccess: () => {
       queryClient.invalidateQueries(['dashboards']).catch(console.log);
     },
@@ -237,7 +237,7 @@ const Dashboard = () => {
     );
   }
 
-  const { mutate: deleteComponent } = useMutation(_deleteComponent, {
+  const { mutate: deleteComponent, isLoading: deleteLoading } = useMutation(_deleteComponent, {
     onSuccess: () => {
       queryClient.invalidateQueries(['dashboards']).catch(console.log);
     }
@@ -400,7 +400,7 @@ const Dashboard = () => {
             }
             {dashboardSelected && editState &&
               <AddChart addComponent={addComponent} filteredDashboardComps={filteredDashboardComps}
-                        editState={editState} />
+                        isLoading={addLoading} />
             }
             {keycloak.hasRealmRole('admin') &&
               <Box flex={2} align={'right'}>
@@ -441,7 +441,7 @@ const Dashboard = () => {
                       type: chart.type, variable: chart.variable, stroke: chart.stroke
                     }}
                            data={data[chart.variable]} editState={editState}
-                           id={chart.id} deleteComponent={deleteComponent} />
+                           id={chart.id} deleteComponent={deleteComponent} isLoading={deleteLoading} />
                   </Box>
                 );
               })
