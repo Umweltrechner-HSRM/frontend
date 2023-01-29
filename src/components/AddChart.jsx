@@ -7,7 +7,7 @@ import keycloak from '../keycloak.js';
 import { getBaseURL } from '../helpers/api.jsx';
 import { ThreeDots } from 'react-loader-spinner';
 
-const AddChart = memo(({ addComponent, filteredDashboardComps, editState }) => {
+const AddChart = memo(({ addComponent, filteredDashboardComps, isLoading }) => {
   const [plusClicked, setPlusClicked] = useState(false);
   const selectedComp = useRef(null);
   const [filteredOptions, setFilteredOptions] = useState(null);
@@ -63,7 +63,7 @@ const AddChart = memo(({ addComponent, filteredDashboardComps, editState }) => {
             })}
           </Select>
           <Button
-            marginTop={'0.5rem'}
+            marginTop={'0.5rem'} isLoading={isLoading}
             colorScheme={'blue'}
             onClick={() => {
               addComponent(selectedComp.current);
