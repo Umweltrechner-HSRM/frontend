@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
   FormLabel,
   FormControl,
-  Input, useToast, HStack, useColorModeValue
+  Input, useToast, HStack, useColorModeValue, Text
 } from '@chakra-ui/react';
 import '../styles/styles.css';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -21,6 +21,7 @@ import {
 } from '@tanstack/react-table';
 import { TableListView } from '../components/TableListView.jsx';
 import { useFieldArray, useForm } from 'react-hook-form';
+import {FiRefreshCcw} from "react-icons/fi";
 
 
 const getVariables = async token => {
@@ -223,6 +224,13 @@ function VariablePage() {
               borderWidth={1}
               borderRadius={'5px'}
               alignItems={'center'}>
+          <Button size={{ base: "sm", md: "md" }}
+                  disabled={isLoading || !data} onClick={refetch} mr={3}
+                  isLoading={isLoading}
+          >
+            <FiRefreshCcw />
+            <Text ml={2}>Refresh</Text>
+          </Button>
         </Flex>
         {isOpen && <EditDialog data={selected} isOpen={isOpen} onClose={onClose} onOpen={onOpen} />}
         {data && <TableListView data={data.data} columns={columns} refetch={refetch} updatedAt={dataUpdatedAt}

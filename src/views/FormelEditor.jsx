@@ -454,7 +454,10 @@ function FormulaEditor() {
             borderWidth={1}
             borderRadius={"5px"}
             alignItems={"center"}>
-        <Button size={{ base: "sm", md: "md" }} disabled={isLoading || !data} onClick={refetch} mr={3}>
+        <Button size={{ base: "sm", md: "md" }}
+                disabled={isLoading || !data} onClick={refetch} mr={3}
+                isLoading={isLoading}
+        >
           <FiRefreshCcw />
           <Text ml={2}>Refresh</Text>
         </Button>
