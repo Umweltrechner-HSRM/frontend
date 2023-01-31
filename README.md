@@ -8,8 +8,13 @@ Frontend for the Umweltrechner project.
 4. Run the application with `npm run dev`.
 
 ## Development
-- docker compose -f docker-compose.local.yml up --build
-
+```bash
+docker compose -f docker-compose.local.yml up -d --build
+```
+# Deployment
+```bash
+docker-compose up -d
+```
 
 ## Resources
 - [React.js](https://beta.reactjs.org/) - A JavaScript library for building user interfaces
